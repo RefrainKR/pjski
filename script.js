@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. 캐릭터 데이터 정의 (isActive 속성은 유지, 순서가 중요)
     const initialCharactersData = [
         { name: "미쿠", group: "VIRTUAL_SINGER", isActive: false },
         { name: "린", group: "VIRTUAL_SINGER", isActive: false },
@@ -29,11 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: "미즈키", group: "25시_나이트_코드에서.", isActive: false }
     ];
 
-    // 현재 관리되는 캐릭터 데이터 (랭크 및 활성화 상태 포함)
-    let currentCharacterData = {}; // { groupName: { charName: { rank: X, isActive: true/false }, ... }, ... }
+    let currentCharacterData = {};
 
-    // initialCharactersData의 순서를 유지하기 위한 맵
-    // { groupName: [char1_name, char2_name, ...], ... }
     const groupedInitialCharacterNames = initialCharactersData.reduce((acc, char) => {
         if (!acc[char.group]) {
             acc[char.group] = [];
@@ -43,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }, {});
 
 
-    // 탭 1 (캐릭터 랭크) 관련 요소
     const characterListDiv = document.getElementById('characterList');
     const saveDataBtn = document.getElementById('saveDataBtn');
     const loadDataInput = document.getElementById('loadDataInput');
@@ -51,18 +46,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const fileNameDisplay = document.getElementById('fileNameDisplay');
     const LOCAL_STORAGE_KEY = 'characterRanksAndActivityData';
 
-    // 탭 2 (스킬 비교) 관련 요소
     const skillLevelSelect = document.getElementById('skillLevel');
     const skillTableContainer = document.getElementById('skillTableContainer');
     const characterSelect = document.getElementById('characterSelect');
     const directRankInput = document.getElementById('directRankInput');
     const directRankInputGroup = document.getElementById('directRankInputGroup');
 
-    // 공통 탭 관련 요소
+    const skillLevelSelectContainer = document.getElementById('skillLevelSelectContainer');
+
+
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabContents = document.querySelectorAll('.tab-content');
 
-    // --- 탭 기능 구현 시작 ---
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
             const targetTab = button.dataset.tab;
@@ -73,28 +68,20 @@ document.addEventListener('DOMContentLoaded', () => {
             tabContents.forEach(content => content.classList.remove('active'));
             document.getElementById(targetTab).classList.add('active');
 
-            // 스킬 비교 탭이 활성화될 때 자동으로 테이블 생성/업데이트
             if (targetTab === 'skillComparison') {
-                populateCharacterSelect(); // 활성화된 캐릭터만 다시 로드
+                populateCharacterSelect();
                 updateSkillComparisonInputs();
-                generateSkillComparisonTable();
             } else if (targetTab === 'characterRank') {
-                renderCharacters(); // 랭크 탭으로 돌아오면 캐릭터 리스트를 다시 렌더링
+                renderCharacters();
             }
         });
     });
-    // --- 탭 기능 구현 끝 ---
 
 
-    // --- 탭 1: 캐릭터 랭크 기능 (토글 기능 추가 및 데이터 관리 변경) ---
-
-    // currentCharacterData 초기화 및 렌더링
     function initializeCharacterData() {
-        // 기존 로컬 스토리지에서 데이터 로드 시도
         const loaded = loadFromLocalStorage();
 
         if (!loaded) {
-            // 로컬 스토리지에 데이터가 없으면 initialCharactersData로 초기화
             currentCharacterData = {};
             initialCharactersData.forEach(char => {
                 if (!currentCharacterData[char.group]) {
@@ -105,24 +92,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     isActive: char.isActive
                 };
             });
-            saveToLocalStorage(); // 초기화된 데이터 저장
+            saveToLocalStorage();
         }
-        renderCharacters(); // UI 렌더링
+        renderCharacters();
     }
 
 
     function renderCharacters() {
         characterListDiv.innerHTML = '';
-        // groupedInitialCharacterNames의 순서대로 그룹을 순회
         for (const groupName in groupedInitialCharacterNames) {
             const groupDiv = document.createElement('div');
             groupDiv.classList.add('group');
             groupDiv.innerHTML = `<h2>${groupName}</h2>`;
 
-            // 해당 그룹의 initialCharactersData에 정의된 캐릭터 이름 순서대로 순회
             groupedInitialCharacterNames[groupName].forEach(characterName => {
-                const charData = currentCharacterData[groupName][characterName]; // currentCharacterData에서 실제 데이터 가져옴
-                // charData가 없을 경우 (예외 상황) 기본값으로 처리
+                const charData = currentCharacterData[groupName][characterName];
                 if (!charData) {
                     console.warn(`캐릭터 데이터 없음: ${groupName} - ${characterName}. 기본값으로 렌더링합니다.`);
                     charData = { rank: 1, isActive: false };
@@ -184,6 +168,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentCharacterData[groupName] && currentCharacterData[groupName][charName]) {
             currentCharacterData[groupName][charName].rank = rank;
             saveToLocalStorage();
+            if (document.getElementById('skillComparison').classList.contains('active')) {
+                updateSkillComparisonInputs();
+            }
         }
     }
 
@@ -202,7 +189,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             saveToLocalStorage();
             populateCharacterSelect();
-            updateSkillComparisonInputs();
+            if (document.getElementById('skillComparison').classList.contains('active')) {
+                updateSkillComparisonInputs();
+            }
         }
     }
 
@@ -315,6 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 populateCharacterSelect();
                 updateSkillComparisonInputs();
 
+
                 console.log(`캐릭터 데이터가 ${file.name} 파일에서 성공적으로 업데이트되었습니다.`);
                 fileNameDisplay.textContent = `성공적으로 불러왔습니다: ${file.name}`;
                 setTimeout(() => fileNameDisplay.textContent = '선택된 파일 없음', 3000);
@@ -330,10 +320,6 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsText(file);
     });
 
-    // --- 탭 1: 캐릭터 랭크 기능 끝 ---
-
-
-    // --- 탭 2: 스킬 값 비교 기능 시작 ---
 
     const skillData = {
         after: {
@@ -362,25 +348,26 @@ document.addEventListener('DOMContentLoaded', () => {
         return Math.min(finalValue, max);
     }
 
-    // 캐릭터 선택 드롭다운 채우기 (활성화된 캐릭터만, 순서 유지)
     function populateCharacterSelect() {
         characterSelect.innerHTML = '';
+
+        const allDisplayOption = document.createElement('option');
+        allDisplayOption.value = "all";
+        allDisplayOption.textContent = "전체 표시";
+        characterSelect.appendChild(allDisplayOption);
 
         const directInputOption = document.createElement('option');
         directInputOption.value = "";
         directInputOption.textContent = "직접 입력";
         characterSelect.appendChild(directInputOption);
 
-        // initialCharactersData에 정의된 그룹 순서대로 순회
         initialCharactersData.forEach(initialChar => {
-            // 그룹이 아직 처리되지 않았다면 optgroup 생성
             if (!characterSelect.querySelector(`optgroup[label="${initialChar.group}"]`)) {
                 const optgroup = document.createElement('optgroup');
                 optgroup.label = initialChar.group;
                 characterSelect.appendChild(optgroup);
             }
 
-            // 해당 캐릭터가 활성화되어 있다면 option 추가
             const charData = currentCharacterData[initialChar.group][initialChar.name];
             if (charData && charData.isActive) {
                 const option = document.createElement('option');
@@ -391,51 +378,104 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const currentSelectedChar = characterSelect.value;
-        let isCurrentSelectedCharActive = false;
-        if (currentSelectedChar !== "") {
-            for (const groupName in currentCharacterData) {
-                if (currentCharacterData[groupName][currentSelectedChar] && currentCharacterData[groupName][currentSelectedChar].isActive) {
-                    isCurrentSelectedCharActive = true;
-                    break;
-                }
-            }
-        }
-        if (!isCurrentSelectedCharActive && currentSelectedChar !== "") {
-            characterSelect.value = "";
+        if (currentSelectedChar !== "all" && currentSelectedChar !== "") {
+             let isCurrentSelectedCharActive = false;
+             for (const groupName in currentCharacterData) {
+                 if (currentCharacterData[groupName][currentSelectedChar] && currentCharacterData[groupName][currentSelectedChar].isActive) {
+                     isCurrentSelectedCharActive = true;
+                     break;
+                 }
+             }
+             if (!isCurrentSelectedCharActive) {
+                 characterSelect.value = "all";
+             }
         }
     }
 
     function updateSkillComparisonInputs() {
-        const selectedCharacterName = characterSelect.value;
-        let foundRank = 1;
+        const selectedOption = characterSelect.value;
+        let targetCharacterRank = 1;
 
-        if (selectedCharacterName === "") {
-            directRankInputGroup.style.display = 'block';
-        } else {
+        if (selectedOption === "all") {
+            skillLevelSelectContainer.style.display = 'block';
             directRankInputGroup.style.display = 'none';
-            for (const groupName in currentCharacterData) {
-                if (currentCharacterData[groupName][selectedCharacterName]) {
-                    foundRank = currentCharacterData[groupName][selectedCharacterName].rank;
-                    break;
+            generateOverallSkillComparisonTable();
+        } else {
+            skillLevelSelectContainer.style.display = 'none';
+
+            if (selectedOption === "") {
+                directRankInputGroup.style.display = 'block';
+                targetCharacterRank = parseInt(directRankInput.value, 10);
+            } else {
+                directRankInputGroup.style.display = 'none';
+                for (const groupName in currentCharacterData) {
+                    if (currentCharacterData[groupName][selectedOption]) {
+                        targetCharacterRank = currentCharacterData[groupName][selectedOption].rank;
+                        break;
+                    }
                 }
+                directRankInput.value = Math.min(Math.max(targetCharacterRank, 1), 140);
             }
-            directRankInput.value = Math.min(Math.max(foundRank, 1), 140);
+            generateIndividualSkillComparisonTable(targetCharacterRank);
+            // scrollToColumnByTargetRank(targetCharacterRank); // 이 함수는 현재 로직에서 필요 없으므로 주석 처리 유지
         }
-        generateSkillComparisonTable();
     }
 
+    // script.js 내에서 generateOverallSkillComparisonTable 함수 수정
+function generateOverallSkillComparisonTable() {
+    const skillLv = parseInt(skillLevelSelect.value, 10);
+    // highlightRank 관련 변수와 로직을 완전히 삭제합니다.
 
-    function generateSkillComparisonTable() {
-        const skillLv = parseInt(skillLevelSelect.value, 10);
-        const targetRank = parseInt(directRankInput.value, 10);
+    if (isNaN(skillLv) || skillLv < 1 || skillLv > 4) {
+        skillTableContainer.innerHTML = '<p style="color: red;">유효한 스킬 레벨을 선택하세요 (1-4).</p>';
+        return;
+    }
 
-        if (isNaN(skillLv) || skillLv < 1 || skillLv > 4) {
-            skillTableContainer.innerHTML = '<p style="color: red;">유효한 스킬 레벨을 선택하세요 (1-4).</p>';
-            return;
-        }
+    let tableHtml = '<table class="skill-table"><thead><tr>';
+    tableHtml += '<th>\\스킬값<br>랭크\\</th>';
 
-        let tableHtml = '<table class="skill-table"><thead><tr>';
-        tableHtml += '<th>\\스킬값<br>랭크\\</th>';
+    const otherSkillVals = [];
+    for (let val = 80; val <= 140; val += 5) {
+        otherSkillVals.push(val);
+        tableHtml += `<th>${val}%</th>`;
+    }
+    tableHtml += '</tr></thead><tbody>';
+
+    const startRank = 1;
+    const endRank = 140;
+
+    for (let rank = startRank; rank <= endRank; rank++) {
+        // highlight-row 클래스를 추가하는 로직을 완전히 삭제합니다.
+        tableHtml += `<tr data-rank="${rank}"><th>${rank}</th>`; // class="${rowClass}" 부분 삭제
+
+        otherSkillVals.forEach(otherSkillVal => {
+            const skillAfter = calculateSkillAfter(skillLv, rank);
+            const skillBefore = calculateSkillBefore(skillLv, otherSkillVal);
+
+            let cellValue;
+            let cellClass = '';
+
+            if (skillBefore > skillAfter) {
+                cellValue = skillBefore;
+                cellClass = 'advantage-before';
+            } else if (skillAfter > skillBefore) {
+                cellValue = skillAfter;
+                cellClass = 'advantage-after';
+            } else {
+                cellValue = skillBefore;
+                cellClass = 'advantage-equal';
+            }
+            tableHtml += `<td class="${cellClass}">${cellValue}%</td>`;
+        });
+        tableHtml += '</tr>';
+    }
+        tableHtml += '</tbody></table>';
+        skillTableContainer.innerHTML = tableHtml;
+    }
+
+    function generateIndividualSkillComparisonTable(targetCharacterRank) {
+        let tableHtml = '<table class="skill-table individual-table"><thead><tr>';
+        tableHtml += '<th>스킬레벨</th>';
 
         const otherSkillVals = [];
         for (let val = 80; val <= 140; val += 5) {
@@ -444,15 +484,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         tableHtml += '</tr></thead><tbody>';
 
-        const startRank = 1;
-        const endRank = 140;
-
-        for (let rank = startRank; rank <= endRank; rank++) {
-            const rowClass = (rank === targetRank) ? 'highlight-row' : '';
-            tableHtml += `<tr data-rank="${rank}" class="${rowClass}"><th>${rank}</th>`;
+        for (let skillLv = 1; skillLv <= 4; skillLv++) {
+            tableHtml += `<tr data-skill-level="${skillLv}"><th>Lv.${skillLv}</th>`;
 
             otherSkillVals.forEach(otherSkillVal => {
-                const skillAfter = calculateSkillAfter(skillLv, rank);
+                const skillAfter = calculateSkillAfter(skillLv, targetCharacterRank);
                 const skillBefore = calculateSkillBefore(skillLv, otherSkillVal);
 
                 let cellValue;
@@ -468,18 +504,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     cellValue = skillBefore;
                     cellClass = 'advantage-equal';
                 }
+
                 tableHtml += `<td class="${cellClass}">${cellValue}%</td>`;
             });
             tableHtml += '</tr>';
         }
         tableHtml += '</tbody></table>';
         skillTableContainer.innerHTML = tableHtml;
-
-        scrollToRank(targetRank);
     }
 
     function scrollToRank(rankToScroll) {
-        const row = skillTableContainer.querySelector(`tr[data-rank="${rankToScroll}"]`);
+        const row = skillTableContainer.querySelector(`.skill-table tr[data-rank="${rankToScroll}"]`);
         if (row) {
             const containerHeight = skillTableContainer.clientHeight;
             const rowOffsetTop = row.offsetTop;
@@ -488,8 +523,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // 이 함수는 현재 요구사항에 맞지 않아 사용하지 않습니다.
+    function scrollToColumnByTargetRank(targetRank) {
+        // 개별/직접 입력 모드에서 X축은 스킬값(80%~140%)이고 Y축은 스킬레벨(1~4)입니다.
+        // 따라서, Y축은 스크롤이 필요 없으며, X축 스크롤도 특정 랭크에 해당하는 '열'을 강조하는 것이 아니므로
+        // 이 함수는 현재 로직에서는 아무것도 하지 않습니다.
+        // 만약 특정 '스킬값'을 강조하고 싶다면 이 함수를 수정해야 하지만, 현재 요구사항은 아닙니다.
+        // 'highlight-col' 클래스도 제거되었으므로, 이 함수는 이제 불필요합니다.
+    }
 
-    skillLevelSelect.addEventListener('change', generateSkillComparisonTable);
+
+    skillLevelSelect.addEventListener('change', () => {
+        if (characterSelect.value === "all") {
+            generateOverallSkillComparisonTable();
+        }
+    });
+
+
     characterSelect.addEventListener('change', updateSkillComparisonInputs);
     directRankInput.addEventListener('input', updateSkillComparisonInputs);
 
