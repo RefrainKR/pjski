@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>캐릭터 스킬 비교</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>캐릭터 랭크 & 스킬 관리 시스템</h1>
+
+        <div class="tabs">
+            <button class="tab-button active" data-tab="skillComparison">스킬 값 비교</button>
+            <button class="tab-button" data-tab="characterRank">캐릭터 랭크</button>
+        </div>
+
+        <div id="skillComparison" class="tab-content active">
+            <h2>캐릭터 스킬 값 비교 테이블</h2>
+            <div class="skill-controls">
+                <div class="control-group">
+                    <label for="skillLevel">스킬 레벨:</label>
+                    <select id="skillLevel">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="characterSelect">캐릭터 선택:</label>
+                    <select id="characterSelect">
+                        </select>
+                </div>
+                <div class="control-group" id="directRankInputGroup">
+                    <label for="directRankInput">랭크 직접 입력 (1~140):</label>
+                    <input type="number" id="directRankInput" min="1" max="140" value="1">
+                </div>
+            </div>
+            <div class="skill-legend">
+                <div class="legend-item">
+                    <span class="color-box advantage-after"></span> 각후 유리
+                </div>
+                <div class="legend-item">
+                    <span class="color-box advantage-equal"></span> 동일
+                </div>
+                <div class="legend-item">
+                    <span class="color-box advantage-before"></span> 각전 유리
+                </div>
+            </div>
+            <div id="skillTableContainer" class="skill-table-container">
+            </div>
+        </div>
+
+        <div id="characterRank" class="tab-content">
+            <p class="storage-info">
+                * 캐릭터 랭크는 웹 브라우저의 로컬 스토리지에 **자동으로 저장**됩니다. <br>
+                * 파일 다운로드/업로드 기능은 백업/복구 용도로 사용하세요.
+            </p>
+            <div id="characterList" class="character-list">
+            </div>
+
+            <div class="actions">
+                <button id="saveDataBtn">데이터 백업 (JSON 다운로드)</button>
+                <input type="file" id="loadDataInput" accept=".json" style="display: none;">
+                <button id="loadDataBtn">데이터 복구 (JSON 업로드)</button>
+                <span id="fileNameDisplay" class="file-name-display">선택된 파일 없음</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
