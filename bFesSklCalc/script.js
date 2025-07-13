@@ -834,12 +834,11 @@ document.addEventListener('DOMContentLoaded', () => {
     loadAndApplySettings(); // DOMContentLoaded 시점에 설정 로드 및 적용
     initializeCharacterData(); // 캐릭터 데이터 초기화
 
-    // 초기 탭 활성화 로직
     const initialActiveTabButton = document.querySelector('.tab-button.active');
     if (initialActiveTabButton) {
+        document.querySelector('.tab-button[data-tab="settings"]').click(); // 버그로 인해 한번 setting탭을 열어야 불러옴
         initialActiveTabButton.click(); // 활성화된 탭에 맞춰 내용 갱신
     } else {
-        // 기본으로 'characterRank' 탭을 활성화
-        document.querySelector('.tab-button[data-tab="characterRank"]').click();
+        document.querySelector('.tab-button[data-tab="settings"]').click();
     }
 });
