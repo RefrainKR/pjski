@@ -769,7 +769,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tableHtml += '<th>\\값<br>레벨\\</th>';
 
         const otherSkillVals = [];
-        // otherSkillValMin, Max, Increase 사용
+        
         for (let val = otherSkillValMin; val <= otherSkillValMax; val += otherSkillValIncrease) {
             otherSkillVals.push(val);
             tableHtml += `<th>${val}%</th>`;
@@ -813,7 +813,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     characterSelect.addEventListener('change', updateSkillComparisonInputs);
 
-    // directRankInput 이벤트 리스너도 updateAndRenderRank로 통합 (blur 시 저장, input 시 테이블만 갱신)
     directRankInput.removeEventListener('focus', handleRankInputFocus);
     directRankInput.removeEventListener('blur', (e) => updateAndRenderRank(e.target, true));
     directRankInput.removeEventListener('input', (e) => updateAndRenderRank(e.target, false));
@@ -822,21 +821,17 @@ document.addEventListener('DOMContentLoaded', () => {
     directRankInput.addEventListener('blur', (e) => updateAndRenderRank(e.target, true));
     directRankInput.addEventListener('input', (e) => updateAndRenderRank(e.target, false));
 
-    // 설정 입력 필드에 'blur' 이벤트 리스너 추가하여 자동 저장
     minRankInput.addEventListener('blur', saveSettingsImmediately);
     maxRankInput.addEventListener('blur', saveSettingsImmediately);
     otherSkillValMinInput.addEventListener('blur', saveSettingsImmediately);
     otherSkillValMaxInput.addEventListener('blur', saveSettingsImmediately);
     otherSkillValIncreaseInput.addEventListener('blur', saveSettingsImmediately);
 
-
-    // 초기화 순서 변경: 설정 먼저 로드 후 캐릭터 데이터 초기화
-    loadAndApplySettings(); // DOMContentLoaded 시점에 설정 로드 및 적용
     initializeCharacterData(); // 캐릭터 데이터 초기화
+    loadAndApplySettings(); // DOMContentLoaded 시점에 설정 로드 및 적용
 
     const initialActiveTabButton = document.querySelector('.tab-button.active');
     if (initialActiveTabButton) {
-        document.querySelector('.tab-button[data-tab="settings"]').click(); // 버그로 인해 한번 setting탭을 열어야 불러옴
         initialActiveTabButton.click(); // 활성화된 탭에 맞춰 내용 갱신
     } else {
         document.querySelector('.tab-button[data-tab="settings"]').click();

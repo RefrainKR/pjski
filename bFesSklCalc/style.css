@@ -258,7 +258,7 @@ button:hover {
     -moz-appearance: textfield; /* Firefox */
     -webkit-appearance: none; /* Chrome, Safari */
     margin: 0; /* 기본 마진 제거 */
-    width: 95px;
+    width: 100px;
 }
 
 /* Chrome, Safari, Edge, Opera 숨기기 */
