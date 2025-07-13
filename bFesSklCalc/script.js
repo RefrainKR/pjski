@@ -480,12 +480,12 @@ document.addEventListener('DOMContentLoaded', () => {
         delete directRankInput.dataset.characterGroup;
 
         if (selectedOption === "all") {
-            skillLevelSelectContainer.style.display = 'block';
+            skillLevelSelectContainer.style.display = 'flex';
             directRankInputGroup.style.display = 'none';
             generateOverallSkillComparisonTable();
         } else if (selectedOption === "") { // "직접 입력" 선택
             skillLevelSelectContainer.style.display = 'none';
-            directRankInputGroup.style.display = 'block';
+            directRankInputGroup.style.display = 'flex';
 
             // '직접 입력' 더미 데이터의 랭크를 사용
             targetCharacterRank = currentCharacterData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME].rank;
@@ -495,7 +495,7 @@ document.addEventListener('DOMContentLoaded', () => {
             generateIndividualSkillComparisonTable(targetCharacterRank);
         } else { // 특정 캐릭터 선택
             skillLevelSelectContainer.style.display = 'none';
-            directRankInputGroup.style.display = 'block';
+            directRankInputGroup.style.display = 'flex';
 
             for (const groupName in currentCharacterData) {
                 if (currentCharacterData[groupName][selectedOption]) {
