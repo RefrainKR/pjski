@@ -210,7 +210,7 @@ button:hover {
     font-size: 0.9em;
 }
 
-.storage-info {
+.info-message {
     background-color: #e9f7ef;
     border: 1px solid #d4edda;
     border-radius: 5px;
@@ -222,7 +222,7 @@ button:hover {
 }
 
 /* Skill Comparison Tab Specific Styles */
-.skill-controls {
+.form-group-container {
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -235,20 +235,20 @@ button:hover {
     flex-wrap: wrap;
 }
 
-.control-group {
+.form-group {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.control-group label {
+.form-group label {
     font-weight: bold;
     color: #555;
     line-height: 38px;
 }
 
-.control-group select,
-.control-group input[type="number"] {
+.form-group select,
+.form-group input[type="number"] {
     padding: 8px 12px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -262,8 +262,8 @@ button:hover {
 }
 
 /* Chrome, Safari, Edge, Opera 숨기기 */
-.control-group input[type="number"]::-webkit-outer-spin-button,
-.control-group input[type="number"]::-webkit-inner-spin-button {
+.form-group input[type="number"]::-webkit-outer-spin-button,
+.form-group input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
@@ -330,7 +330,7 @@ button:hover {
 }
 
 /* New styles for the box legend */
-.skill-legend {
+.cell-infos {
     display: flex;
     justify-content: flex-end; /* 좌측 정렬 */
     align-items: center; /* 수직 중앙 정렬 */
@@ -343,7 +343,7 @@ button:hover {
     flex-wrap: wrap; /* 공간 부족 시 다음 줄로 넘어가도록 */
 }
 
-.legend-item {
+.cell-info-item {
     display: flex;
     align-items: center; /* 내부 요소 (color-box, 텍스트) 수직 중앙 정렬 */
     gap: 8px;
@@ -404,24 +404,24 @@ button:hover {
         width: 100px; /* 모바일에서 랭크 입력창 너비 조절 */
     }
 
-    .skill-controls {
+    .form-group-container {
         flex-direction: column; /* 스킬 컨트롤 요소 세로로 쌓기 */
         align-items: flex-start;
         gap: 15px; /* 간격 조절 */
     }
 
-    .control-group {
+    .form-group {
         width: 100%; /* 전체 너비 차지 */
         justify-content: space-between; /* 라벨과 인풋 양 끝으로 정렬 */
     }
 
-    .skill-controls select,
-    .skill-controls input[type="number"] {
+    .form-group select,
+    .form-group input[type="number"] {
         width: 120px; /* 모바일에서 드롭다운/인풋 너비 조절 */
     }
 
     /* 2번 적용 사항 (범례 한 줄 표시) 유지 */
-    .skill-legend {
+    .cell-infos {
         flex-direction: row; /* 범례 항목을 가로로 정렬 */
         flex-wrap: nowrap; /* 범례 항목이 줄바꿈되지 않도록 */
         justify-content: center; /* 범례 항목을 중앙 정렬 */
@@ -429,7 +429,7 @@ button:hover {
         padding: 8px 10px; /* 작은 화면을 위한 패딩 조절 */
     }
 
-    .legend-item {
+    .cell-info-item {
         white-space: nowrap; /* 각 범례 항목이 한 줄에 표시되도록 */
         flex-shrink: 0; /* 항목이 줄어들지 않도록 */
     }
