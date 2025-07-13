@@ -34,7 +34,6 @@ h2 {
 /* Tabs */
 .tabs {
     display: flex;
-    margin-bottom: 20px;
     border-bottom: 2px solid #e0e0e0;
 }
 
