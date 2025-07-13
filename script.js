@@ -38,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return acc;
     }, {});
 
-
     const characterListDiv = document.getElementById('characterList');
     const saveDataBtn = document.getElementById('saveDataBtn');
     const loadDataInput = document.getElementById('loadDataInput');
@@ -51,12 +50,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const characterSelect = document.getElementById('characterSelect');
     const directRankInput = document.getElementById('directRankInput');
     const directRankInputGroup = document.getElementById('directRankInputGroup');
-
     const skillLevelSelectContainer = document.getElementById('skillLevelSelectContainer');
-
 
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabContents = document.querySelectorAll('.tab-content');
+
+    // IMPORTANT: '직접 입력' 모드를 위한 더미 그룹과 캐릭터 정의
+    const DIRECT_INPUT_GROUP_NAME = "_DIRECT_INPUT_";
+    const DIRECT_INPUT_CHAR_NAME = "_DEFAULT_";
 
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -78,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    function initializeCharacterData() {
+function initializeCharacterData() {
         const loaded = loadFromLocalStorage();
 
         if (!loaded) {
@@ -92,13 +93,32 @@ document.addEventListener('DOMContentLoaded', () => {
                     isActive: char.isActive
                 };
             });
+
+            if (!currentCharacterData[DIRECT_INPUT_GROUP_NAME]) {
+                currentCharacterData[DIRECT_INPUT_GROUP_NAME] = {};
+            }
+            if (!currentCharacterData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME]) {
+                currentCharacterData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME] = {
+                    rank: 1, // 초기 랭크 값
+                    isActive: true // 활성화 여부는 중요하지 않지만 일관성을 위해 추가
+                };
+            }
             saveToLocalStorage();
+        } else {
+            if (!currentCharacterData[DIRECT_INPUT_GROUP_NAME] || !currentCharacterData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME]) {
+                if (!currentCharacterData[DIRECT_INPUT_GROUP_NAME]) {
+                    currentCharacterData[DIRECT_INPUT_GROUP_NAME] = {};
+                }
+                currentCharacterData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME] = {
+                    rank: 1,
+                    isActive: true
+                };
+                saveToLocalStorage(); // 더미 데이터 추가 후 저장
+            }
         }
-        renderCharacters();
     }
 
-
-    function renderCharacters() {
+function renderCharacters() {
         characterListDiv.innerHTML = '';
         for (const groupName in groupedInitialCharacterNames) {
             const groupDiv = document.createElement('div');
@@ -106,30 +126,32 @@ document.addEventListener('DOMContentLoaded', () => {
             groupDiv.innerHTML = `<h2>${groupName}</h2>`;
 
             groupedInitialCharacterNames[groupName].forEach(characterName => {
-                const charData = currentCharacterData[groupName][characterName];
+                const charData = currentCharacterData[groupName]?.[characterName];
                 if (!charData) {
                     console.warn(`캐릭터 데이터 없음: ${groupName} - ${characterName}. 기본값으로 렌더링합니다.`);
-                    charData = { rank: 1, isActive: false };
+                    // 이 경우는 initialCharactersData와 currentCharacterData 간의 불일치이므로
+                    // initializeCharacterData에서 제대로 처리해야 함. 여기서는 기본값으로 렌더링.
+                    currentCharacterData[groupName][characterName] = { rank: 1, isActive: false }; // 누락된 데이터 추가
                 }
+                const charToRender = currentCharacterData[groupName][characterName];
 
                 const characterItem = document.createElement('div');
                 characterItem.classList.add('character-item');
                 characterItem.innerHTML = `
                     <span class="character-name">${characterName}</span>
                     <div class="toggle-container">
-                        <span class="toggle-label">${charData.isActive ? '활성화' : '비활성화'}</span>
-                        <div class="toggle-switch ${charData.isActive ? 'active' : ''}"
+                        <span class="toggle-label">${charToRender.isActive ? '활성화' : '비활성화'}</span>
+                        <div class="toggle-switch ${charToRender.isActive ? 'active' : ''}"
                              data-character-name="${characterName}"
                              data-character-group="${groupName}">
                         </div>
                         <div class="character-rank">
                             <input type="number"
                                    min="1"
-                                   max="200"
-                                   value="${charData.rank}"
+                                   max="140" value="${charToRender.rank}"
                                    data-character-name="${characterName}"
                                    data-character-group="${groupName}"
-                                   placeholder="랭크 (1-200)">
+                                   placeholder="랭크 (1 - 140)">
                         </div>
                     </div>
                 `;
@@ -160,16 +182,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (isNaN(rank) || rank < 1) {
             rank = 1;
-        } else if (rank > 200) {
-            rank = 200;
+        } else if (rank > 140) { // 랭크 최대값 140으로 통일
+            rank = 140;
         }
-        input.value = rank;
+        input.value = rank; // 유효성 검사 후 값 업데이트
 
-        if (currentCharacterData[groupName] && currentCharacterData[groupName][charName]) {
-            currentCharacterData[groupName][charName].rank = rank;
-            saveToLocalStorage();
-            if (document.getElementById('skillComparison').classList.contains('active')) {
-                updateSkillComparisonInputs();
+        if (charName && groupName) {
+            if (currentCharacterData[groupName] && currentCharacterData[groupName][charName]) {
+                currentCharacterData[groupName][charName].rank = rank;
+                saveToLocalStorage();
+
+                // 탭1에서 해당 캐릭터가 선택된 상태였다면, 탭1의 directRankInput도 업데이트
+                if (characterSelect.value === charName) {
+                    directRankInput.value = rank; // 동기화
+                    generateIndividualSkillComparisonTable(rank); // 테이블도 바로 갱신
+                }
             }
         }
     }
@@ -188,7 +215,8 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleLabel.textContent = !currentIsActive ? '활성화' : '비활성화';
 
             saveToLocalStorage();
-            populateCharacterSelect();
+            populateCharacterSelect(); // 활성화/비활성화 목록이 바뀌었으므로 드롭다운 갱신
+
             if (document.getElementById('skillComparison').classList.contains('active')) {
                 updateSkillComparisonInputs();
             }
@@ -218,16 +246,32 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     if (loadedData[initialChar.group] && loadedData[initialChar.group][initialChar.name]) {
                         mergedData[initialChar.group][initialChar.name] = loadedData[initialChar.group][initialChar.name];
+                        // isActive 필드 유효성 검사 추가 (불린 타입이 아니면 초기값으로)
                         if (typeof mergedData[initialChar.group][initialChar.name].isActive !== 'boolean') {
                              mergedData[initialChar.group][initialChar.name].isActive = initialChar.isActive;
                         }
                     } else {
+                        // 새로운 캐릭터 추가 또는 데이터 누락 시 초기값으로 설정
                         mergedData[initialChar.group][initialChar.name] = {
                             rank: 1,
                             isActive: initialChar.isActive
                         };
                     }
                 });
+
+                // 더미 데이터 로드 또는 초기화
+                if (loadedData[DIRECT_INPUT_GROUP_NAME] && loadedData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME]) {
+                    if (!mergedData[DIRECT_INPUT_GROUP_NAME]) {
+                        mergedData[DIRECT_INPUT_GROUP_NAME] = {};
+                    }
+                    mergedData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME] = loadedData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME];
+                } else {
+                    if (!mergedData[DIRECT_INPUT_GROUP_NAME]) {
+                        mergedData[DIRECT_INPUT_GROUP_NAME] = {};
+                    }
+                    mergedData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME] = { rank: 1, isActive: true };
+                }
+
                 currentCharacterData = mergedData;
                 console.log('캐릭터 랭크 및 활성화 상태가 로컬 스토리지에서 자동 불러와졌습니다.');
                 return true;
@@ -238,7 +282,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return false;
     }
-
 
     saveDataBtn.addEventListener('click', () => {
         const dataToSave = currentCharacterData;
@@ -295,6 +338,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
+                if (loadedFileContent[DIRECT_INPUT_GROUP_NAME] && loadedFileContent[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME]) {
+                    if (!mergedDataFromFile[DIRECT_INPUT_GROUP_NAME]) {
+                        mergedDataFromFile[DIRECT_INPUT_GROUP_NAME] = {};
+                    }
+                    mergedDataFromFile[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME] = loadedFileContent[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME];
+                } else {
+                    if (!mergedDataFromFile[DIRECT_INPUT_GROUP_NAME]) {
+                        mergedDataFromFile[DIRECT_INPUT_GROUP_NAME] = {};
+                    }
+                    mergedDataFromFile[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME] = { rank: 1, isActive: true };
+                }
+
                 currentCharacterData = mergedDataFromFile;
                 saveToLocalStorage();
 
@@ -303,7 +358,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 populateCharacterSelect();
                 updateSkillComparisonInputs();
-
 
                 console.log(`캐릭터 데이터가 ${file.name} 파일에서 성공적으로 업데이트되었습니다.`);
                 fileNameDisplay.textContent = `성공적으로 불러왔습니다: ${file.name}`;
@@ -361,70 +415,82 @@ document.addEventListener('DOMContentLoaded', () => {
         directInputOption.textContent = "직접 입력";
         characterSelect.appendChild(directInputOption);
 
-        initialCharactersData.forEach(initialChar => {
-            if (!characterSelect.querySelector(`optgroup[label="${initialChar.group}"]`)) {
-                const optgroup = document.createElement('optgroup');
-                optgroup.label = initialChar.group;
-                characterSelect.appendChild(optgroup);
-            }
+        const previouslySelectedValue = characterSelect.value;
+        let currentSelectedCharExistsAndActive = false;
 
-            const charData = currentCharacterData[initialChar.group][initialChar.name];
-            if (charData && charData.isActive) {
+        initialCharactersData.forEach(initialChar => {
+            const charData = currentCharacterData[initialChar.group]?.[initialChar.name]; 
+
+            if (charData && charData.isActive) { // 활성화된 캐릭터만 추가
+                if (!characterSelect.querySelector(`optgroup[label="${initialChar.group}"]`)) {
+                    const optgroup = document.createElement('optgroup');
+                    optgroup.label = initialChar.group;
+                    characterSelect.appendChild(optgroup);
+                }
                 const option = document.createElement('option');
                 option.value = initialChar.name;
                 option.textContent = initialChar.name;
                 characterSelect.querySelector(`optgroup[label="${initialChar.group}"]`).appendChild(option);
+
+                if (previouslySelectedValue === initialChar.name) {
+                    currentSelectedCharExistsAndActive = true;
+                }
             }
         });
 
-        const currentSelectedChar = characterSelect.value;
-        if (currentSelectedChar !== "all" && currentSelectedChar !== "") {
-             let isCurrentSelectedCharActive = false;
-             for (const groupName in currentCharacterData) {
-                 if (currentCharacterData[groupName][currentSelectedChar] && currentCharacterData[groupName][currentSelectedChar].isActive) {
-                     isCurrentSelectedCharActive = true;
-                     break;
-                 }
-             }
-             if (!isCurrentSelectedCharActive) {
-                 characterSelect.value = "all";
-             }
+        if (previouslySelectedValue && previouslySelectedValue !== "all" && previouslySelectedValue !== "" && !currentSelectedCharExistsAndActive) {
+            characterSelect.value = "all";
+        } else {
+            characterSelect.value = previouslySelectedValue || "all"; 
         }
     }
 
     function updateSkillComparisonInputs() {
         const selectedOption = characterSelect.value;
         let targetCharacterRank = 1;
+        let selectedCharacterGroup = '';
+
+        // directRankInput의 dataset 초기화
+        delete directRankInput.dataset.characterName;
+        delete directRankInput.dataset.characterGroup;
 
         if (selectedOption === "all") {
             skillLevelSelectContainer.style.display = 'block';
             directRankInputGroup.style.display = 'none';
             generateOverallSkillComparisonTable();
-        } else {
+        } else if (selectedOption === "") { // "직접 입력" 선택
             skillLevelSelectContainer.style.display = 'none';
+            directRankInputGroup.style.display = 'block';
 
-            if (selectedOption === "") {
-                directRankInputGroup.style.display = 'block';
-                targetCharacterRank = parseInt(directRankInput.value, 10);
-            } else {
-                directRankInputGroup.style.display = 'none';
-                for (const groupName in currentCharacterData) {
-                    if (currentCharacterData[groupName][selectedOption]) {
-                        targetCharacterRank = currentCharacterData[groupName][selectedOption].rank;
-                        break;
-                    }
-                }
-                directRankInput.value = Math.min(Math.max(targetCharacterRank, 1), 140);
-            }
+            // '직접 입력' 더미 데이터의 랭크를 사용
+            targetCharacterRank = currentCharacterData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME].rank;
+            directRankInput.value = Math.min(Math.max(targetCharacterRank, 1), 140); // 랭크 표시
+
+            // '직접 입력' 모드일 때는 dataset을 설정하지 않습니다. (이미 위에서 제거됨)
             generateIndividualSkillComparisonTable(targetCharacterRank);
-            // scrollToColumnByTargetRank(targetCharacterRank); // 이 함수는 현재 로직에서 필요 없으므로 주석 처리 유지
+        } else { // 특정 캐릭터 선택
+            skillLevelSelectContainer.style.display = 'none';
+            directRankInputGroup.style.display = 'block';
+
+            for (const groupName in currentCharacterData) {
+                if (currentCharacterData[groupName][selectedOption]) {
+                    targetCharacterRank = currentCharacterData[groupName][selectedOption].rank;
+                    selectedCharacterGroup = groupName;
+                    break;
+                }
+            }
+            directRankInput.value = Math.min(Math.max(targetCharacterRank, 1), 140);
+
+            // 특정 캐릭터를 선택했을 때만 directRankInput에 데이터셋 추가
+            directRankInput.dataset.characterName = selectedOption;
+            directRankInput.dataset.characterGroup = selectedCharacterGroup;
+
+            generateIndividualSkillComparisonTable(targetCharacterRank);
         }
     }
 
-    // script.js 내에서 generateOverallSkillComparisonTable 함수 수정
 function generateOverallSkillComparisonTable() {
     const skillLv = parseInt(skillLevelSelect.value, 10);
-    // highlightRank 관련 변수와 로직을 완전히 삭제합니다.
 
     if (isNaN(skillLv) || skillLv < 1 || skillLv > 4) {
         skillTableContainer.innerHTML = '<p style="color: red;">유효한 스킬 레벨을 선택하세요 (1-4).</p>';
@@ -445,8 +511,7 @@ function generateOverallSkillComparisonTable() {
     const endRank = 140;
 
     for (let rank = startRank; rank <= endRank; rank++) {
-        // highlight-row 클래스를 추가하는 로직을 완전히 삭제합니다.
-        tableHtml += `<tr data-rank="${rank}"><th>${rank}</th>`; // class="${rowClass}" 부분 삭제
+        tableHtml += `<tr data-rank="${rank}"><th>${rank}</th>`;
 
         otherSkillVals.forEach(otherSkillVal => {
             const skillAfter = calculateSkillAfter(skillLv, rank);
@@ -513,26 +578,6 @@ function generateOverallSkillComparisonTable() {
         skillTableContainer.innerHTML = tableHtml;
     }
 
-    function scrollToRank(rankToScroll) {
-        const row = skillTableContainer.querySelector(`.skill-table tr[data-rank="${rankToScroll}"]`);
-        if (row) {
-            const containerHeight = skillTableContainer.clientHeight;
-            const rowOffsetTop = row.offsetTop;
-            const rowHeight = row.offsetHeight;
-            skillTableContainer.scrollTop = rowOffsetTop - (containerHeight / 2) + (rowHeight / 2);
-        }
-    }
-
-    // 이 함수는 현재 요구사항에 맞지 않아 사용하지 않습니다.
-    function scrollToColumnByTargetRank(targetRank) {
-        // 개별/직접 입력 모드에서 X축은 스킬값(80%~140%)이고 Y축은 스킬레벨(1~4)입니다.
-        // 따라서, Y축은 스크롤이 필요 없으며, X축 스크롤도 특정 랭크에 해당하는 '열'을 강조하는 것이 아니므로
-        // 이 함수는 현재 로직에서는 아무것도 하지 않습니다.
-        // 만약 특정 '스킬값'을 강조하고 싶다면 이 함수를 수정해야 하지만, 현재 요구사항은 아닙니다.
-        // 'highlight-col' 클래스도 제거되었으므로, 이 함수는 이제 불필요합니다.
-    }
-
-
     skillLevelSelect.addEventListener('change', () => {
         if (characterSelect.value === "all") {
             generateOverallSkillComparisonTable();
@@ -541,11 +586,44 @@ function generateOverallSkillComparisonTable() {
 
 
     characterSelect.addEventListener('change', updateSkillComparisonInputs);
-    directRankInput.addEventListener('input', updateSkillComparisonInputs);
 
-    // 페이지 로드 시 초기화:
+    directRankInput.removeEventListener('input', handleRankInput);
+    directRankInput.addEventListener('input', (event) => {
+        const selectedOption = characterSelect.value;
+        let rank = parseInt(event.target.value, 10);
+        if (isNaN(rank) || rank < 1) {
+            rank = 1;
+        } else if (rank > 140) {
+            rank = 140;
+        }
+        event.target.value = rank;
+
+        if (selectedOption === "") { // "직접 입력" 모드
+            currentCharacterData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME].rank = rank;
+            saveToLocalStorage(); // 더미 데이터도 저장
+            generateIndividualSkillComparisonTable(rank);
+        } else { // 특정 캐릭터 선택 모드 (directRankInput이 해당 캐릭터의 랭크를 보여줌)
+            const charName = selectedOption;
+            let groupName = '';
+
+            groupName = event.target.dataset.characterGroup;
+
+            if (groupName && charName && currentCharacterData[groupName]?.[charName]) {
+                currentCharacterData[groupName][charName].rank = rank;
+                saveToLocalStorage();
+                generateIndividualSkillComparisonTable(rank);
+
+                if (document.getElementById('characterRank').classList.contains('active')) {
+                    const tab2RankInput = document.querySelector(`#characterList input[data-character-name="${charName}"][data-character-group="${groupName}"]`);
+                    if (tab2RankInput) {
+                        tab2RankInput.value = rank;
+                    }
+                }
+            }
+        }
+    });
+
     initializeCharacterData();
-
     populateCharacterSelect();
     updateSkillComparisonInputs();
 });
