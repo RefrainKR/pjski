@@ -275,7 +275,6 @@ button:hover {
     overflow-x: auto; /* 이 컨테이너에서 X축 스크롤 */
     overflow-y: auto; /* 세로 스크롤도 가능하게 */
     max-height: 70vh; /* 화면 높이에 비례하도록 변경 (예: 70% 뷰포트 높이) */
-    /* height: 900px; 대신 max-height를 사용하여 유연성 확보 */
     margin-top: 20px;
     -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
 }
@@ -312,8 +311,10 @@ button:hover {
     z-index: 1;
 }
 
-/* 첫 번째 헤더 셀 (왼쪽 상단 코너) 고정 */
 .skill-table thead th:first-child {
+    position: sticky;
+    left: 0;
+    top: 0;
     z-index: 3; /* 변경 없음, 적절 */
 }
 

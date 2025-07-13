@@ -523,7 +523,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let tableHtml = '<table class="skill-table"><thead><tr>';
-        tableHtml += '<th>\\스킬값<br>랭크\\</th>';
+        tableHtml += '<th>\\값<br>랭크\\</th>';
 
         const otherSkillVals = [];
         for (let val = 80; val <= 140; val += 5) {
@@ -565,7 +565,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function generateIndividualSkillComparisonTable(targetCharacterRank) {
         let tableHtml = '<table class="skill-table individual-table"><thead><tr>';
-        tableHtml += '<th>스킬레벨</th>';
+        tableHtml += '<th>\\값<br>레벨\\</th>';
 
         const otherSkillVals = [];
         for (let val = 80; val <= 140; val += 5) {
