@@ -242,14 +242,14 @@ button:hover {
     gap: 10px;
 }
 
-.skill-controls label {
+.control-group label {
     font-weight: bold;
     color: #555;
     line-height: 38px;
 }
 
-.skill-controls select,
-.skill-controls input[type="number"] {
+.control-group select,
+.control-group input[type="number"] {
     padding: 8px 12px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -263,8 +263,8 @@ button:hover {
 }
 
 /* Chrome, Safari, Edge, Opera 숨기기 */
-.skill-controls input[type="number"]::-webkit-outer-spin-button,
-.skill-controls input[type="number"]::-webkit-inner-spin-button {
+.control-group input[type="number"]::-webkit-outer-spin-button,
+.control-group input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
