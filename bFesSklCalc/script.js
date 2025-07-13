@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
+    let MIN_RANK = 1;
+    let MAX_RANK = 100;
+
     const initialCharactersData = [
         { name: "미쿠", group: "VIRTUAL_SINGER", isActive: false },
         { name: "린", group: "VIRTUAL_SINGER", isActive: false },
@@ -151,11 +154,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="character-rank">
                             <input type="number"
-                                   min="1"
-                                   max="140" value="${charToRender.rank}"
-                                   data-character-name="${characterName}"
-                                   data-character-group="${groupName}"
-                                   placeholder="랭크 (1 - 140)">
+                                       min="${MIN_RANK}"
+                                       max="${MAX_RANK}" value="${charToRender.rank}"
+                                       data-character-name="${characterName}"
+                                       data-character-group="${groupName}"
+                                       placeholder="랭크 (${MIN_RANK} - ${MAX_RANK})">
                         </div>
                     </div>
                 `;
@@ -166,17 +169,57 @@ document.addEventListener('DOMContentLoaded', () => {
         attachEventListenersToRankInputsAndToggles();
     }
 
+    // 랭크 입력 필드의 값을 업데이트하고 테이블을 갱신하며, 필요시 데이터를 저장하는 공통 함수
+    function updateAndRenderRank(inputElement, save) {
+        const charName = inputElement.dataset.characterName;
+        const groupName = inputElement.dataset.characterGroup;
+        let rank = parseInt(inputElement.value, 10);
+
+        // 숫자 값 유효성 검사 및 범위 제한
+        if (isNaN(rank) || rank < MIN_RANK) {
+            rank = MIN_RANK;
+        } else if (rank > MAX_RANK) {
+            rank = MAX_RANK;
+        }
+        inputElement.value = rank; // 유효성 검사 후 값 업데이트 (사용자 UI에 반영)
+
+        let isDirectInputMode = false;
+        if (charName && groupName) { // 특정 캐릭터 모드
+            if (currentCharacterData[groupName] && currentCharacterData[groupName][charName]) {
+                if (save) {
+                    currentCharacterData[groupName][charName].rank = rank;
+                    saveToLocalStorage();
+                }
+                generateIndividualSkillComparisonTable(rank); // 테이블 갱신
+
+                // 탭2의 해당 캐릭터 랭크 UI도 업데이트 (다른 탭에서 변경 시 동기화)
+                const tab2RankInput = document.querySelector(`#characterList input[data-character-name="${charName}"][data-character-group="${groupName}"]`);
+                if (tab2RankInput && tab2RankInput !== inputElement) { // 현재 입력 필드와 다른 경우에만 업데이트
+                    tab2RankInput.value = rank;
+                }
+            }
+        } else { // "직접 입력" 모드
+            isDirectInputMode = true;
+            if (save) {
+                currentCharacterData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME].rank = rank;
+                saveToLocalStorage();
+            }
+            generateIndividualSkillComparisonTable(rank); // 테이블 갱신
+        }
+    }
+
+
     function attachEventListenersToRankInputsAndToggles() {
         document.querySelectorAll('input[data-character-name]').forEach(input => {
             // 기존 이벤트 리스너 제거 (중복 방지)
             input.removeEventListener('focus', handleRankInputFocus);
-            input.removeEventListener('blur', handleRankInputBlur);
-            input.removeEventListener('input', handleRankInputTab2); // Tab2 input에 대한 input 이벤트는 별도로 관리
+            input.removeEventListener('blur', (e) => updateAndRenderRank(e.target, true));
+            input.removeEventListener('input', (e) => updateAndRenderRank(e.target, false)); // input 시에는 저장하지 않고 테이블만 갱신
 
             // 새 이벤트 리스너 추가
             input.addEventListener('focus', handleRankInputFocus);   // 포커스 시 전체 선택
-            input.addEventListener('blur', handleRankInputBlur);     // 포커스 잃었을 때 최종 유효성 검사 및 저장
-            input.addEventListener('input', handleRankInputTab2);    // Tab2의 input은 실시간 업데이트가 없으므로 필요 시 이 함수 내부에서 처리
+            input.addEventListener('blur', (e) => updateAndRenderRank(e.target, true)); // 포커스 잃었을 때 최종 유효성 검사 및 저장
+            input.addEventListener('input', (e) => updateAndRenderRank(e.target, false)); // input 시 테이블만 갱신 (저장 X)
         });
 
         document.querySelectorAll('.toggle-switch').forEach(toggle => {
@@ -188,43 +231,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleRankInputFocus(event) {
         event.target.select(); // 현재 입력 필드의 텍스트 전체 선택
     }
-
-    // 탭2의 랭크 입력 필드를 위한 blur 핸들러
-    function handleRankInputBlur(event) {
-        const input = event.target;
-        const charName = input.dataset.characterName;
-        const groupName = input.dataset.characterGroup;
-        let rank = parseInt(input.value, 10);
-
-        // 최종 유효성 검사 및 값 고정
-        if (isNaN(rank) || rank < 1) {
-            rank = 1;
-        } else if (rank > 140) {
-            rank = 140;
-        }
-        input.value = rank; // 유효성 검사 후 값 업데이트
-
-        if (charName && groupName) {
-            if (currentCharacterData[groupName] && currentCharacterData[groupName][charName]) {
-                currentCharacterData[groupName][charName].rank = rank;
-                saveToLocalStorage();
-
-                // 탭1에서 해당 캐릭터가 선택된 상태였다면, 탭1의 directRankInput도 업데이트
-                if (characterSelect.value === charName) {
-                    directRankInput.value = rank; // 동기화
-                    generateIndividualSkillComparisonTable(rank); // 테이블도 바로 갱신
-                }
-            }
-        }
-    }
-
-    // 탭2의 랭크 입력 필드를 위한 input 핸들러 (실시간 유효성 검사는 하지 않음)
-    function handleRankInputTab2(event) {
-        // type="number"가 기본적인 유효성 검사를 제공하므로,
-        // 여기서는 추가적인 엄격한 유효성 검사를 하지 않습니다.
-        // 최종 값 고정은 blur 이벤트에서 이루어집니다.
-    }
-
 
     function handleToggleClick(event) {
         const toggle = event.target;
@@ -242,6 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
             saveToLocalStorage();
             populateCharacterSelect(); // 활성화/비활성화 목록이 바뀌었으므로 드롭다운 갱신
 
+            // skillComparison 탭이 활성화되어 있을 경우 해당 탭의 내용을 업데이트
             if (document.getElementById('skillComparison').classList.contains('active')) {
                 updateSkillComparisonInputs();
             }
@@ -489,9 +496,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // '직접 입력' 더미 데이터의 랭크를 사용
             targetCharacterRank = currentCharacterData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME].rank;
-            directRankInput.value = Math.min(Math.max(targetCharacterRank, 1), 140); // 랭크 표시
+            directRankInput.value = Math.min(Math.max(targetCharacterRank, MIN_RANK), MAX_RANK); // 랭크 표시
 
-            // '직접 입력' 모드일 때는 dataset을 설정하지 않습니다. (이미 위에서 제거됨)
             generateIndividualSkillComparisonTable(targetCharacterRank);
         } else { // 특정 캐릭터 선택
             skillLevelSelectContainer.style.display = 'none';
@@ -504,7 +510,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     break;
                 }
             }
-            directRankInput.value = Math.min(Math.max(targetCharacterRank, 1), 140);
+            directRankInput.value = Math.min(Math.max(targetCharacterRank, MIN_RANK), MAX_RANK);
 
             // 특정 캐릭터를 선택했을 때만 directRankInput에 데이터셋 추가
             directRankInput.dataset.characterName = selectedOption;
@@ -532,10 +538,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         tableHtml += '</tr></thead><tbody>';
 
-        const startRank = 1;
-        const endRank = 140;
-
-        for (let rank = startRank; rank <= endRank; rank++) {
+        for (let rank = MIN_RANK; rank <= MAX_RANK; rank++) {
             tableHtml += `<tr data-rank="${rank}"><th>${rank}</th>`;
 
             otherSkillVals.forEach(otherSkillVal => {
@@ -611,95 +614,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     characterSelect.addEventListener('change', updateSkillComparisonInputs);
 
-    // directRankInput의 이벤트 리스너 재설정
+    // directRankInput의 이벤트 리스너 재설정 (통합 함수 사용)
     directRankInput.removeEventListener('focus', handleRankInputFocus);
-    directRankInput.removeEventListener('blur', handleDirectRankInputBlur);
-    directRankInput.removeEventListener('input', handleDirectRankInputLiveUpdate); // 기존 input 리스너 제거
+    directRankInput.removeEventListener('blur', (e) => updateAndRenderRank(e.target, true));
+    directRankInput.removeEventListener('input', (e) => updateAndRenderRank(e.target, false));
 
     directRankInput.addEventListener('focus', handleRankInputFocus); // 포커스 시 전체 선택
-    directRankInput.addEventListener('blur', handleDirectRankInputBlur); // 포커스 잃었을 때 최종 유효성 검사 및 저장
-    directRankInput.addEventListener('input', handleDirectRankInputLiveUpdate); // 사용자가 입력할 때만 테이블 즉시 갱신 (선택 사항)
+    directRankInput.addEventListener('blur', (e) => updateAndRenderRank(e.target, true)); // 포커스 잃었을 때 최종 유효성 검사 및 저장
+    directRankInput.addEventListener('input', (e) => updateAndRenderRank(e.target, false)); // 사용자가 입력할 때 테이블 즉시 갱신 (저장 X)
 
-
-    // directRankInput의 input 이벤트 핸들러 (입력 도중에는 유효성 검사를 최소화하고 테이블을 즉시 갱신)
-    function handleDirectRankInputLiveUpdate(event) {
-        const selectedOption = characterSelect.value;
-        let rank = parseInt(event.target.value, 10);
-
-        // 입력 중에는 140을 초과해도 일단 허용하여 사용자가 자유롭게 입력하도록 돕습니다.
-        // 최종 유효성 검사 및 고정은 blur 이벤트에서 처리됩니다.
-        if (isNaN(rank)) {
-            // 숫자가 아니면 아무것도 하지 않음 (브라우저의 type="number" 기본 동작에 의존)
-            // 또는 빈 문자열을 허용하는 경우
-            rank = 1; // 기본값으로 설정
-        }
-
-        // '직접 입력' 모드일 때만 실시간 업데이트
-        if (selectedOption === "") {
-            currentCharacterData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME].rank = rank;
-            // saveToLocalStorage(); // 실시간 입력 시에는 저장하지 않고, blur 시에만 저장
-            generateIndividualSkillComparisonTable(rank);
-        } else {
-            // 특정 캐릭터 선택 모드일 때는 실시간 업데이트가 필요 없을 수 있습니다.
-            // 여기서는 일단 기존 로직을 유지하여 테이블을 즉시 갱신하도록 합니다.
-            // 실제 데이터 저장은 blur에서.
-            const charName = selectedOption;
-            const groupName = event.target.dataset.characterGroup;
-
-            if (groupName && charName && currentCharacterData[groupName]?.[charName]) {
-                // 이 부분은 input 이벤트에서는 데이터 자체를 변경하지 않고,
-                // UI(테이블)만 즉시 갱신하는 것이 좋습니다.
-                // 데이터 변경은 blur에서 합니다.
-                // currentCharacterData[groupName][charName].rank = rank; // 이 줄은 blur로 옮김
-                generateIndividualSkillComparisonTable(rank);
-
-                // 탭2의 해당 캐릭터 랭크 UI도 업데이트 (사용자 입력에 따라)
-                if (document.getElementById('characterRank').classList.contains('active')) {
-                    const tab2RankInput = document.querySelector(`#characterList input[data-character-name="${charName}"][data-character-group="${groupName}"]`);
-                    if (tab2RankInput) {
-                        tab2RankInput.value = rank; // 여기서는 사용자가 입력한 그대로 보여줌
-                    }
-                }
-            }
-        }
-    }
-
-    // directRankInput을 위한 별도의 blur 핸들러 (복사본)
-    function handleDirectRankInputBlur(event) {
-        const selectedOption = characterSelect.value;
-        let rank = parseInt(event.target.value, 10);
-
-        // 최종 유효성 검사 및 값 고정
-        if (isNaN(rank) || rank < 1) {
-            rank = 1;
-        } else if (rank > 140) {
-            rank = 140;
-        }
-        event.target.value = rank; // 유효성 검사 후 값 업데이트
-
-        if (selectedOption === "") { // "직접 입력" 모드
-            currentCharacterData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME].rank = rank;
-            saveToLocalStorage(); // 더미 데이터도 저장
-            generateIndividualSkillComparisonTable(rank);
-        } else { // 특정 캐릭터 선택 모드
-            const charName = selectedOption;
-            let groupName = event.target.dataset.characterGroup; // dataset에서 그룹 이름 가져오기
-
-            if (groupName && charName && currentCharacterData[groupName]?.[charName]) {
-                currentCharacterData[groupName][charName].rank = rank;
-                saveToLocalStorage();
-                generateIndividualSkillComparisonTable(rank);
-
-                // 탭2의 해당 캐릭터 랭크 UI도 업데이트
-                if (document.getElementById('characterRank').classList.contains('active')) {
-                    const tab2RankInput = document.querySelector(`#characterList input[data-character-name="${charName}"][data-character-group="${groupName}"]`);
-                    if (tab2RankInput) {
-                        tab2RankInput.value = rank;
-                    }
-                }
-            }
-        }
-    }
 
     initializeCharacterData();
     populateCharacterSelect();
