@@ -1,5 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
-
+    const SKILL_VALUE_DATA = {
+        after: {
+            base: { 1: 90, 2: 95, 3: 100, 4: 110 },
+            max: { 1: 140, 2: 145, 3: 150, 4: 160 }
+        },
+        before: {
+            base: { 1: 60, 2: 65, 3: 70, 4: 80 },
+            max: { 1: 120, 2: 130, 3: 140, 4: 150 }
+        }
+    };
+    
     const CHARACTERS_DATA = [
         { name: "미쿠", group: "VIRTUAL_SINGER", isActive: false },
         { name: "린", group: "VIRTUAL_SINGER", isActive: false },
@@ -31,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentCharacterData = {};
 
-        const groupedInitialCharacterNames = CHARACTERS_DATA.reduce((acc, char) => {
+    const groupedInitialCharacterNames = CHARACTERS_DATA.reduce((acc, char) => {
         if (!acc[char.group]) {
             acc[char.group] = [];
         }
@@ -39,27 +49,30 @@ document.addEventListener('DOMContentLoaded', () => {
         return acc;
     }, {});
 
-
     // 기본 설정값 (로컬 스토리지에 없을 경우 사용)
     const DEFAULT_SETTINGS = {
-        minRank: 2,
-        maxRank: 100, // 이 값은 `loadAndApplySettings`에서 SETTINGS_LIMITS에 따라 조정됩니다.
+        characterMinRank: 1,   // ⭐ 이름 변경: minRank -> characterMinRank
+        characterMaxRank: 100, // ⭐ 이름 변경: maxRank -> characterMaxRank
         otherSkillValMin: 80,
         otherSkillValMax: 140,
         otherSkillValIncrease: 5
     };
 
     // 설정 값별 유효 범위
-    const SETTINGS_LIMITS = {
-        minRank: { min: 2, max: 60 },
-        maxRank: { min: 60, max: 100 },
+    const SETTINGS_TABLE_LIMIT = {
+        characterMinRank: { min: 2, max: 60 },   // ⭐ 이름 변경: minRank -> characterMinRank
+        characterMaxRank: { min: 60, max: 100 }, // ⭐ 이름 변경: maxRank -> characterMaxRank
         otherSkillValMin: { min: 40, max: 140 },
         otherSkillValMax: { min: 80, max: 140 },
         otherSkillValIncrease: { min: 1, max: 10 }
     };
 
-    let minRank;
-    let maxRank;
+    const DEFAULT_RANK = 1;
+
+    // 전역 변수: 이제 이 변수들은 "사용자가 설정 탭에서 설정한 값"을 의미합니다.
+    // 탭 2의 랭크 입력 필드는 이 변수들을 따르지 않고 DEFAULT_SETTINGS.characterMinRank/MaxRank를 따릅니다.
+    let currentMinRankSetting;
+    let currentMaxRankSetting;
     let otherSkillValMin;
     let otherSkillValMax;
     let otherSkillValIncrease;
@@ -70,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadDataBtn = document.getElementById('loadDataBtn');
     const fileNameDisplay = document.getElementById('fileNameDisplay');
     const LOCAL_STORAGE_KEY = 'characterRanksAndActivityData';
-    const SETTINGS_STORAGE_KEY = 'appSettings'; // 설정값 저장을 위한 새로운 키
+    const SETTINGS_STORAGE_KEY = 'appSettings';
 
     const skillLevelSelect = document.getElementById('skillLevel');
     const skillTableContainer = document.getElementById('skillTableContainer');
@@ -82,14 +95,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabContents = document.querySelectorAll('.tab-content');
 
-    // 설정 탭 관련 DOM 요소
+    // 설정 탭 관련 DOM 요소 (ID는 그대로 유지)
     const minRankInput = document.getElementById('minRankInput');
     const maxRankInput = document.getElementById('maxRankInput');
     const otherSkillValMinInput = document.getElementById('otherSkillValMinInput');
     const otherSkillValMaxInput = document.getElementById('otherSkillValMaxInput');
     const otherSkillValIncreaseInput = document.getElementById('otherSkillValIncreaseInput');
-    // const settingsSaveStatus = document.getElementById('settingsSaveStatus'); // 안내문 제거되므로 더 이상 사용하지 않음
-
 
     // IMPORTANT: '직접 입력' 모드를 위한 더미 그룹과 캐릭터 정의
     const DIRECT_INPUT_GROUP_NAME = "_DIRECT_INPUT_";
@@ -99,40 +110,42 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadAndApplySettings() {
         try {
             const storedSettings = localStorage.getItem(SETTINGS_STORAGE_KEY);
+            // 로드 시에는 저장된 키 값(minRank, maxRank)으로 접근합니다.
             const settings = storedSettings ? JSON.parse(storedSettings) : DEFAULT_SETTINGS;
 
             // 각 변수에 저장된 값 또는 기본값 할당 및 유효성 검사 적용
-            minRank = compensationRankSetting(validateSetting('minRank', settings.minRank));
-            maxRank = compensationRankSetting(validateSetting('maxRank', settings.maxRank));
+            // 여기서 `validateSetting`은 SETTINGS_TABLE_LIMIT를 따릅니다.
+            currentMinRankSetting = validateSetting('characterMinRank', settings.characterMinRank || DEFAULT_SETTINGS.characterMinRank); // ⭐ 이름 변경
+            currentMaxRankSetting = validateSetting('characterMaxRank', settings.characterMaxRank || DEFAULT_SETTINGS.characterMaxRank); // ⭐ 이름 변경
             otherSkillValMin = validateSetting('otherSkillValMin', settings.otherSkillValMin);
             otherSkillValMax = validateSetting('otherSkillValMax', settings.otherSkillValMax);
             otherSkillValIncrease = validateSetting('otherSkillValIncrease', settings.otherSkillValIncrease);
 
-            // 특별 유효성 검사: maxRank는 minRank보다 크거나 같아야 함
-            if (maxRank < minRank) {
-                maxRank = minRank;
+            // 특별 유효성 검사: userMaxRankSetting은 userMinRankSetting보다 크거나 같아야 함
+            if (currentMaxRankSetting < currentMinRankSetting) {
+                currentMaxRankSetting = currentMinRankSetting;
             }
-            // 특별 유효성 검사: otherSkillValMax는 otherSkillValMin보다 크거나 같아야 함
             if (otherSkillValMax < otherSkillValMin) {
                 otherSkillValMax = otherSkillValMin;
             }
 
-            // 설정 탭 입력 필드에 값 반영
-            minRankInput.value = minRank;
-            maxRankInput.value = maxRank;
+            // 설정 탭 입력 필드에 값 반영 (3탭의 input)
+            minRankInput.value = currentMinRankSetting;
+            maxRankInput.value = currentMaxRankSetting;
             otherSkillValMinInput.value = otherSkillValMin;
             otherSkillValMaxInput.value = otherSkillValMax;
             otherSkillValIncreaseInput.value = otherSkillValIncrease;
 
-            // 랭크 입력 필드의 min/max 속성 업데이트
+            // ⭐ 랭크 입력 필드의 min/max 속성 업데이트 (2탭 및 직접 입력 input)
+            // DEFAULT_SETTINGS.characterMinRank/MaxRank 상수를 사용합니다.
             document.querySelectorAll('input[type="number"][data-character-name]').forEach(input => {
-                input.min = minRank;
-                input.max = maxRank;
+                input.min = DEFAULT_SETTINGS.characterMinRank;
+                input.max = DEFAULT_SETTINGS.characterMaxRank;
             });
-            directRankInput.min = minRank;
-            directRankInput.max = maxRank;
+            directRankInput.min = DEFAULT_SETTINGS.characterMinRank;
+            directRankInput.max = DEFAULT_SETTINGS.characterMaxRank;
 
-            console.log('설정값이 로드 및 적용되었습니다:', { minRank, maxRank, otherSkillValMin, otherSkillValMax, otherSkillValIncrease });
+            console.log('설정값이 로드 및 적용되었습니다:', { currentMinRankSetting, currentMaxRankSetting, otherSkillValMin, otherSkillValMax, otherSkillValIncrease });
 
             // 설정값 변경으로 인해 영향을 받는 UI 업데이트
             if (document.getElementById('characterRank').classList.contains('active')) {
@@ -144,19 +157,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (e) {
             console.error('설정값 로드 및 적용 실패:', e);
-            // 오류 발생 시 기본값으로 강제 적용 (SETTINGS_LIMITS에 따라 조정된 값)
-            minRank = validateSetting('minRank', DEFAULT_SETTINGS.minRank);
-            maxRank = validateSetting('maxRank', DEFAULT_SETTINGS.maxRank);
+            // 오류 발생 시 DEFAULT_SETTINGS에서 가져와 유효성 검사 적용 (SETTINGS_TABLE_LIMIT에 따라 조정된 값)
+            currentMinRankSetting = validateSetting('characterMinRank', DEFAULT_SETTINGS.characterMinRank);
+            currentMaxRankSetting = validateSetting('characterMaxRank', DEFAULT_SETTINGS.characterMaxRank);
             otherSkillValMin = validateSetting('otherSkillValMin', DEFAULT_SETTINGS.otherSkillValMin);
             otherSkillValMax = validateSetting('otherSkillValMax', DEFAULT_SETTINGS.otherSkillValMax);
             otherSkillValIncrease = validateSetting('otherSkillValIncrease', DEFAULT_SETTINGS.otherSkillValIncrease);
 
-            if (maxRank < minRank) maxRank = minRank;
+            if (currentMaxRankSetting < currentMinRankSetting) currentMaxRankSetting = currentMinRankSetting;
             if (otherSkillValMax < otherSkillValMin) otherSkillValMax = otherSkillValMin;
 
-            // UI도 기본값으로 업데이트
-            minRankInput.value = minRank;
-            maxRankInput.value = maxRank;
+            minRankInput.value = currentMinRankSetting;
+            maxRankInput.value = currentMaxRankSetting;
             otherSkillValMinInput.value = otherSkillValMin;
             otherSkillValMaxInput.value = otherSkillValMax;
             otherSkillValIncreaseInput.value = otherSkillValIncrease;
@@ -165,31 +177,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 설정값 개별 유효성 검사 도우미 함수 (null/빈 문자열 허용)
     function validateSetting(key, value) {
-        // 값이 빈 문자열이거나 null이면 그대로 반환하여 사용자가 지울 수 있도록 허용
         if (value === '' || value === null) {
             return value;
         }
         let parsedValue = parseInt(value, 10);
-        const limits = SETTINGS_LIMITS[key];
+        const limits = SETTINGS_TABLE_LIMIT[key]; // ⭐ SETTINGS_TABLE_LIMIT에서 올바른 키 사용
 
-        // 숫자가 아니면 default값을 반환
         if (isNaN(parsedValue)) {
+            // ⭐ DEFAULT_SETTINGS에서 올바른 키 사용
             return DEFAULT_SETTINGS[key];
         }
-        // 범위를 벗어나면 범위 내 값으로 강제 조정
         return Math.min(Math.max(parsedValue, limits.min), limits.max);
     }
 
-    function compensationRankSetting(value) {
-        return (value % 2 == 0) ? value : value + 1;
-    } 
-
     // --- 설정값 자동 저장 함수 (입력 필드 변경 시 호출) ---
     function saveSettingsImmediately() {
-        // 현재 입력 필드의 값들을 임시로 가져옴 (아직 최종 유효성 검사 전)
+        // 현재 입력 필드의 값들을 임시로 가져옴 (ID는 기존대로 사용)
         const currentInputValues = {
-            minRank: minRankInput.value,
-            maxRank: maxRankInput.value,
+            characterMinRank: minRankInput.value,   // ⭐ 이름 변경: minRank -> characterMinRank
+            characterMaxRank: maxRankInput.value,   // ⭐ 이름 변경: maxRank -> characterMaxRank
             otherSkillValMin: otherSkillValMinInput.value,
             otherSkillValMax: otherSkillValMaxInput.value,
             otherSkillValIncrease: otherSkillValIncreaseInput.value
@@ -197,41 +203,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 각 값을 validateSetting 함수를 통해 최종 유효성 검사 및 조정
         const settingsToSave = {
-            minRank: compensationRankSetting(validateSetting('minRank', currentInputValues.minRank)),
-            maxRank: compensationRankSetting(validateSetting('maxRank', currentInputValues.maxRank)),
+            characterMinRank: validateSetting('characterMinRank', currentInputValues.characterMinRank), // ⭐ 이름 변경
+            characterMaxRank: validateSetting('characterMaxRank', currentInputValues.characterMaxRank), // ⭐ 이름 변경
             otherSkillValMin: validateSetting('otherSkillValMin', currentInputValues.otherSkillValMin),
             otherSkillValMax: validateSetting('otherSkillValMax', currentInputValues.otherSkillValMax),
             otherSkillValIncrease: validateSetting('otherSkillValIncrease', currentInputValues.otherSkillValIncrease)
         };
 
         // 특별 유효성 검사: maxRank는 minRank보다 크거나 같아야 함
-        if (settingsToSave.maxRank < settingsToSave.minRank) {
-            settingsToSave.maxRank = settingsToSave.minRank;
+        if (settingsToSave.characterMaxRank < settingsToSave.characterMinRank) {
+            settingsToSave.characterMaxRank = settingsToSave.characterMinRank;
         }
-        // 특별 유효성 검사: otherSkillValMax는 otherSkillValMin보다 크거나 같아야 함
         if (settingsToSave.otherSkillValMax < settingsToSave.otherSkillValMin) {
             settingsToSave.otherSkillValMax = settingsToSave.otherSkillValMin;
         }
 
-        // 유효성 검사 및 조정된 최종 값을 UI에 반영
-        minRankInput.value = settingsToSave.minRank;
-        maxRankInput.value = settingsToSave.maxRank;
+        // 유효성 검사 및 조정된 최종 값을 UI에 반영 (3탭의 input)
+        minRankInput.value = settingsToSave.characterMinRank;
+        maxRankInput.value = settingsToSave.characterMaxRank;
         otherSkillValMinInput.value = settingsToSave.otherSkillValMin;
         otherSkillValMaxInput.value = settingsToSave.otherSkillValMax;
         otherSkillValIncreaseInput.value = settingsToSave.otherSkillValIncrease;
 
         try {
             localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settingsToSave));
-            // "설정이 자동 저장되었습니다!" 안내 메시지 표시 제거
-            console.log('설정값이 로컬 스토리지에 자동 저장되었습니다.'); // 개발자 도구 콘솔에서만 확인
-            
+            console.log('설정값이 로컬 스토리지에 자동 저장되었습니다.');
             loadAndApplySettings(); // 저장된 값을 전역 변수에 즉시 적용하고 다른 UI 갱신
         } catch (e) {
             console.error('설정 자동 저장 실패:', e);
-            // "설정 자동 저장 실패!" 안내 메시지 표시 제거
         }
     }
-
 
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -255,7 +256,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-
     function initializeCharacterData() {
         const loaded = loadFromLocalStorage();
 
@@ -266,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentCharacterData[char.group] = {};
                 }
                 currentCharacterData[char.group][char.name] = {
-                    rank: 1, // 초기 랭크 값은 1로 유지
+                    rank: DEFAULT_RANK,
                     isActive: char.isActive
                 };
             });
@@ -276,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (!currentCharacterData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME]) {
                 currentCharacterData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME] = {
-                    rank: 1, // 초기 랭크 값은 1로 유지
+                    rank: DEFAULT_RANK,
                     isActive: true
                 };
             }
@@ -288,7 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentCharacterData[DIRECT_INPUT_GROUP_NAME] = {};
                 }
                 currentCharacterData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME] = {
-                    rank: 1,
+                    rank: DEFAULT_RANK,
                     isActive: true
                 };
                 saveToLocalStorage();
@@ -310,7 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (!currentCharacterData[groupName]) {
                         currentCharacterData[groupName] = {};
                     }
-                    currentCharacterData[groupName][characterName] = { rank: 1, isActive: false };
+                    currentCharacterData[groupName][characterName] = { rank: DEFAULT_RANK, isActive: false };
                 }
                 const charToRender = currentCharacterData[groupName][characterName];
 
@@ -326,11 +326,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="character-rank">
                             <input type="number"
-                                       min="${minRank}"
-                                       max="${maxRank}" value="${charToRender.rank}"
-                                       data-character-name="${characterName}"
-                                       data-character-group="${groupName}"
-                                       placeholder="랭크 (${minRank} - ${maxRank})">
+                                   min="${DEFAULT_SETTINGS.characterMinRank}" // ⭐ DEFAULT_SETTINGS의 값을 따름
+                                   max="${DEFAULT_SETTINGS.characterMaxRank}" // ⭐ DEFAULT_SETTINGS의 값을 따름
+                                   value="${charToRender.rank}"
+                                   data-character-name="${characterName}"
+                                   data-character-group="${groupName}"
+                                   placeholder="랭크 (${DEFAULT_SETTINGS.characterMinRank} - ${DEFAULT_SETTINGS.characterMaxRank})">
                         </div>
                     </div>
                 `;
@@ -355,10 +356,11 @@ document.addEventListener('DOMContentLoaded', () => {
             rank = parseInt(inputValue, 10);
             // 숫자가 아니거나 유효 범위를 벗어나면 조정 (saveChanges가 true일 때만 강제 조정)
             if (saveChanges) {
-                if (isNaN(rank) || rank < minRank) {
-                    rank = minRank;
-                } else if (rank > maxRank) {
-                    rank = maxRank;
+                // ⭐ 캐릭터 랭크의 실제 유효 범위는 DEFAULT_SETTINGS를 따름
+                if (isNaN(rank) || rank < DEFAULT_SETTINGS.characterMinRank) {
+                    rank = DEFAULT_SETTINGS.characterMinRank;
+                } else if (rank > DEFAULT_SETTINGS.characterMaxRank) {
+                    rank = DEFAULT_SETTINGS.characterMaxRank;
                 }
                 inputElement.value = rank; // 최종적으로 조정된 값 UI에 반영
             }
@@ -373,45 +375,47 @@ document.addEventListener('DOMContentLoaded', () => {
             if (saveChanges) {
                 if (currentCharacterData[groupName] && currentCharacterData[groupName][charName]) {
                     // 데이터 저장 시에는 빈 문자열이 아닌 유효한 숫자로 저장 (NaN일 경우 minRank)
-                    currentCharacterData[groupName][charName].rank = isNaN(rank) ? minRank : rank;
+                    // ⭐ 데이터 저장 시에도 DEFAULT_SETTINGS.characterMinRank 사용
+                    currentCharacterData[groupName][charName].rank = isNaN(rank) ? DEFAULT_SETTINGS.characterMinRank : rank;
                     saveToLocalStorage();
                 }
-            }
-            // 스킬 비교 탭이 현재 활성화되어 있고, 해당 캐릭터가 선택된 경우에만 갱신
-            if (document.getElementById('skillComparison').classList.contains('active') && characterSelect.value === charName) {
-                 // 테이블 갱신은 현재 input의 값 또는 유효한 값으로
-                 generateIndividualSkillComparisonTable(currentEffectiveRank || (currentCharacterData[groupName][charName] ? currentCharacterData[groupName][charName].rank : minRank));
             }
             // 탭2의 해당 캐릭터 랭크 UI도 업데이트 (다른 탭에서 변경 시 동기화)
             const tab2RankInput = document.querySelector(`#characterList input[data-character-name="${charName}"][data-character-group="${groupName}"]`);
             if (tab2RankInput && tab2RankInput !== inputElement) {
                 tab2RankInput.value = rank; // 여기서는 유효성 검사된 최종 랭크를 반영
             }
+            // 스킬 비교 탭이 현재 활성화되어 있고, 해당 캐릭터가 선택된 경우에만 갱신
+            if (document.getElementById('skillComparison').classList.contains('active') && characterSelect.value === charName) {
+                // ⭐ 테이블 갱신 시에는 DEFAULT_SETTINGS.characterMinRank 사용
+                generateSkillComparisonTable('individual', currentEffectiveRank || (currentCharacterData[groupName][charName] ? currentCharacterData[groupName][charName].rank : DEFAULT_SETTINGS.characterMinRank));
+            }
         } else { // "직접 입력" 모드
             if (saveChanges) {
                 // 데이터 저장 시에는 빈 문자열이 아닌 유효한 숫자로 저장 (NaN일 경우 minRank)
-                currentCharacterData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME].rank = isNaN(rank) ? minRank : rank;
+                // ⭐ 데이터 저장 시에도 DEFAULT_SETTINGS.characterMinRank 사용
+                currentCharacterData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME].rank = isNaN(rank) ? DEFAULT_SETTINGS.characterMinRank : rank;
                 saveToLocalStorage();
             }
             // 스킬 비교 탭이 현재 활성화되어 있고, 직접 입력 모드인 경우에만 갱신
             if (document.getElementById('skillComparison').classList.contains('active') && characterSelect.value === "") {
-                generateIndividualSkillComparisonTable(currentEffectiveRank || (currentCharacterData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME] ? currentCharacterData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME].rank : minRank));
+                // ⭐ 테이블 갱신 시에는 DEFAULT_SETTINGS.characterMinRank 사용
+                generateSkillComparisonTable('individual', currentEffectiveRank || (currentCharacterData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME] ? currentCharacterData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME].rank : DEFAULT_SETTINGS.characterMinRank));
             }
         }
     }
-
 
     function attachEventListenersToRankInputsAndToggles() {
         document.querySelectorAll('input[data-character-name]').forEach(input => {
             // 기존 이벤트 리스너 제거 (중복 방지)
             input.removeEventListener('focus', handleRankInputFocus);
-            input.removeEventListener('blur', (e) => updateAndRenderRank(e.target, true)); // 포커스 잃으면 최종 저장
-            input.removeEventListener('input', (e) => updateAndRenderRank(e.target, false)); // 입력 중에는 저장하지 않음
+            input.removeEventListener('blur', (e) => updateAndRenderRank(e.target, true));
+            input.removeEventListener('input', (e) => updateAndRenderRank(e.target, false));
 
             // 새 이벤트 리스너 추가
-            input.addEventListener('focus', handleRankInputFocus);   // 포커스 시 전체 선택
-            input.addEventListener('blur', (e) => updateAndRenderRank(e.target, true)); // 포커스 잃었을 때 최종 유효성 검사 및 저장
-            input.addEventListener('input', (e) => updateAndRenderRank(e.target, false)); // input 시에는 값 조정 없이 테이블만 갱신
+            input.addEventListener('focus', handleRankInputFocus);
+            input.addEventListener('blur', (e) => updateAndRenderRank(e.target, true));
+            input.addEventListener('input', (e) => updateAndRenderRank(e.target, false));
         });
 
         document.querySelectorAll('.toggle-switch').forEach(toggle => {
@@ -477,7 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         // 새로운 캐릭터 추가 또는 데이터 누락 시 초기값으로 설정
                         mergedData[initialChar.group][initialChar.name] = {
-                            rank: 1,
+                            rank: DEFAULT_RANK,
                             isActive: initialChar.isActive
                         };
                     }
@@ -493,7 +497,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (!mergedData[DIRECT_INPUT_GROUP_NAME]) {
                         mergedData[DIRECT_INPUT_GROUP_NAME] = {};
                     }
-                    mergedData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME] = { rank: 1, isActive: true };
+                    mergedData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME] = { rank: DEFAULT_RANK, isActive: true };
                 }
 
                 currentCharacterData = mergedData;
@@ -556,7 +560,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     } else {
                         mergedDataFromFile[initialChar.group][initialChar.name] = {
-                            rank: 1,
+                            rank: DEFAULT_RANK,
                             isActive: initialChar.isActive
                         };
                     }
@@ -571,7 +575,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (!mergedDataFromFile[DIRECT_INPUT_GROUP_NAME]) {
                         mergedDataFromFile[DIRECT_INPUT_GROUP_NAME] = {};
                     }
-                    mergedDataFromFile[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME] = { rank: 1, isActive: true };
+                    mergedDataFromFile[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME] = { rank: DEFAULT_RANK, isActive: true };
                 }
 
                 currentCharacterData = mergedDataFromFile;
@@ -598,28 +602,16 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsText(file);
     });
 
-
-    const skillData = {
-        after: {
-            base: { 1: 90, 2: 95, 3: 100, 4: 110 },
-            max: { 1: 140, 2: 145, 3: 150, 4: 160 }
-        },
-        before: {
-            base: { 1: 60, 2: 65, 3: 70, 4: 80 },
-            max: { 1: 120, 2: 130, 3: 140, 4: 150 }
-        }
-    };
-
     function calculateSkillAfter(skillLv, charRank) {
-        // 계산 시에는 유효한 숫자 범위 내로 강제
-        if (isNaN(charRank) || charRank < minRank) {
-            charRank = minRank;
-        } else if (charRank > maxRank) {
-            charRank = maxRank;
+        // 계산 시에는 유효한 숫자 범위 내로 강제 (캐릭터 랭크의 실제 유효 범위)
+        if (isNaN(charRank) || charRank < DEFAULT_SETTINGS.characterMinRank) {
+            charRank = DEFAULT_SETTINGS.characterMinRank;
+        } else if (charRank > DEFAULT_SETTINGS.characterMaxRank) {
+            charRank = DEFAULT_SETTINGS.characterMaxRank;
         }
 
-        const base = skillData.after.base[skillLv];
-        const max = skillData.after.max[skillLv];
+        const base = SKILL_VALUE_DATA.after.base[skillLv];
+        const max = SKILL_VALUE_DATA.after.max[skillLv];
         if (!base || !max) return 0;
         let finalValue = base + Math.floor(charRank / 2);
         return Math.min(finalValue, max);
@@ -633,8 +625,8 @@ document.addEventListener('DOMContentLoaded', () => {
             otherCharSkillVal = otherSkillValMax;
         }
 
-        const base = skillData.before.base[skillLv];
-        const max = skillData.before.max[skillLv];
+        const base = SKILL_VALUE_DATA.before.base[skillLv];
+        const max = SKILL_VALUE_DATA.before.max[skillLv];
         if (!base || !max) return 0;
         let finalValue = base + Math.floor(otherCharSkillVal / 2);
         return Math.min(finalValue, max);
@@ -685,7 +677,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateSkillComparisonInputs() {
         const selectedOption = characterSelect.value;
-        let targetCharacterRank = 1; // 기본값
+        let targetCharacterRank = DEFAULT_RANK;
         let selectedCharacterGroup = '';
 
         delete directRankInput.dataset.characterName;
@@ -694,14 +686,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (selectedOption === "all") {
             skillLevelSelectContainer.style.display = 'flex';
             directRankInputGroup.style.display = 'none';
-            generateOverallSkillComparisonTable();
+            generateSkillComparisonTable('overall');
         } else if (selectedOption === "") { // 직접 입력 모드
             skillLevelSelectContainer.style.display = 'none';
             directRankInputGroup.style.display = 'flex';
 
             targetCharacterRank = currentCharacterData[DIRECT_INPUT_GROUP_NAME][DIRECT_INPUT_CHAR_NAME].rank;
             directRankInput.value = targetCharacterRank; // UI에 표시
-            generateIndividualSkillComparisonTable(targetCharacterRank);
+            generateSkillComparisonTable('individual', targetCharacterRank);
         } else { // 특정 캐릭터 선택 모드
             skillLevelSelectContainer.style.display = 'none';
             directRankInputGroup.style.display = 'flex';
@@ -718,101 +710,79 @@ document.addEventListener('DOMContentLoaded', () => {
             directRankInput.dataset.characterName = selectedOption;
             directRankInput.dataset.characterGroup = selectedCharacterGroup;
 
-            generateIndividualSkillComparisonTable(targetCharacterRank);
+            generateSkillComparisonTable('individual', targetCharacterRank);
         }
     }
 
-    function generateOverallSkillComparisonTable() {
-        const skillLv = parseInt(skillLevelSelect.value, 10);
-
-        if (isNaN(skillLv) || skillLv < 1 || skillLv > 4) {
-            skillTableContainer.innerHTML = '<p style="color: red;">유효한 스킬 레벨을 선택하세요 (1-4).</p>';
-            return;
-        }
-
+    // ⭐ 중복 제거를 위한 새로운 통합 테이블 생성 함수 ⭐
+    function generateSkillComparisonTable(mode, targetRank = null) {
         let tableHtml = '<table class="skill-table"><thead><tr>';
-        tableHtml += '<th>\\대상값<br>랭크\\</th>';
-
-        const otherSkillVals = [];
-        // otherSkillValMin, Max, Increase 사용
-        for (let val = otherSkillValMin; val <= otherSkillValMax; val += otherSkillValIncrease) {
-            otherSkillVals.push(val);
-            tableHtml += `<th>${val}%</th>`;
-        }
-        tableHtml += '</tr></thead><tbody>';
-
-        for (let rank = minRank; rank <= maxRank; rank += 2) {
-            tableHtml += `<tr data-rank="${rank}"><th>${rank}</th>`;
-
-            otherSkillVals.forEach(otherSkillVal => {
-                const skillAfter = calculateSkillAfter(skillLv, rank);
-                const skillBefore = calculateSkillBefore(skillLv, otherSkillVal);
-
-                let cellValue;
-                let cellClass = '';
-
-                if (skillBefore > skillAfter) {
-                    cellValue = skillBefore;
-                    cellClass = 'advantage-before';
-                } else if (skillAfter > skillBefore) {
-                    cellValue = skillAfter;
-                    cellClass = 'advantage-after';
-                } else {
-                    cellValue = skillBefore;
-                    cellClass = 'advantage-equal';
-                }
-                tableHtml += `<td class="${cellClass}">${cellValue}%</td>`;
-            });
-            tableHtml += '</tr>';
-        }
-        tableHtml += '</tbody></table>';
-        skillTableContainer.innerHTML = tableHtml;
-    }
-
-    function generateIndividualSkillComparisonTable(targetCharacterRank) {
-        let tableHtml = '<table class="skill-table individual-table"><thead><tr>';
-        tableHtml += '<th>\\대상값<br>레벨\\</th>';
-
         const otherSkillVals = [];
         
         for (let val = otherSkillValMin; val <= otherSkillValMax; val += otherSkillValIncrease) {
             otherSkillVals.push(val);
-            tableHtml += `<th>${val}%</th>`;
         }
-        tableHtml += '</tr></thead><tbody>';
 
-        for (let skillLv = 1; skillLv <= 4; skillLv++) {
-            tableHtml += `<tr data-skill-level="${skillLv}"><th>Lv.${skillLv}</th>`;
-
-            otherSkillVals.forEach(otherSkillVal => {
-                const skillAfter = calculateSkillAfter(skillLv, targetCharacterRank);
-                const skillBefore = calculateSkillBefore(skillLv, otherSkillVal);
-
-                let cellValue;
-                let cellClass = '';
-
-                if (skillBefore > skillAfter) {
-                    cellValue = skillBefore;
-                    cellClass = 'advantage-before';
-                } else if (skillAfter > skillBefore) {
-                    cellValue = skillAfter;
-                    cellClass = 'advantage-after';
-                } else {
-                    cellValue = skillBefore;
-                    cellClass = 'advantage-equal';
-                }
-
-                tableHtml += `<td class="${cellClass}">${cellValue}%</td>`;
+        if (mode === 'overall') {
+            tableHtml += '<th>\\대상값<br>랭크\\</th>';
+            otherSkillVals.forEach(val => {
+                tableHtml += `<th>${val}%</th>`;
             });
-            tableHtml += '</tr>';
+            tableHtml += '</tr></thead><tbody>';
+
+            // ⭐ 테이블 전체 표시 모드에서는 DEFAULT_SETTINGS.characterMinRank/MaxRank를 따름
+            for (let rank = currentMinRankSetting; rank <= currentMaxRankSetting; rank += 2) {
+                tableHtml += `<tr data-rank="${rank}"><th>${rank}</th>`;
+                otherSkillVals.forEach(otherSkillVal => {
+                    const skillLv = parseInt(skillLevelSelect.value, 10);
+                    const skillAfter = calculateSkillAfter(skillLv, rank);
+                    const skillBefore = calculateSkillBefore(skillLv, otherSkillVal);
+                    tableHtml += getSkillComparisonCellHtml(skillAfter, skillBefore);
+                });
+                tableHtml += '</tr>';
+            }
+        } else if (mode === 'individual') {
+            tableHtml += '<th>\\대상값<br>레벨\\</th>';
+            otherSkillVals.forEach(val => {
+                tableHtml += `<th>${val}%</th>`;
+            });
+            tableHtml += '</tr></thead><tbody>';
+
+            for (let skillLv = 1; skillLv <= 4; skillLv++) {
+                tableHtml += `<tr data-skill-level="${skillLv}"><th>Lv.${skillLv}</th>`;
+                otherSkillVals.forEach(otherSkillVal => {
+                    const skillAfter = calculateSkillAfter(skillLv, targetRank);
+                    const skillBefore = calculateSkillBefore(skillLv, otherSkillVal);
+                    tableHtml += getSkillComparisonCellHtml(skillAfter, skillBefore);
+                });
+                tableHtml += '</tr>';
+            }
         }
         tableHtml += '</tbody></table>';
         skillTableContainer.innerHTML = tableHtml;
     }
 
+    // ⭐ 셀 내용을 결정하는 헬퍼 함수 ⭐
+    function getSkillComparisonCellHtml(skillAfter, skillBefore) {
+        let cellValue;
+        let cellClass = '';
+
+        if (skillBefore > skillAfter) {
+            cellValue = skillBefore;
+            cellClass = 'advantage-before';
+        } else if (skillAfter > skillBefore) {
+            cellValue = skillAfter;
+            cellClass = 'advantage-after';
+        } else {
+            cellValue = skillBefore;
+            cellClass = 'advantage-equal';
+        }
+        return `<td class="${cellClass}">${cellValue}%</td>`;
+    }
+
     skillLevelSelect.addEventListener('change', () => {
         if (characterSelect.value === "all") {
-            generateOverallSkillComparisonTable();
+            generateSkillComparisonTable('overall');
         }
     });
 
@@ -826,6 +796,7 @@ document.addEventListener('DOMContentLoaded', () => {
     directRankInput.addEventListener('blur', (e) => updateAndRenderRank(e.target, true));
     directRankInput.addEventListener('input', (e) => updateAndRenderRank(e.target, false));
 
+    // 설정 탭 입력 필드의 이벤트 리스너는 그대로 유지 (settingsSaveStatus 제거는 이전과 동일)
     minRankInput.addEventListener('blur', saveSettingsImmediately);
     maxRankInput.addEventListener('blur', saveSettingsImmediately);
     otherSkillValMinInput.addEventListener('blur', saveSettingsImmediately);
