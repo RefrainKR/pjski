@@ -1,30 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. 기존 상수 이름을 변수형식으로 변경
-    let minRank;
-    let maxRank;
-    let otherSkillValMin;
-    let otherSkillValMax;
-    let otherSkillValIncrease;
 
-    // 기본 설정값 (로컬 스토리지에 없을 경우 사용)
-    const DEFAULT_SETTINGS = {
-        minRank: 1,
-        maxRank: 100, // 이 값은 `loadAndApplySettings`에서 SETTINGS_LIMITS에 따라 조정됩니다.
-        otherSkillValMin: 80,
-        otherSkillValMax: 140,
-        otherSkillValIncrease: 5
-    };
-
-    // 설정 값별 유효 범위
-    const SETTINGS_LIMITS = {
-        minRank: { min: 1, max: 80 },
-        maxRank: { min: 20, max: 100 },
-        otherSkillValMin: { min: 40, max: 140 },
-        otherSkillValMax: { min: 80, max: 140 },
-        otherSkillValIncrease: { min: 5, max: 10 }
-    };
-
-    const initialCharactersData = [
+    const CHARACTERS_DATA = [
         { name: "미쿠", group: "VIRTUAL_SINGER", isActive: false },
         { name: "린", group: "VIRTUAL_SINGER", isActive: false },
         { name: "렌", group: "VIRTUAL_SINGER", isActive: false },
@@ -55,13 +31,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentCharacterData = {};
 
-    const groupedInitialCharacterNames = initialCharactersData.reduce((acc, char) => {
+        const groupedInitialCharacterNames = CHARACTERS_DATA.reduce((acc, char) => {
         if (!acc[char.group]) {
             acc[char.group] = [];
         }
         acc[char.group].push(char.name);
         return acc;
     }, {});
+
+
+    // 기본 설정값 (로컬 스토리지에 없을 경우 사용)
+    const DEFAULT_SETTINGS = {
+        minRank: 2,
+        maxRank: 100, // 이 값은 `loadAndApplySettings`에서 SETTINGS_LIMITS에 따라 조정됩니다.
+        otherSkillValMin: 80,
+        otherSkillValMax: 140,
+        otherSkillValIncrease: 5
+    };
+
+    // 설정 값별 유효 범위
+    const SETTINGS_LIMITS = {
+        minRank: { min: 2, max: 60 },
+        maxRank: { min: 60, max: 100 },
+        otherSkillValMin: { min: 40, max: 140 },
+        otherSkillValMax: { min: 80, max: 140 },
+        otherSkillValIncrease: { min: 1, max: 10 }
+    };
+
+    let minRank;
+    let maxRank;
+    let otherSkillValMin;
+    let otherSkillValMax;
+    let otherSkillValIncrease;
 
     const characterListDiv = document.getElementById('characterList');
     const saveDataBtn = document.getElementById('saveDataBtn');
@@ -101,8 +102,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const settings = storedSettings ? JSON.parse(storedSettings) : DEFAULT_SETTINGS;
 
             // 각 변수에 저장된 값 또는 기본값 할당 및 유효성 검사 적용
-            minRank = validateSetting('minRank', settings.minRank);
-            maxRank = validateSetting('maxRank', settings.maxRank);
+            minRank = compensationRankSetting(validateSetting('minRank', settings.minRank));
+            maxRank = compensationRankSetting(validateSetting('maxRank', settings.maxRank));
             otherSkillValMin = validateSetting('otherSkillValMin', settings.otherSkillValMin);
             otherSkillValMax = validateSetting('otherSkillValMax', settings.otherSkillValMax);
             otherSkillValIncrease = validateSetting('otherSkillValIncrease', settings.otherSkillValIncrease);
@@ -179,6 +180,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return Math.min(Math.max(parsedValue, limits.min), limits.max);
     }
 
+    function compensationRankSetting(value) {
+        return (value % 2 == 0) ? value : value + 1;
+    } 
+
     // --- 설정값 자동 저장 함수 (입력 필드 변경 시 호출) ---
     function saveSettingsImmediately() {
         // 현재 입력 필드의 값들을 임시로 가져옴 (아직 최종 유효성 검사 전)
@@ -192,8 +197,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 각 값을 validateSetting 함수를 통해 최종 유효성 검사 및 조정
         const settingsToSave = {
-            minRank: validateSetting('minRank', currentInputValues.minRank),
-            maxRank: validateSetting('maxRank', currentInputValues.maxRank),
+            minRank: compensationRankSetting(validateSetting('minRank', currentInputValues.minRank)),
+            maxRank: compensationRankSetting(validateSetting('maxRank', currentInputValues.maxRank)),
             otherSkillValMin: validateSetting('otherSkillValMin', currentInputValues.otherSkillValMin),
             otherSkillValMax: validateSetting('otherSkillValMax', currentInputValues.otherSkillValMax),
             otherSkillValIncrease: validateSetting('otherSkillValIncrease', currentInputValues.otherSkillValIncrease)
@@ -256,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!loaded) {
             currentCharacterData = {};
-            initialCharactersData.forEach(char => {
+            CHARACTERS_DATA.forEach(char => {
                 if (!currentCharacterData[char.group]) {
                     currentCharacterData[char.group] = {};
                 }
@@ -459,7 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const loadedData = JSON.parse(storedData);
 
                 const mergedData = {};
-                initialCharactersData.forEach(initialChar => {
+                CHARACTERS_DATA.forEach(initialChar => {
                     if (!mergedData[initialChar.group]) {
                         mergedData[initialChar.group] = {};
                     }
@@ -540,7 +545,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const loadedFileContent = JSON.parse(e.target.result);
 
                 const mergedDataFromFile = {};
-                initialCharactersData.forEach(initialChar => {
+                CHARACTERS_DATA.forEach(initialChar => {
                     if (!mergedDataFromFile[initialChar.group]) {
                         mergedDataFromFile[initialChar.group] = {};
                     }
@@ -651,7 +656,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const previouslySelectedValue = characterSelect.value;
         let currentSelectedCharExistsAndActive = false;
 
-        initialCharactersData.forEach(initialChar => {
+        CHARACTERS_DATA.forEach(initialChar => {
             const charData = currentCharacterData[initialChar.group]?.[initialChar.name];
 
             if (charData && charData.isActive) {
@@ -736,7 +741,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         tableHtml += '</tr></thead><tbody>';
 
-        for (let rank = minRank; rank <= maxRank; rank++) {
+        for (let rank = minRank; rank <= maxRank; rank += 2) {
             tableHtml += `<tr data-rank="${rank}"><th>${rank}</th>`;
 
             otherSkillVals.forEach(otherSkillVal => {
