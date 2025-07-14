@@ -731,7 +731,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let tableHtml = '<table class="skill-table"><thead><tr>';
-        tableHtml += '<th>\\값<br>랭크\\</th>';
+        tableHtml += '<th>\\대상값<br>랭크\\</th>';
 
         const otherSkillVals = [];
         // otherSkillValMin, Max, Increase 사용
@@ -771,7 +771,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function generateIndividualSkillComparisonTable(targetCharacterRank) {
         let tableHtml = '<table class="skill-table individual-table"><thead><tr>';
-        tableHtml += '<th>\\값<br>레벨\\</th>';
+        tableHtml += '<th>\\대상값<br>레벨\\</th>';
 
         const otherSkillVals = [];
         
