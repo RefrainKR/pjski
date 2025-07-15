@@ -1,4 +1,35 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // 캐릭터 데이터, 캐릭터가 속하는 그룹, 활성화(테이블에서 고를 수 있는가 여부)
+    const CHARACTERS_DATA = [
+        { name: "이치카", group: "Leo/Need", isActive: false },
+        { name: "사키", group: "Leo/Need", isActive: false },
+        { name: "호나미", group: "Leo/Need", isActive: false },
+        { name: "시호", group: "Leo/Need", isActive: false },
+        { name: "미노리", group: "MORE MORE JUMP", isActive: false },
+        { name: "하루카", group: "MORE MORE JUMP", isActive: false },
+        { name: "아이리", group: "MORE MORE JUMP", isActive: false },
+        { name: "시즈쿠", group: "MORE MORE JUMP", isActive: false },
+        { name: "코하네", group: "Vivid_BAD_SQUAD", isActive: false },
+        { name: "안", group: "Vivid BAD SQUAD", isActive: false },
+        { name: "아키토", group: "Vivid BAD SQUAD", isActive: false },
+        { name: "토우야", group: "Vivid BAD SQUAD", isActive: false },
+        { name: "츠카사", group: "원더랜즈X쇼타임", isActive: false },
+        { name: "에무", group: "원더랜즈X쇼타임", isActive: false },
+        { name: "네네", group: "원더랜즈X쇼타임", isActive: false },
+        { name: "루이", group: "원더랜즈X쇼타임", isActive: false },
+        { name: "카나데", group: "25시 나이트 코드에서.", isActive: false },
+        { name: "마후유", group: "25시 나이트 코드에서.", isActive: false },
+        { name: "에나", group: "25시 나이트 코드에서.", isActive: false },
+        { name: "미즈키", group: "25시 나이트 코드에서.", isActive: false },
+        { name: "미쿠", group: "VIRTUAL SINGER", isActive: false },
+        { name: "린", group: "VIRTUAL SINGER", isActive: false },
+        { name: "렌", group: "VIRTUAL SINGER", isActive: false },
+        { name: "루카", group: "VIRTUAL SINGER", isActive: false },
+        { name: "MEIKO", group: "VIRTUAL SINGER", isActive: false },
+        { name: "KAITO", group: "VIRTUAL SINGER", isActive: false }
+    ];
+
+    // 각후(after), 각전(before)의 스킬 기본값(base), 스킬 최대값(max) 
     const SKILL_VALUE_DATA = {
         after: {
             base: { 1: 90, 2: 95, 3: 100, 4: 110 },
@@ -9,50 +40,11 @@ document.addEventListener('DOMContentLoaded', () => {
             max: { 1: 120, 2: 130, 3: 140, 4: 150 }
         }
     };
-    
-    const CHARACTERS_DATA = [
-        { name: "미쿠", group: "VIRTUAL_SINGER", isActive: false },
-        { name: "린", group: "VIRTUAL_SINGER", isActive: false },
-        { name: "렌", group: "VIRTUAL_SINGER", isActive: false },
-        { name: "루카", group: "VIRTUAL_SINGER", isActive: false },
-        { name: "MEIKO", group: "VIRTUAL_SINGER", isActive: false },
-        { name: "KAITO", group: "VIRTUAL_SINGER", isActive: false },
-        { name: "이치카", group: "Leo_Need", isActive: false },
-        { name: "사키", group: "Leo_Need", isActive: false },
-        { name: "호나미", group: "Leo_Need", isActive: false },
-        { name: "시호", group: "Leo_Need", isActive: false },
-        { name: "미노리", group: "MORE_MORE_JUMP", isActive: false },
-        { name: "하루카", group: "MORE_MORE_JUMP", isActive: false },
-        { name: "아이리", group: "MORE_MORE_JUMP", isActive: false },
-        { name: "시즈쿠", group: "MORE_MORE_JUMP", isActive: false },
-        { name: "코하네", group: "Vivid_BAD_SQUAD", isActive: false },
-        { name: "안", group: "Vivid_BAD_SQUAD", isActive: false },
-        { name: "아키토", group: "Vivid_BAD_SQUAD", isActive: false },
-        { name: "토우야", group: "Vivid_BAD_SQUAD", isActive: false },
-        { name: "츠카사", group: "원더랜즈X쇼타임", isActive: false },
-        { name: "에무", group: "원더랜즈X쇼타임", isActive: false },
-        { name: "네네", group: "원더랜즈X쇼타임", isActive: false },
-        { name: "루이", group: "원더랜즈X쇼타임", isActive: false },
-        { name: "카나데", group: "25시_나이트_코드에서.", isActive: false },
-        { name: "마후유", group: "25시_나이트_코드에서.", isActive: false },
-        { name: "에나", group: "25시_나이트_코드에서.", isActive: false },
-        { name: "미즈키", group: "25시_나이트_코드에서.", isActive: false }
-    ];
 
-    let currentCharacterData = {};
-
-    const groupedInitialCharacterNames = CHARACTERS_DATA.reduce((acc, char) => {
-        if (!acc[char.group]) {
-            acc[char.group] = [];
-        }
-        acc[char.group].push(char.name);
-        return acc;
-    }, {});
-
-    // 기본 설정값 (로컬 스토리지에 없을 경우 사용)
+    // 기본 설정값 (사용자가 변경할 수 있는 설정의 초기값)
     const DEFAULT_SETTINGS = {
-        characterMinRank: 1,   // ⭐ 이름 변경: minRank -> characterMinRank
-        characterMaxRank: 100, // ⭐ 이름 변경: maxRank -> characterMaxRank
+        characterMinRank: 1,
+        characterMaxRank: 100,
         otherSkillValMin: 80,
         otherSkillValMax: 140,
         otherSkillValIncrease: 5
@@ -76,6 +68,16 @@ document.addEventListener('DOMContentLoaded', () => {
     let otherSkillValMin;
     let otherSkillValMax;
     let otherSkillValIncrease;
+
+    let currentCharacterData = {};
+
+    const groupedInitialCharacterNames = CHARACTERS_DATA.reduce((acc, char) => {
+        if (!acc[char.group]) {
+            acc[char.group] = [];
+        }
+        acc[char.group].push(char.name);
+        return acc;
+    }, {});
 
     const characterListDiv = document.getElementById('characterList');
     const saveDataBtn = document.getElementById('saveDataBtn');
