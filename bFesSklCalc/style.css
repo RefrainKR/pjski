@@ -268,7 +268,7 @@ button:hover {
     margin: 0;
 }
 
-.skill-table-container { /* 이 클래스는 HTML에서 skillTableContainer ID가 있는 div에 붙여야 합니다. */
+.table-container {
     max-width: 100%;
     overflow-x: auto; /* 이 컨테이너에서 X축 스크롤 */
     overflow-y: auto; /* 세로 스크롤도 가능하게 */
