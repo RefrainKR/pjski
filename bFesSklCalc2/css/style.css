@@ -70,7 +70,7 @@ body {
     background-color: #545b62;
 }
 
-/* Dropdown Sections (Character Rank & Backup) */
+/* Dropdown Sections (Character Rank & Backup & Auto Calc) */
 .dropdown-section {
     display: none; /* Hidden by default */
     position: absolute;
@@ -317,6 +317,39 @@ input:checked + .slider:before {
     background-color: #138496;
 }
 
+/* Auto Calculation Modal Specific Styles */
+.auto-calc-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+}
+
+.auto-calc-controls .control-group {
+    flex-direction: row; /* Label and input side-by-side */
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.auto-calc-controls label {
+    flex-shrink: 0; /* Prevent label from shrinking */
+    margin-right: 10px;
+    margin-bottom: 0; /* Override default control-group label margin */
+}
+
+.auto-calc-controls input[type="number"] {
+    flex-grow: 1; /* Input takes remaining space */
+    max-width: 150px; /* Limit input width */
+    text-align: center;
+}
+
+.auto-calc-controls .btn {
+    width: 100%;
+    margin-top: 10px;
+}
+
+
 /* Tabs Navigation */
 .tabs {
     background-color: #ffffff;
@@ -479,6 +512,7 @@ input:checked + .slider:before {
     overflow-x: auto; /* Enable horizontal scrolling for wide tables */
     overflow-y: auto; /* 세로 스크롤도 가능하게 추가 */
     max-width: 100%;
+    max-height: 80vh; /* 뷰포트 높이의 80%로 최대 높이 제한 */
 }
 
 .skill-table {
@@ -486,12 +520,11 @@ input:checked + .slider:before {
     border-collapse: collapse;
     margin-top: 5px; /* margin-top 5px로 설정 */
     min-width: 700px; /* Ensure table has a minimum width for readability */
-    white-space: nowrap;
 }
 
 .skill-table th, .skill-table td {
     border: 1px solid #ddd;
-    padding: 8px;
+    padding: 5px 2px; /* Changed padding */
     text-align: center;
     white-space: nowrap; /* Prevent content from wrapping */
     color: #333; /* 텍스트 색상 기본값으로 되돌림 */

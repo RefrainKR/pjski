@@ -2,7 +2,7 @@
 
 import { MESSAGE_DISPLAY_DURATION } from './data.js';
 import { CharacterRankManager } from './components/CharacterRankManager.js';
-import { SkillCalculator } from './components/SkillCalculator.js'; // SkillSimulator -> SkillCalculator로 변경
+import { SkillCalculator } from './components/SkillCalculator.js';
 import { BackupManager } from './components/BackupManager.js';
 import { TabManager } from './components/TabManager.js';
 
@@ -14,9 +14,10 @@ class App {
         this.messageDiv = document.getElementById('message');
         this.rankManagementBtn = document.getElementById('rankManagementBtn');
         this.backupBtn = document.getElementById('backupBtn');
+        this.autoCalcSection = document.getElementById('auto-calc-section'); // New: Auto Calc Modal
 
         this.characterRankManager = new CharacterRankManager('character-ranks-section', this.displayMessage.bind(this));
-        this.skillCalculator = new SkillCalculator('rank-tab', this.displayMessage.bind(this)); // SkillSimulator -> SkillCalculator로 변경
+        this.skillCalculator = new SkillCalculator('rank-tab', this.displayMessage.bind(this));
         this.backupManager = new BackupManager('backup-section', this.displayMessage.bind(this), this.characterRankManager);
         this.tabManager = new TabManager('.tab-button', '.tab-content');
 
@@ -28,24 +29,39 @@ class App {
         this.rankManagementBtn.addEventListener('click', this.toggleCharacterRankDropdown.bind(this));
         this.backupBtn.addEventListener('click', this.toggleBackupDropdown.bind(this));
 
+        // Close buttons for dropdowns
         document.getElementById('character-ranks-section').querySelector('.close-btn')
             .addEventListener('click', () => this.closeDropdown(document.getElementById('character-ranks-section')));
         document.getElementById('backup-section').querySelector('.close-btn')
             .addEventListener('click', () => this.closeDropdown(document.getElementById('backup-section')));
+        // New: Close button for Auto Calc Modal
+        this.autoCalcSection.querySelector('.close-btn')
+            .addEventListener('click', () => this.closeDropdown(this.autoCalcSection));
+
 
         document.addEventListener('click', (event) => {
             const isClickInsideHeader = this.header.contains(event.target);
             const isClickOnRankBtn = this.rankManagementBtn.contains(event.target);
             const isClickOnBackupBtn = this.backupBtn.contains(event.target);
+            const isClickOnAutoCalcTriggerBtn = this.skillCalculator.autoCalcTriggerBtn.contains(event.target); // New: Auto Calc Trigger button
 
-            if (!isClickInsideHeader && this.isAnyDropdownActive()) {
-                this.closeAllDropdowns();
-            } else if (this.isAnyDropdownActive()) {
+            // Check if any dropdown is currently active
+            const characterRanksSection = document.getElementById('character-ranks-section');
+            const backupSection = document.getElementById('backup-section');
+            const autoCalcSection = document.getElementById('auto-calc-section'); // New: Auto Calc Modal
+
+            const isAnyDropdownActive = characterRanksSection.classList.contains('active') ||
+                                         backupSection.classList.contains('active') ||
+                                         autoCalcSection.classList.contains('active'); // New: Check Auto Calc Modal
+
+            if (isAnyDropdownActive) {
                 const isClickInsideOpenDropdown =
-                    (document.getElementById('character-ranks-section').classList.contains('active') && document.getElementById('character-ranks-section').contains(event.target)) ||
-                    (document.getElementById('backup-section').classList.contains('active') && document.getElementById('backup-section').contains(event.target));
+                    (characterRanksSection.classList.contains('active') && characterRanksSection.contains(event.target)) ||
+                    (backupSection.classList.contains('active') && backupSection.contains(event.target)) ||
+                    (autoCalcSection.classList.contains('active') && autoCalcSection.contains(event.target)); // New: Check Auto Calc Modal
 
-                if (!isClickOnRankBtn && !isClickOnBackupBtn && !isClickInsideOpenDropdown) {
+                // If click is not on any header button and not inside an open dropdown, close all.
+                if (!isClickOnRankBtn && !isClickOnBackupBtn && !isClickOnAutoCalcTriggerBtn && !isClickInsideOpenDropdown) {
                     this.closeAllDropdowns();
                 }
             }
@@ -53,46 +69,54 @@ class App {
     }
 
     isAnyDropdownActive() {
-        return document.getElementById('character-ranks-section').style.display === 'block' ||
-               document.getElementById('backup-section').style.display === 'block';
+        return document.getElementById('character-ranks-section').classList.contains('active') ||
+               document.getElementById('backup-section').classList.contains('active') ||
+               document.getElementById('auto-calc-section').classList.contains('active'); // New: Check Auto Calc Modal
     }
 
     closeAllDropdowns() {
         this.closeDropdown(document.getElementById('character-ranks-section'));
         this.closeDropdown(document.getElementById('backup-section'));
+        this.closeDropdown(document.getElementById('auto-calc-section')); // New: Close Auto Calc Modal
     }
 
     closeDropdown(sectionElement) {
         sectionElement.classList.remove('active');
-        sectionElement.style.display = 'none';
         this.displayMessage('');
     }
 
     openDropdown(sectionElement) {
+        // 다른 드롭다운이 열려있으면 닫기
+        this.closeAllDropdowns();
         sectionElement.classList.add('active');
-        sectionElement.style.display = 'block';
         this.displayMessage('');
     }
 
     toggleCharacterRankDropdown() {
-        if (document.getElementById('backup-section').classList.contains('active')) {
-            this.closeDropdown(document.getElementById('backup-section'));
-        }
-        if (document.getElementById('character-ranks-section').style.display === 'block') {
-            this.closeDropdown(document.getElementById('character-ranks-section'));
+        const characterRanksSection = document.getElementById('character-ranks-section');
+        if (characterRanksSection.classList.contains('active')) {
+            this.closeDropdown(characterRanksSection);
         } else {
-            this.openDropdown(document.getElementById('character-ranks-section'));
+            this.openDropdown(characterRanksSection);
         }
     }
 
     toggleBackupDropdown() {
-        if (document.getElementById('character-ranks-section').classList.contains('active')) {
-            this.closeDropdown(document.getElementById('character-ranks-section'));
-        }
-        if (document.getElementById('backup-section').style.display === 'block') {
-            this.closeDropdown(document.getElementById('backup-section'));
+        const backupSection = document.getElementById('backup-section');
+        if (backupSection.classList.contains('active')) {
+            this.closeDropdown(backupSection);
         } else {
-            this.openDropdown(document.getElementById('backup-section'));
+            this.openDropdown(backupSection);
+        }
+    }
+
+    // New: Toggle Auto Calculation Modal
+    toggleAutoCalcModal() {
+        const autoCalcSection = document.getElementById('auto-calc-section');
+        if (autoCalcSection.classList.contains('active')) {
+            this.closeDropdown(autoCalcSection);
+        } else {
+            this.openDropdown(autoCalcSection);
         }
     }
 

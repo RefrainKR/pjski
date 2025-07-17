@@ -1,4 +1,3 @@
-
 export const CHARACTER_DATA = [
     { groupName: "Leo/Need", characters: ["이치카", "사키", "호나미", "시호"] },
     { groupName: "MORE MORE JUMP", characters: ["미노리", "하루카", "아이리", "시즈쿠"] },
@@ -9,7 +8,28 @@ export const CHARACTER_DATA = [
 ];
 
 export const LOCAL_STORAGE_KEY = 'characterRanksData';
+export const SKILL_CALCULATOR_SETTINGS_KEY = 'skillCalculatorSettings';
 export const MESSAGE_DISPLAY_DURATION = 3000; // 메시지 자동 사라짐 시간 (ms)
+
+// --- Skill Calculator Input Constants ---
+export const MIN_RANK_MIN = 1;
+export const MAX_RANK_MIN = 90;
+export const DEFAULT_RANK_MIN = 1;
+
+export const MIN_RANK_MAX = 10;
+export const MAX_RANK_MAX = 100;
+export const DEFAULT_RANK_MAX = 100;
+
+export const MIN_RANK_INCREMENT = 1;
+export const MAX_RANK_INCREMENT = 10;
+export const DEFAULT_RANK_INCREMENT = 1;
+
+export const MIN_TARGET_VALUE = 0; // manual-x-input 및 자동 계산 시작값
+export const MAX_TARGET_VALUE = 200; // manual-x-input 및 자동 계산 끝나는값
+export const DEFAULT_AUTO_CALC_START = 80;
+export const DEFAULT_AUTO_CALC_END = 140;
+export const DEFAULT_AUTO_CALC_INCREMENT = 5;
+
 
 export const SKILL_DATA = {
     "bloomFes": { // 카드 종류: bloomFes (camelCase)

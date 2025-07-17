@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>캐릭터 랭크 관리 시스템</title>
+    <title>블룸페스 스킬값 계산</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="header">
         <nav class="navbar">
-            <div class="navbar-brand">캐릭터 프로젝트</div>
+            <div class="navbar-brand">블룸페스 스킬값 계산</div>
             <div class="navbar-actions">
                 <button id="rankManagementBtn" class="btn btn-primary">캐릭터 랭크 관리</button>
                 <button id="backupBtn" class="btn btn-secondary">백업</button>
@@ -22,138 +22,6 @@
                 <button class="close-btn">&times;</button>
             </div>
             <div id="character-ranks-content" class="scrollable-content">
-                <div class="group-section">
-                    <h2>Leo/Need</h2>
-                    <div class="character-grid">
-                        <div class="character-item">
-                            <label for="ichika-rank">이치카</label>
-                            <div class="character-controls">
-                                <input type="number" id="ichika-rank" value="1" min="1" max="200">
-                                <div class="toggle-wrapper">
-                                    <span class="status-label">비활성화</span> <label class="toggle-switch">
-                                        <input type="checkbox" id="ichika-toggle">
-                                        <span class="slider round"></span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="character-item">
-                            <label for="saki-rank">사키</label>
-                            <div class="character-controls">
-                                <input type="number" id="saki-rank" value="1" min="1" max="200">
-                                <div class="toggle-wrapper">
-                                    <span class="status-label">비활성화</span>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="saki-toggle">
-                                        <span class="slider round"></span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="character-item">
-                            <label for="honami-rank">호나미</label>
-                            <div class="character-controls">
-                                <input type="number" id="honami-rank" value="1" min="1" max="200">
-                                <div class="toggle-wrapper">
-                                    <span class="status-label">비활성화</span>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="honami-toggle">
-                                        <span class="slider round"></span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="character-item">
-                            <label for="shiho-rank">시호</label>
-                            <div class="character-controls">
-                                <input type="number" id="shiho-rank" value="1" min="1" max="200">
-                                <div class="toggle-wrapper">
-                                    <span class="status-label">비활성화</span>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="shiho-toggle">
-                                        <span class="slider round"></span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="group-section">
-                    <h2>MORE MORE JUMP</h2>
-                    <div class="character-grid">
-                        <div class="character-item">
-                            <label for="minori-rank">미노리</label>
-                            <div class="character-controls">
-                                <input type="number" id="minori-rank" value="1" min="1" max="200">
-                                <div class="toggle-wrapper">
-                                    <span class="status-label">비활성화</span>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="minori-toggle">
-                                        <span class="slider round"></span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="character-item">
-                            <label for="haruka-rank">하루카</label>
-                            <div class="character-controls">
-                                <input type="number" id="haruka-rank" value="58" min="1" max="200">
-                                <div class="toggle-wrapper">
-                                    <span class="status-label">활성화</span>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="haruka-toggle" checked>
-                                        <span class="slider round"></span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="character-item">
-                            <label for="airi-rank">아이리</label>
-                            <div class="character-controls">
-                                <input type="number" id="airi-rank" value="1" min="1" max="200">
-                                <div class="toggle-wrapper">
-                                    <span class="status-label">비활성화</span>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="airi-toggle">
-                                        <span class="slider round"></span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="character-item">
-                            <label for="shizuku-rank">시즈쿠</label>
-                            <div class="character-controls">
-                                <input type="number" id="shizuku-rank" value="1" min="1" max="200">
-                                <div class="toggle-wrapper">
-                                    <span class="status-label">비활성화</span>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="shizuku-toggle">
-                                        <span class="slider round"></span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="group-section">
-                    <h2>Vivid BAD SQUAD</h2>
-                    <div class="character-grid">
-                        <div class="character-item">
-                            <label for="toya-rank">아오야기 토우야</label>
-                            <div class="character-controls">
-                                <input type="number" id="toya-rank" value="1" min="1" max="200">
-                                <div class="toggle-wrapper">
-                                    <span class="status-label">비활성화</span>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="toya-toggle">
-                                        <span class="slider round"></span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -166,6 +34,29 @@
                 <button id="downloadBtn" class="btn btn-success">다운로드 (JSON)</button>
                 <input type="file" id="uploadFile" accept=".json">
                 <label for="uploadFile" class="btn btn-info">업로드 (JSON)</label>
+            </div>
+        </div>
+
+        <!-- New Auto Calculation Modal -->
+        <div id="auto-calc-section" class="dropdown-section">
+            <div class="dropdown-title-bar">
+                <span class="dropdown-title">자동 계산 설정</span>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="auto-calc-controls scrollable-content">
+                <div class="control-group">
+                    <label for="auto-calc-start">시작값:</label>
+                    <input type="number" id="auto-calc-start" value="80" min="0" max="200">
+                </div>
+                <div class="control-group">
+                    <label for="auto-calc-end">끝나는값:</label>
+                    <input type="number" id="auto-calc-end" value="140" min="0" max="200">
+                </div>
+                <div class="control-group">
+                    <label for="auto-calc-increment">증가값:</label>
+                    <input type="number" id="auto-calc-increment" value="5" min="1" max="50">
+                </div>
+                <button id="applyAutoCalcBtn" class="btn btn-primary">계산</button>
             </div>
         </div>
     </div>
@@ -193,9 +84,10 @@
 
                             <div class="control-group">
                                 <label>랭크 범위:</label>
-                                <div class="rank-range-inputs"> <input type="number" id="rank-min" value="1" min="10" max="200">
+                                <div class="rank-range-inputs"> 
+                                    <input type="number" id="rank-min" value="1" min="1" max="90">
                                     <span>~</span>
-                                    <input type="number" id="rank-max" value="100" min="10" max="200">
+                                    <input type="number" id="rank-max" value="100" min="10" max="100">
                                 </div>
                             </div>
 
@@ -207,7 +99,8 @@
                         
                         <div class="skill-table-interaction-row"> 
                             <div class="control-group">
-                                <button id="mode-toggle-btn" class="btn btn-toggle" data-mode="auto">자동 모드</button>
+                                <!-- Changed from mode toggle to auto calculation trigger -->
+                                <button id="autoCalcTriggerBtn" class="btn btn-toggle">자동 계산</button>
                             </div>
                             <div class="legend-container">
                                 <div class="legend-item"><span class="legend-color legend-blue"></span> 각후 유리</div>
@@ -221,7 +114,7 @@
                                 <thead>
                                     <tr>
                                         <th>대상값<br>\랭크\</th> 
-                                        </tr>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                 </tbody>
@@ -245,7 +138,7 @@
 
     <div class="footer">
         <div id="message" class="message"></div>
-        <p>&copy; 2025 캐릭터 프로젝트</p>
+        <p>blank</p>
     </div>
 
     <script type="module" src="js/App.js"></script>
