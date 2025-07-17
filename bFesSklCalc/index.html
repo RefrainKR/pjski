@@ -1,97 +1,177 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>블룸페스 스킬값 비교</title>
-    <link rel="stylesheet" href="style.css">
+    <title>프로젝트 세카이 스킬 계산기</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- modal.css와 table.css는 style.css에 통합되거나 별도 파일로 관리될 수 있습니다. -->
+    <!-- 현재 HTML은 style.css만 링크하고 있으므로, 이 파일들이 필요하다면 style.css에 @import 하거나 별도로 링크해야 합니다. -->
+    <!-- 여기서는 style.css에 모든 관련 CSS가 있다고 가정합니다. -->
 </head>
-
 <body>
-    <div class="container">
-        <div class="tabs">
-            <button class="tab-button active" data-tab="skillComparison">테이블</button>
-            <button class="tab-button" data-tab="characterRank">랭크 관리</button>
-            <button class="tab-button" data-tab="settings">설  정</button>
-        </div>
-        <div id="skillComparison" class="tab-content active">
-            <h2>각전 / 각후 스킬값 비교</h2>
-            <div class="form-group-container">
-                <div class="form-group">
-                    <label for="characterSelect">캐릭터 선택</label>
-                    <select id="characterSelect">
-                    </select>
+    <div id="app">
+        <header class="header">
+            <nav class="navbar">
+                <div class="navbar-brand">블룸페스 스킬값 계산</div>
+                <div class="navbar-actions">
+                    <button id="rankManagementBtn" class="btn btn-primary">캐릭터 랭크 관리</button>
+                    <button id="backupBtn" class="btn btn-secondary">백업</button>
                 </div>
-                <div class="form-group" id="skillLevelSelectContainer">
-                    <label for="skillLevel">스킬 레벨</label>
-                    <select id="skillLevel">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                    </select>
-                </div>
-                <div class="form-group" id="directRankInputGroup">
-                    <label for="directRankInput">랭크 입력</label>
-                    <input type="number" id="directRankInput" min="1" max="100" value="1">
-                </div>
-            </div>
-            <div class="cell-infos">
-                <div class="cell-info-item">
-                    <span class="color-box advantage-after"></span> 각후 유리
-                </div>
-                <div class="cell-info-item">
-                    <span class="color-box advantage-equal"></span> 동일
-                </div>
-                <div class="cell-info-item">
-                    <span class="color-box advantage-before"></span> 각전 유리
-                </div>
-            </div>
-            <div id="skillTableContainer" class="table-container">
-            </div>
-        </div>
-        <div id="characterRank" class="tab-content">
-            <div id="characterList" class="character-list">
-            </div>
-            <p class="info-message"> 
-                * 캐릭터 랭크는 웹 브라우저의 로컬 스토리지에 "자동으로 저장"됩니다.<br>
-				* 파일 다운로드/업로드 기능은 백업/복구 용도로 사용하세요.
-            </p>
-            <div class="actions">
-                <button id="saveDataBtn">백업 (JSON 다운로드)</button>
-                <input type="file" id="loadDataInput" accept=".json" style="display: none;">
-                <button id="loadDataBtn">복구 (JSON 업로드)</button>
-                <span id="fileNameDisplay" class="file-name-display">선택된 파일 없음</span>
-            </div>
-        </div>
-        <div id="settings" class="tab-content">
-            <h2>테이블 설정</h2>
-            <div class="form-group-container">
-                <div class="form-group">
-                    <label for="minRankInput">최소 표시 랭크(2~60)</label>
-                    <input type="number" id="minRankInput" value="1">
-                </div>
-                <div class="form-group">
-                    <label for="maxRankInput">최대 표시 랭크(60~100)</label>
-                    <input type="number" id="maxRankInput" value="100">
-                </div>
-                <div class="form-group">
-                    <label for="otherSkillValMinInput">대상 스킬값 최소치(40~140)</label>
-                    <input type="number" id="otherSkillValMinInput" value="80">
-                </div>
-                <div class="form-group">
-                    <label for="otherSkillValMaxInput">대상 스킬값 최대치(80~140)</label>
-                    <input type="number" id="otherSkillValMaxInput" value="140">
-                </div>
-                <div class="form-group">
-                    <label for="otherSkillValIncreaseInput">대상 스킬값 증가량(1~10)</label>
-                    <input type="number" id="otherSkillValIncreaseInput" value="5">
-                </div>
-            </div>
-        </div>
-    </div>
-    <script src="script.js"></script>
-</body>
+            </nav>
 
+            <!-- 캐릭터 랭크 드롭다운 섹션 (헤더 버튼 클릭 시 표시) -->
+            <div id="character-ranks-section" class="dropdown-section">
+                <div class="dropdown-title-bar">
+                    <span class="dropdown-title">캐릭터 랭크 관리</span>
+                    <button class="close-btn" data-target="character-ranks-section">&times;</button>
+                </div>
+                <div id="character-ranks-content" class="scrollable-content">
+                    <!-- 캐릭터 그룹 및 랭크 입력 필드는 JS에서 동적으로 생성됩니다 -->
+                </div>
+            </div>
+
+            <!-- 백업/복원 드롭다운 섹션 (헤더 버튼 클릭 시 표시) -->
+            <div id="backup-section" class="dropdown-section">
+                <div class="dropdown-title-bar">
+                    <span class="dropdown-title">데이터 백업 / 복원</span>
+                    <button class="close-btn" data-target="backup-section">&times;</button>
+                </div>
+                <div class="backup-actions scrollable-content">
+                    <button id="exportDataBtn" class="btn btn-success">데이터 내보내기 (JSON)</button>
+                    <label for="importFile" class="btn btn-info">데이터 가져오기 (JSON 파일 선택)</label>
+                    <input type="file" id="importFile" accept=".json">
+                    <button id="clearDataBtn" class="btn-secondary">모든 데이터 지우기</button>
+                    <div id="user-id-display" class="user-id-display"></div>
+                </div>
+            </div>
+
+            <!-- 자동 입력 모달 (드롭다운 섹션으로 유지, 스킬 계산기 내 버튼 클릭 시 표시) -->
+            <div id="auto-input-section" class="dropdown-section">
+                <div class="dropdown-title-bar">
+                    <span class="dropdown-title">자동 입력 설정</span>
+                    <button class="close-btn" data-target="auto-input-section">&times;</button>
+                </div>
+                <div class="auto-input-controls scrollable-content">
+                    <div class="control-group">
+                        <label for="auto-input-start">시작값:</label>
+                        <input type="number" id="auto-input-start" value="80" min="0" max="200">
+                    </div>
+                    <div class="control-group">
+                        <label for="auto-input-end">끝나는값:</label>
+                        <input type="number" id="auto-input-end" value="140" min="0" max="200">
+                    </div>
+                    <div class="control-group">
+                        <label for="auto-input-increment">증가값:</label>
+                        <input type="number" id="auto-input-increment" value="5" min="1" max="50">
+                    </div>
+                    <button id="applyAutoInputBtn" class="btn btn-primary">적용</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="container">
+            <div class="tabs">
+                <div class="tab-buttons">
+                    <button class="tab-button active" data-tab="skill-calculator-tab">스킬 계산기</button>
+                    <button class="tab-button" data-tab="character-tab">캐릭터별</button>
+                    <button class="tab-button" data-tab="tab3">탭3</button>
+                </div>
+                <div class="tab-content-wrapper">
+                    <!-- 스킬 계산기 탭 내용 -->
+                    <div id="skill-calculator-tab" class="tab-content active">
+                        <section id="skill-calculator-container" class="skill-calculator">
+                            <h2>스킬 비교 계산기</h2>
+                            <div class="skill-controls-top">
+                                <div class="control-group">
+                                    <label for="skill-level-select">스킬 레벨:</label>
+                                    <select id="skill-level-select">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                    </select>
+                                </div>
+
+                                <div class="control-group">
+                                    <label>랭크 범위:</label>
+                                    <div class="rank-range-inputs"> 
+                                        <input type="number" id="rank-min" value="1" min="1" max="90">
+                                        <span>~</span>
+                                        <input type="number" id="rank-max" value="100" min="10" max="100">
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label for="rank-increment">랭크 증가량:</label>
+                                    <input type="number" id="rank-increment" value="1" min="1" max="10">
+                                </div>
+                            </div>
+                            
+                            <div class="skill-table-interaction-row"> 
+                                <div class="control-group">
+                                    <button id="autoInputTriggerBtn" class="btn btn-toggle">자동 입력</button>
+                                </div>
+                                <div class="legend-container">
+                                    <div class="legend-item"><span class="legend-color legend-blue"></span> 각후 유리</div>
+                                    <div class="legend-item"><span class="legend-color legend-yellow"></span> 각전 유리</div>
+                                    <div class="legend-item"><span class="legend-color legend-gray"></span> 동일</div>
+                                </div>
+                            </div>
+
+                            <div class="skill-table-container">
+                                <table id="skill-comparison-table" class="skill-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="corner-header">
+                                                <div class="diagonal-box">
+                                                    <span class="diag-rank">랭크</span>
+                                                    <span class="diag-target">대상값</span>
+                                                </div>
+                                            </th> 
+                                            <!-- X축 헤더는 JS에서 동적으로 생성됩니다 -->
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- 테이블 내용은 JS에서 동적으로 생성됩니다 -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- 캐릭터 랭크 탭 내용 -->
+                    <div id="character-tab" class="tab-content">
+                        <section id="character-ranks-section-tab" class="character-ranks-container">
+                            <h2>캐릭터 랭크 관리 (탭)</h2>
+                            <div id="character-ranks-tab-content" class="scrollable-content">
+                                <!-- JS에서 동적으로 생성될 캐릭터 랭크 입력 필드 -->
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- 탭3 내용 -->
+                    <div id="tab3" class="tab-content">
+                        <h3>탭3 내용</h3>
+                        <p>이곳은 탭3의 콘텐츠입니다. 탭3에 관련된 정보를 표시할 수 있습니다.</p>
+                        <p>다른 종류의 데이터 시각화나 도구들이 여기에 배치될 수 있습니다.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div id="message-display" class="message"></div>
+            <p>프로젝트 세카이 스킬 계산기</p>
+        </footer>
+    </div>
+
+    <script type="module" src="js/data.js"></script>
+    <script type="module" src="js/utils/InputNumberElement.js"></script>
+    <script type="module" src="js/components/SkillCalculator.js"></script>
+    <script type="module" src="js/components/CharacterRankManager.js"></script>
+    <script type="module" src="js/components/BackupManager.js"></script>
+    <script type="module" src="js/components/TabManager.js"></script> <!-- TabManager 추가 -->
+    <script type="module" src="js/App.js"></script>
+</body>
 </html>

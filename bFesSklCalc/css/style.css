@@ -70,7 +70,7 @@ body {
     background-color: #545b62;
 }
 
-/* Dropdown Sections (Character Rank & Backup & Auto Calc) */
+/* Dropdown Sections (Character Rank & Backup) */
 .dropdown-section {
     display: none; /* Hidden by default */
     position: absolute;
@@ -317,39 +317,6 @@ input:checked + .slider:before {
     background-color: #138496;
 }
 
-/* Auto Calculation Modal Specific Styles */
-.auto-calc-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    padding: 20px;
-}
-
-.auto-calc-controls .control-group {
-    flex-direction: row; /* Label and input side-by-side */
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.auto-calc-controls label {
-    flex-shrink: 0; /* Prevent label from shrinking */
-    margin-right: 10px;
-    margin-bottom: 0; /* Override default control-group label margin */
-}
-
-.auto-calc-controls input[type="number"] {
-    flex-grow: 1; /* Input takes remaining space */
-    max-width: 150px; /* Limit input width */
-    text-align: center;
-}
-
-.auto-calc-controls .btn {
-    width: 100%;
-    margin-top: 10px;
-}
-
-
 /* Tabs Navigation */
 .tabs {
     background-color: #ffffff;
@@ -524,7 +491,7 @@ input:checked + .slider:before {
 
 .skill-table th, .skill-table td {
     border: 1px solid #ddd;
-    padding: 5px 2px; /* Changed padding */
+    padding: 8px;
     text-align: center;
     white-space: nowrap; /* Prevent content from wrapping */
     color: #333; /* 텍스트 색상 기본값으로 되돌림 */
