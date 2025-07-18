@@ -5,52 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>프로젝트 세카이 스킬 계산기</title>
     <link rel="stylesheet" href="css/style.css">
-    <!-- modal.css와 table.css는 style.css에 통합되거나 별도 파일로 관리될 수 있습니다. -->
-    <!-- 현재 HTML은 style.css만 링크하고 있으므로, 이 파일들이 필요하다면 style.css에 @import 하거나 별도로 링크해야 합니다. -->
-    <!-- 여기서는 style.css에 모든 관련 CSS가 있다고 가정합니다. -->
 </head>
 <body>
     <div id="app">
         <header class="header">
             <nav class="navbar">
-                <div class="navbar-brand">블룸페스 스킬값 계산</div>
+                <div class="navbar-brand">스킬값 계산</div>
                 <div class="navbar-actions">
-                    <button id="rankManagementBtn" class="btn btn-primary">캐릭터 랭크 관리</button>
+                    <!-- 수정된 버튼 클래스 적용 -->
+                    <button id="rankManagementBtn" class="btn btn-primary">캐릭터 랭크</button>
                     <button id="backupBtn" class="btn btn-secondary">백업</button>
                 </div>
             </nav>
 
-            <!-- 캐릭터 랭크 드롭다운 섹션 (헤더 버튼 클릭 시 표시) -->
+            <!-- 캐릭터 랭크 드롭다운 섹션 (내용 변경 없음) -->
             <div id="character-ranks-section" class="dropdown-section">
                 <div class="dropdown-title-bar">
                     <span class="dropdown-title">캐릭터 랭크 관리</span>
-                    <button class="close-btn" data-target="character-ranks-section">&times;</button>
+                    <button class="close-btn" data-target="character-ranks-section">×</button>
                 </div>
                 <div id="character-ranks-content" class="scrollable-content">
-                    <!-- 캐릭터 그룹 및 랭크 입력 필드는 JS에서 동적으로 생성됩니다 -->
+                    <!-- JS에서 동적으로 생성 -->
                 </div>
             </div>
 
-            <!-- 백업/복원 드롭다운 섹션 (헤더 버튼 클릭 시 표시) -->
+            <!-- 백업/복원 드롭다운 섹션 (수정된 버튼 클래스 적용) -->
             <div id="backup-section" class="dropdown-section">
                 <div class="dropdown-title-bar">
                     <span class="dropdown-title">데이터 백업 / 복원</span>
-                    <button class="close-btn" data-target="backup-section">&times;</button>
+                    <button class="close-btn" data-target="backup-section">×</button>
                 </div>
                 <div class="backup-actions scrollable-content">
                     <button id="exportDataBtn" class="btn btn-success">데이터 내보내기 (JSON)</button>
                     <label for="importFile" class="btn btn-info">데이터 가져오기 (JSON 파일 선택)</label>
                     <input type="file" id="importFile" accept=".json">
-                    <button id="clearDataBtn" class="btn-secondary">모든 데이터 지우기</button>
+                    <button id="clearDataBtn" class="btn btn-secondary">모든 데이터 지우기</button>
                     <div id="user-id-display" class="user-id-display"></div>
                 </div>
             </div>
 
-            <!-- 자동 입력 모달 (드롭다운 섹션으로 유지, 스킬 계산기 내 버튼 클릭 시 표시) -->
+            <!-- 자동 입력 모달 (누락된 input 필드들 추가) -->
             <div id="auto-input-section" class="dropdown-section">
                 <div class="dropdown-title-bar">
                     <span class="dropdown-title">자동 입력 설정</span>
-                    <button class="close-btn" data-target="auto-input-section">&times;</button>
+                    <button class="close-btn" data-target="auto-input-section">×</button>
                 </div>
                 <div class="auto-input-controls scrollable-content">
                     <div class="control-group">
@@ -110,7 +108,8 @@
                             
                             <div class="skill-table-interaction-row"> 
                                 <div class="control-group">
-                                    <button id="autoInputTriggerBtn" class="btn btn-toggle">자동 입력</button>
+                                    <!-- 수정된 버튼 클래스 적용 -->
+                                    <button id="autoInputTriggerBtn" class="btn btn-warning">자동 입력</button>
                                 </div>
                                 <div class="legend-container">
                                     <div class="legend-item"><span class="legend-color legend-blue"></span> 각후 유리</div>
@@ -129,11 +128,11 @@
                                                     <span class="diag-target">대상값</span>
                                                 </div>
                                             </th> 
-                                            <!-- X축 헤더는 JS에서 동적으로 생성됩니다 -->
+                                            <!-- X축 헤더는 JS에서 동적으로 생성 -->
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <!-- 테이블 내용은 JS에서 동적으로 생성됩니다 -->
+                                        <!-- 테이블 내용은 JS에서 동적으로 생성 -->
                                     </tbody>
                                 </table>
                             </div>
@@ -145,7 +144,7 @@
                         <section id="character-ranks-section-tab" class="character-ranks-container">
                             <h2>캐릭터 랭크 관리 (탭)</h2>
                             <div id="character-ranks-tab-content" class="scrollable-content">
-                                <!-- JS에서 동적으로 생성될 캐릭터 랭크 입력 필드 -->
+                                <!-- JS에서 동적으로 생성 -->
                             </div>
                         </section>
                     </div>
@@ -168,10 +167,11 @@
 
     <script type="module" src="js/data.js"></script>
     <script type="module" src="js/utils/InputNumberElement.js"></script>
+    <script type="module" src="js/utils/DraggableScroller.js"></script> 
     <script type="module" src="js/components/SkillCalculator.js"></script>
     <script type="module" src="js/components/CharacterRankManager.js"></script>
     <script type="module" src="js/components/BackupManager.js"></script>
-    <script type="module" src="js/components/TabManager.js"></script> <!-- TabManager 추가 -->
+    <script type="module" src="js/components/TabManager.js"></script>
     <script type="module" src="js/App.js"></script>
 </body>
 </html>

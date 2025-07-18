@@ -1,3 +1,5 @@
+// js/data.js
+
 export const CHARACTER_DATA = [
     { groupName: "Leo/Need", characters: ["이치카", "사키", "호나미", "시호"] },
     { groupName: "MORE MORE JUMP", characters: ["미노리", "하루카", "아이리", "시즈쿠"] },

@@ -1,3 +1,5 @@
+/* css/style.css */
+
 /* General Body and Container Styles */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -11,9 +13,9 @@ body {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1200px; /* 고정 최대 너비 */
     margin: 20px auto;
-    padding: 0 20px;
+    padding: 0 1rem; /* 반응형 패딩 (16px) */
     flex-grow: 1; /* Allow container to grow and push footer down */
 }
 
@@ -21,8 +23,8 @@ body {
 .header {
     background-color: #3f51b5; /* Deep blue */
     color: white;
-    padding: 10px 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 0.625rem 0; /* 10px */
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1); /* 2px 4px */
     position: relative; /* For dropdown positioning */
     z-index: 1000; /* Ensure header is above other content */
 }
@@ -33,58 +35,116 @@ body {
     align-items: center;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 1rem; /* 16px */
+    flex-wrap: wrap; /* 모바일에서 버튼이 줄바꿈되도록 */
 }
 
 .navbar-brand {
     font-size: 1.8em;
     font-weight: bold;
     letter-spacing: 0.5px;
+    padding: 0.5rem 0; /* 모바일에서 탭 상단에 공간 확보 */
 }
 
-.navbar-actions .btn {
-    margin-left: 10px;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+.navbar-actions {
+    display: flex;
+    gap: 0.625rem; /* 10px */
+    flex-wrap: wrap; /* 모바일에서 버튼이 줄바꿈되도록 */
+    justify-content: center; /* 모바일에서 버튼 중앙 정렬 */
+}
+
+/* --- Start: Refactored Button Styles --- */
+
+/* 1. 통합 버튼 기본 클래스 (.btn) */
+/* 모든 버튼의 공통 스타일 (구조, 패딩, 폰트, 테두리 등) */
+.btn {
+    display: inline-block;
+    padding: 0.625rem 0.9375rem; /* 10px 15px */
     font-size: 1em;
-    transition: background-color 0.2s ease;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 0.3125rem; /* 5px */
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
-.btn-primary {
-    background-color: #007bff; /* Bootstrap primary blue */
+/* 2. 색상/용도별 서브 클래스 */
+/* 각 클래스는 색상 관련 속성만 담당 */
+
+.btn-primary { /* 파란색 계열 (기본, 확인) */
+    background-color: #007bff;
     color: white;
+    border-color: #007bff;
 }
-
 .btn-primary:hover {
-    background-color: #0056b3;
+    background-color: #0069d9;
+    border-color: #0062cc;
 }
 
-.btn-secondary {
-    background-color: #6c757d; /* Bootstrap secondary gray */
+.btn-secondary { /* 회색 계열 (보조, 취소) */
+    background-color: #6c757d;
     color: white;
+    border-color: #6c757d;
 }
-
 .btn-secondary:hover {
-    background-color: #545b62;
+    background-color: #5a6268;
+    border-color: #545b62;
 }
 
-/* Dropdown Sections (Character Rank & Backup) */
+.btn-success { /* 초록색 계열 (성공, 내보내기) */
+    background-color: #28a745;
+    color: white;
+    border-color: #28a745;
+}
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.btn-info { /* 하늘색 계열 (정보, 가져오기) */
+    background-color: #17a2b8;
+    color: white;
+    border-color: #17a2b8;
+}
+.btn-info:hover {
+    background-color: #138496;
+    border-color: #117a8b;
+}
+
+.btn-warning { /* 노란색/주황색 계열 (설정, 주의) - 신규 추가 */
+    background-color: #ffc107;
+    color: #212529;
+    border-color: #ffc107;
+}
+.btn-warning:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+}
+/* --- End: Refactored Button Styles --- */
+
+
+/* Dropdown Sections (Character Rank & Backup & Auto Input) */
 .dropdown-section {
     display: none; /* Hidden by default */
     position: absolute;
     top: 100%; /* Position right below the header */
     left: 50%;
     transform: translateX(-50%);
-    width: 90%;
+    width: 90%; /* 반응형 너비 */
     max-width: 800px;
     background-color: #ffffff;
     border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 0.5rem; /* 8px */
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2); /* 8px 16px */
     z-index: 999;
-    padding-bottom: 15px; /* Spacing for content */
+    padding-bottom: 0.9375rem; /* 15px */
 }
 
 .dropdown-section.active {
@@ -95,11 +155,11 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 20px;
+    padding: 0.9375rem 1.25rem; /* 15px 20px */
     background-color: #e9ecef;
     border-bottom: 1px solid #dee2e6;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
+    border-top-left-radius: 0.5rem; /* 8px */
+    border-top-right-radius: 0.5rem; /* 8px */
 }
 
 .dropdown-title {
@@ -125,110 +185,103 @@ body {
 .scrollable-content {
     max-height: 400px; /* Limit height and enable scrolling */
     overflow-y: auto;
-    padding: 20px;
+    padding: 1.25rem; /* 20px */
 }
 
 /* Character Rank Section Specific Styles */
-#character-ranks-content {
-    padding-top: 0; /* Adjust padding if needed for scrollable-content */
+#character-ranks-content,
+#character-ranks-tab-content {
+    padding-top: 0;
 }
 
 .group-section {
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem; /* 20px */
     border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 15px;
+    border-radius: 0.5rem; /* 8px */
+    padding: 0.9375rem; /* 15px */
     background-color: #fdfdfd;
 }
 
-.group-section h2 {
+.group-section h2.group-title-blue {
     font-size: 1.1em;
-    color: #444;
+    color: #007bff;
     margin-top: 0;
-    margin-bottom: 15px;
+    margin-bottom: 0.9375rem; /* 15px */
     border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
+    padding-bottom: 0.625rem; /* 10px */
 }
 
 .character-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 15px;
+    gap: 0.9375rem; /* 15px */
 }
 
 .character-item {
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Align label to start */
+    align-items: flex-start;
     background-color: #f1f1f1;
     border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 10px;
+    border-radius: 0.3125rem; /* 5px */
+    padding: 0.625rem; /* 10px */
 }
 
 .character-item label {
     font-weight: bold;
-    margin-bottom: 8px;
+    margin-bottom: 0.5rem; /* 8px */
     color: #555;
-    white-space: nowrap; /* Prevent character names from wrapping */
+    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; /* Add ellipsis if name is too long */
-    width: 45px; /* 사용자 지정 값 유지 */
+    text-overflow: ellipsis;
+    width: 45px;
 }
 
 .character-controls {
     display: flex;
     align-items: center;
-    gap: 10px; /* input과 toggle-wrapper 사이 간격 */
-    width: 100%; /* Ensure controls fill character-item width */
-    justify-content: space-between; /* 사용자 지정 값 유지 */
+    gap: 0.625rem; /* 10px */
+    width: 100%;
+    justify-content: space-between;
 }
 
-/* --- 공통 Input 및 Select 스타일 --- */
+/* Common Input and Select Styles */
 input[type="number"],
 input[type="text"],
 select {
-    padding: 8px 10px;
+    padding: 0.4rem 0.6rem;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 0.25rem; /* 4px */
     font-size: 1em;
-    box-sizing: border-box; /* 패딩과 보더가 너비에 포함되도록 */
+    box-sizing: border-box;
 }
 
 input[type="number"]:focus,
 input[type="text"]:focus,
 select:focus {
-    border-color: #007bff; /* 포커스 시 테두리 색상 변경 */
-    outline: none; /* 기본 아웃라인 제거 */
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* 부트스트랩과 유사한 쉐도우 */
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
-/* --- End 공통 Input 및 Select 스타일 --- */
-
 
 .character-controls input[type="number"] {
-    width: 60px; /* Adjust width for rank input */
+    width: 60px;
     text-align: center;
-    margin-left: auto; /* 사용자 지정 값 유지 */
+    margin-left: auto;
 }
 
-/* Toggle Switch Styles - Modified based on user's reference snippet */
+/* Toggle Switch Styles */
 .toggle-wrapper {
     display: flex;
     align-items: center;
-    gap: 8px; /* "비활성화" 텍스트와 토글 스위치 사이 간격 */
-}
-
-.toggle-wrapper .status-label {
-    font-size: 0.9em;
-    color: #666;
-    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+    gap: 0.5rem; /* 8px */
 }
 
 .toggle-switch {
     position: relative;
     display: inline-block;
-    width: 45px; /* 토글 스위치 너비 (참조 값) */
-    height: 25px; /* 토글 스위치 높이 (참조 값) */
+    width: 2.8125rem; /* 45px */
+    height: 1.5625rem; /* 25px */
 }
 
 .toggle-switch input {
@@ -244,27 +297,26 @@ select:focus {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc; /* 비활성화 시 배경색 (참조 값) */
-    transition: background-color 0.3s; /* transition 시간 조정 (참조 값) */
-    border-radius: 25px; /* height의 절반으로 설정하여 완전히 둥글게 (참조 값) */
+    background-color: #ccc;
+    transition: background-color 0.3s;
+    border-radius: 1.5625rem; /* 25px */
 }
 
 .slider:before {
-    content: ''; /* content 속성 추가 (참조 값) */
+    content: '';
     position: absolute;
-    width: 21px; /* 토글 원 지름 (참조 값) */
-    height: 21px; /* 토글 원 지름 (참조 값) */
-    border-radius: 50%; /* 50%로 설정하여 원형 유지 (참조 값) */
+    width: 1.3125rem; /* 21px */
+    height: 1.3125rem; /* 21px */
+    border-radius: 50%;
     background-color: white;
-    top: 2px; /* 위쪽 여백 (참조 값) */
-    left: 2px; /* 왼쪽 여백 (참조 값) */
-    transition: transform 0.3s, background-color 0.3s; /* transition 시간 조정 (참조 값) */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* 그림자 추가 (참조 값) */
+    top: 0.125rem; /* 2px */
+    left: 0.125rem; /* 2px */
+    transition: transform 0.3s, background-color 0.3s;
+    box-shadow: 0 0.125rem 0.3125rem rgba(0,0,0,0.2);
 }
 
-/* 활성화 시 스타일 */
 input:checked + .slider {
-    background-color: #28a745; /* 활성화 시 배경색 (녹색, 참조 값) */
+    background-color: #28a745;
 }
 
 input:focus + .slider {
@@ -272,58 +324,68 @@ input:focus + .slider {
 }
 
 input:checked + .slider:before {
-    transform: translateX(20px); /* 활성화 시 오른쪽으로 이동 (참조 값) */
-    /* (스위치 너비 - 핸들 너비 - 좌우 여백) 계산: 45px - 21px - 2px(left) - 2px(right) = 20px */
+    transform: translateX(1.25rem); /* 20px */
 }
 
-/* Backup Section Specific Styles */
+/* Backup Section Specific Styles (Refactored) */
 .backup-actions {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 0.9375rem; /* 15px */
 }
 
-.backup-actions .btn {
-    width: 100%; /* Full width buttons */
-    text-align: center;
+/* label도 .btn 스타일을 공유하도록 선택자 추가 */
+.backup-actions .btn,
+.backup-actions label.btn {
+    width: 100%; /* 너비를 100%로 통일 */
+    box-sizing: border-box; /* 패딩이 너비에 포함되도록 */
 }
 
 .backup-actions input[type="file"] {
-    display: none; /* Hide default file input */
+    display: none;
 }
 
-.btn-success {
-    background-color: #28a745;
-    color: white;
+
+/* Auto Input Modal Specific Styles */
+.auto-input-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9375rem; /* 15px */
+    padding: 1.25rem; /* 20px */
 }
 
-.btn-success:hover {
-    background-color: #218838;
+.auto-input-controls .control-group {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
 }
 
-.btn-info {
-    background-color: #17a2b8;
-    color: white;
-    padding: 10px 15px; /* Match button padding */
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.2s ease;
+.auto-input-controls label {
+    flex-shrink: 0;
+    margin-right: 0.625rem; /* 10px */
+    margin-bottom: 0;
+}
+
+.auto-input-controls input[type="number"] {
+    flex-grow: 1;
+    max-width: 9.375rem; /* 150px */
     text-align: center;
-    display: block; /* Make it behave like a block button */
 }
 
-.btn-info:hover {
-    background-color: #138496;
+.auto-input-controls .btn {
+    width: 100%;
+    margin-top: 0.625rem; /* 10px */
 }
+
 
 /* Tabs Navigation */
 .tabs {
     background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    overflow: hidden; /* Clear floats */
-    margin-top: 20px;
+    border-radius: 0.5rem; /* 8px */
+    box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.05); /* 2px 8px */
+    overflow: hidden;
+    margin-top: 1.25rem; /* 20px */
 }
 
 .tab-buttons {
@@ -332,8 +394,8 @@ input:checked + .slider:before {
 }
 
 .tab-button {
-    flex: 1; /* Distribute space equally */
-    padding: 15px 20px;
+    flex: 1;
+    padding: 0.9375rem 1.25rem; /* 15px 20px */
     background-color: #f8f9fa;
     border: none;
     cursor: pointer;
@@ -341,7 +403,7 @@ input:checked + .slider:before {
     font-weight: bold;
     color: #555;
     transition: all 0.3s ease;
-    border-right: 1px solid #e0e0e0; /* Separator */
+    border-right: 1px solid #e0e0e0;
 }
 
 .tab-button:last-child {
@@ -354,107 +416,88 @@ input:checked + .slider:before {
 }
 
 .tab-button.active {
-    background-color: #3f51b5; /* Active tab color */
+    background-color: #3f51b5;
     color: white;
-    border-bottom: 3px solid #007bff; /* Highlight active tab */
-    padding-bottom: 12px; /* Adjust padding for border */
+    border-bottom: 0.1875rem solid #007bff; /* 3px */
+    padding-bottom: 0.75rem; /* 12px */
 }
 
 .tab-content-wrapper {
-    padding: 20px;
+    padding: 1.25rem; /* 20px */
 }
 
 .tab-content {
-    display: none; /* Hidden by default */
+    display: none;
 }
 
 .tab-content.active {
-    display: block; /* Show active content */
+    display: block;
 }
 
 /* Skill Calculator Styles */
 .skill-calculator {
-    padding: 15px;
-    border-radius: 8px;
+    padding: 0.9375rem; /* 15px */
+    border-radius: 0.5rem; /* 8px */
     background-color: #ffffff;
 }
 
-/* Top control group for skill level, rank range, increment */
 .skill-controls-top {
-    margin-bottom: 20px;
-    display: flex; /* 여기에 display: flex를 추가합니다. */
-    gap: 20px; /* 각 control-group 사이의 간격을 조절합니다. 필요에 따라 조절하세요. */
-    flex-wrap: wrap; /* 화면이 작아질 때 줄바꿈되도록 합니다. */
-    align-items: flex-end; /* 하단 정렬 (input 하단이 맞도록) */
+    margin-bottom: 1.25rem; /* 20px */
+    display: flex; 
+    gap: 1.25rem; /* 20px */
+    flex-wrap: wrap; 
+    align-items: flex-end; 
 }
 
 .control-group {
-    display: flex; /* 내부 label과 input/select를 수직으로 배치하기 위함 */
+    display: flex; 
     flex-direction: column;
-    gap: 5px; /* 내부 요소 간격 */
-    /* margin-bottom은 .skill-controls-top의 gap으로 대체되므로 여기서는 제거하거나 필요시 0으로 설정 */
+    gap: 0.3125rem; /* 5px */
     margin-bottom: 0;
-    width: fit-content; /* 내용물 너비만큼만 차지하도록 */
+    width: fit-content; 
 }
 
-/* 랭크 범위 input들을 위한 flex 래퍼 */
 .rank-range-inputs {
     display: flex;
-    align-items: center; /* 수직 중앙 정렬 */
-    gap: 5px; /* input과 ~ 사이 간격 */
+    align-items: center; 
+    gap: 0.3125rem; /* 5px */
 }
 
 .control-group label {
     font-weight: bold;
     font-size: 0.9em;
     color: #555;
-    margin-bottom: 2px; /* 라벨과 인풋 사이 간격 조정 */
+    margin-bottom: 0.125rem; /* 2px */
 }
 
-/* control-group 내 input 및 select의 너비를 유연하게 조정 */
 .control-group input[type="number"],
 .control-group select {
-    width: 80px; /* 고정 너비 유지 */
+    width: 5rem; /* 80px */
 }
 
 .control-group span {
     font-size: 1.2em;
     font-weight: bold;
     color: #777;
-    margin: 0 5px; /* 기존 margin 유지 */
+    margin: 0 0.3125rem; /* 5px */
 }
 
-/* Toggle button style */
-.btn-toggle {
-    background-color: #f0ad4e; /* 노란색 계열 */
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.2s;
-}
-
-.btn-toggle:hover {
-    background-color: #ec971f;
-}
-
-/* Skill Table */
-/* New wrapper for toggle button and legend */
+/* Skill Table Interaction */
 .skill-table-interaction-row {
     display: flex;
-    justify-content: space-between; /* 버튼과 범례를 양 끝으로 정렬 */
-    align-items: center; /* 수직 중앙 정렬 */
-    margin-bottom: 0; /* margin-bottom 0으로 설정 */
-    padding-right: 5px; /* Adjust as needed */
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 0; 
+    padding-right: 0.3125rem; /* 5px */
 }
 
 .legend-container {
     display: flex;
-    gap: 15px;
+    gap: 0.9375rem; /* 15px */
     font-size: 0.9em;
     color: #666;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .legend-item {
@@ -464,11 +507,11 @@ input:checked + .slider:before {
 
 .legend-color {
     display: inline-block;
-    width: 15px;
-    height: 15px;
-    border-radius: 3px;
-    margin-right: 5px;
-    border: 1px solid #ccc; /* Add border for visibility */
+    width: 0.9375rem; /* 15px */
+    height: 0.9375rem; /* 15px */
+    border-radius: 0.1875rem; /* 3px */
+    margin-right: 0.3125rem; /* 5px */
+    border: 1px solid #ccc;
 }
 
 .legend-blue { background-color: #e0f2f7; }
@@ -476,47 +519,45 @@ input:checked + .slider:before {
 .legend-gray { background-color: #f5f5f5; }
 
 .skill-table-container {
-    overflow-x: auto; /* Enable horizontal scrolling for wide tables */
-    overflow-y: auto; /* 세로 스크롤도 가능하게 추가 */
+    overflow-x: auto;
+    overflow-y: auto;
     max-width: 100%;
-    max-height: 80vh; /* 뷰포트 높이의 80%로 최대 높이 제한 */
+    max-height: 80vh;
 }
 
 .skill-table {
-    width: 100%; /* Takes full width of its container */
+    width: 100%;
     border-collapse: collapse;
-    margin-top: 5px; /* margin-top 5px로 설정 */
-    min-width: 700px; /* Ensure table has a minimum width for readability */
+    margin-top: 0.3125rem; /* 5px */
+    min-width: 43.75rem; /* 700px */
 }
 
 .skill-table th, .skill-table td {
     border: 1px solid #ddd;
-    padding: 8px;
+    padding: 0.5rem; /* 8px */
     text-align: center;
-    white-space: nowrap; /* Prevent content from wrapping */
-    color: #333; /* 텍스트 색상 기본값으로 되돌림 */
-    min-width: 93px; /* 모든 td에 최소 너비 적용 */
-    min-height: 38px; /* 모든 td에 최소 높이 적용 */
-    box-sizing: border-box; /* 패딩과 보더가 너비/높이에 포함되도록 */
+    white-space: nowrap;
+    color: #333; 
+    min-height: 2.375rem; /* 38px */
+    box-sizing: border-box; 
 }
 
 .skill-table thead th {
     background-color: #f2f2f2;
     font-weight: bold;
-    position: sticky; /* Sticky header for vertical scroll */
+    position: sticky; 
     top: 0;
-    z-index: 10; /* Ensure header is above scrolling cells */
+    z-index: 10; 
 }
 
-.skill-table tbody th { /* 좌측 고정 셀 (랭크 값) */
-    background-color: #f2f2f2; /* 헤더와 동일한 배경색 */
+.skill-table tbody th { 
+    background-color: #f2f2f2; 
     font-weight: bold;
     position: sticky;
     left: 0;
-    z-index: 9; /* td 셀 위에 보이도록 z-index 설정 */
-    min-width: 60px; /* 여기를 60px로 조정 */
+    z-index: 9; 
+    min-width: 3.75rem; /* 60px */
 }
-
 
 .skill-table tbody tr:nth-child(even) {
     background-color: #f9f9f9;
@@ -527,69 +568,67 @@ input:checked + .slider:before {
 }
 
 .skill-cell-blue {
-    background-color: #e0f2f7; /* 각후 유리 */
+    background-color: #e0f2f7;
 }
 
 .skill-cell-yellow {
-    background-color: #fffde7; /* 각전 유리 */
+    background-color: #fffde7;
 }
 
 .skill-cell-gray {
-    background-color: #f5f5f5; /* 동일 */
-}
-
-/* Manual mode specific styles for header inputs */
-.skill-table.manual-mode th .manual-input-wrapper {
+    background-color: #f5f5f5;
 }
 
 .manual-input-wrapper {
     display: flex;
-    align-items: center;
+    align-items: center; /* 세로 중앙 정렬 */
     justify-content: center;
     height: 100%;
     width: 100%;
     box-sizing: border-box;
-    padding: 0 3px; /* 여백 추가 */
+    padding: 0; /* 내부 여백 제거 */
 }
 
-.manual-x-input {
-    width: 55px; /* 너비 조정 */
-    padding: 0;
-    border: none;
+/* 1) 클래스 이름을 target-value-input으로 변경하고 스타일을 수정합니다. */
+.target-value-input {
+    width: 100%; /* 부모 요소의 너비를 모두 사용 */
+    flex-grow: 1; /* 남는 공간을 모두 차지 */
+    padding: 0 0.3rem; /* 좌우 약간의 여백 */
+    border: none; /* 2) 테두리 제거 */
     background-color: transparent;
-    text-align: right; /* 숫자는 오른쪽 정렬 */
+    text-align: right; 
     font-weight: bold;
-    font-size: 0.9em; /* 자동 모드와 유사한 글자 크기 */
+    font-size: 0.9em; 
     color: #333;
     outline: none;
-    -moz-appearance: textfield; /* Remove number input arrows in Firefox */
+    -moz-appearance: textfield; 
 }
-.manual-x-input::-webkit-outer-spin-button,
-.manual-x-input::-webkit-inner-spin-button {
-    -webkit-appearance: none; /* Remove number input arrows in Webkit */
+.target-value-input::-webkit-outer-spin-button,
+.target-value-input::-webkit-inner-spin-button {
+    -webkit-appearance: none; 
     margin: 0;
 }
 
+/* '%' 기호는 공간을 차지하지 않도록 약간의 스타일 조정 */
 .manual-input-wrapper .percent-sign {
     font-weight: bold;
-    font-size: 0.9em; /* 자동 모드와 유사한 글자 크기 */
+    font-size: 0.9em; 
     color: #333;
-    margin-left: 2px; /* % 기호와의 간격 */
+    padding-right: 0.3rem; /* 오른쪽 여백 확보 */
 }
 
 .skill-table.manual-mode tbody td.empty-cell {
-    background-color: #eee; /* 비어있는 셀 배경색 */
+    background-color: #eee; 
 }
 
-/* Corner Header Styling (대상값\랭크\) */
 .skill-table th.corner-header {
-    position: sticky; /* X축, Y축 모두 고정 */
-    top: 0; /* Y축 고정 */
-    left: 0; /* X축 고정 */
-    z-index: 11; /* 다른 sticky 요소들(thead th, tbody th) 위에 보이도록 더 높은 z-index 설정 */
-    padding: 0; /* Remove default padding to control inner content */
-    vertical-align: top; /* Align content to the top within the cell */
-    overflow: hidden; /* Hide anything outside the diagonal */
+    position: sticky; 
+    top: 0; 
+    left: 0; 
+    z-index: 11; 
+    padding: 0; 
+    vertical-align: top; 
+    overflow: hidden; 
 }
 
 .skill-table th.corner-header .diagonal-box {
@@ -602,42 +641,36 @@ input:checked + .slider:before {
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    /* 대각선 배경 (CSS gradient) */
     background: linear-gradient(to top right, transparent 49.5%, #ddd 49.5%, #ddd 50.5%, transparent 50.5%);
 }
 
 .skill-table th.corner-header .diag-rank {
     position: absolute;
-    bottom: -2px; /* Adjust position based on user feedback */
-    left: 1px; /* Adjust position based on user feedback */
+    bottom: -0.125rem; /* -2px */
+    left: 0.0625rem; /* 1px */
     font-weight: bold;
     font-size: 0.9em;
     color: #555;
-    /* 텍스트 회전 (필요에 따라 조절) */
-    /* transform: rotate(-45deg); transform-origin: bottom left; */
 }
 
 .skill-table th.corner-header .diag-target {
     position: absolute;
-    top: -4px; /* Adjust position based on user feedback */
-    right: 1px; /* Adjust position based on user feedback */
+    top: -0.25rem; /* -4px */
+    right: 0.0625rem; /* 1px */
     font-weight: bold;
     font-size: 0.9em;
     color: #555;
-    /* 텍스트 회전 (필요에 따라 조절) */
-    /* transform: rotate(45deg); transform-origin: top right; */
 }
-
 
 /* Footer Styles */
 .footer {
-    margin-top: 40px;
-    padding: 15px 20px;
+    margin-top: 2.5rem; /* 40px */
+    padding: 0.9375rem 1.25rem; /* 15px 20px */
     background-color: #3f51b5;
     color: white;
     text-align: center;
     font-size: 0.9em;
-    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 -0.125rem 0.25rem rgba(0, 0, 0, 0.05); /* -2px 4px */
 }
 
 .footer p {
@@ -647,14 +680,14 @@ input:checked + .slider:before {
 /* Message Display Styles */
 .message {
     position: fixed;
-    bottom: 20px;
+    bottom: 1.25rem; /* 20px */
     left: 50%;
     transform: translateX(-50%);
-    background-color: #4CAF50; /* Green for success */
+    background-color: #4CAF50;
     color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 0.625rem 1.25rem; /* 10px 20px */
+    border-radius: 0.3125rem; /* 5px */
+    box-shadow: 0 0.125rem 0.3125rem rgba(0, 0, 0, 0.2); /* 2px 5px */
     z-index: 2000;
     opacity: 0;
     visibility: hidden;
@@ -668,13 +701,92 @@ input:checked + .slider:before {
 }
 
 .message.error {
-    background-color: #f44336; /* Red for error */
+    background-color: #f44336;
     opacity: 1;
     visibility: visible;
 }
 
 .message.info {
-    background-color: #2196F3; /* Blue for info */
+    background-color: #2196F3;
     opacity: 1;
     visibility: visible;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .navbar {
+        /* navbar 자체는 세로 정렬 유지 */
+        flex-direction: column; 
+        align-items: center; 
+    }
+
+    .navbar-brand {
+        margin-bottom: 0.5rem;
+    }
+
+    /* --- 수정된 부분 --- */
+    /* 버튼들을 담고 있는 .navbar-actions를 스크롤 가능하게 만듭니다. */
+    .navbar-actions {
+        width: 100%; /* 부모 너비에 맞춤 */
+        justify-content: flex-start; /* 왼쪽부터 정렬 */
+        flex-wrap: nowrap; /* 줄바꿈 방지 */
+        overflow-x: auto; /* 내용이 넘칠 경우 가로 스크롤 생성 */
+        -webkit-overflow-scrolling: touch; /* 부드러운 터치 스크롤 */
+        cursor: grab; /* 드래그 가능함을 시각적으로 표시 */
+    }
+    .navbar-actions.active-drag {
+        cursor: grabbing; /* 드래그 중 커서 변경 */
+    }
+    
+    /* 스크롤바 숨기기 (선택 사항이지만 깔끔함) */
+    .navbar-actions::-webkit-scrollbar { display: none; }
+    .navbar-actions { -ms-overflow-style: none; scrollbar-width: none; }
+    /* --- 수정 끝 --- */
+
+    .navbar-actions .btn {
+        flex-shrink: 0; /* 버튼이 줄어들지 않도록 설정 */
+        width: auto; /* 원래 너비 유지 */
+        margin: 0 0.25rem; /* 좌우 여백만 적용 */
+    }
+
+    .dropdown-section {
+        width: 95%;
+    }
+
+    /* --- 수정된 부분 --- */
+    /* skill-controls-top도 위와 동일한 로직을 적용합니다. */
+    .skill-controls-top {
+        flex-direction: row; /* 가로 정렬 유지 */
+        flex-wrap: nowrap; /* 줄바꿈 방지 */
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        cursor: grab;
+        padding-bottom: 1rem; /* 스크롤 공간 확보 */
+        margin-bottom: 1rem;
+    }
+    .skill-controls-top.active-drag {
+        cursor: grabbing;
+    }
+
+    .skill-controls-top::-webkit-scrollbar { display: none; }
+    .skill-controls-top { -ms-overflow-style: none; scrollbar-width: none; }
+    /* --- 수정 끝 --- */
+
+    .control-group {
+        flex-shrink: 0; /* 그룹이 줄어들지 않도록 설정 */
+        width: auto; /* 원래 너비 유지 */
+    }
+
+    .rank-range-inputs {
+        justify-content: space-between;
+    }
+
+    .skill-table th, .skill-table td {
+        padding: 0.3rem;
+        font-size: 0.8em;
+    }
+
+    .target-value-input { /* 클래스명 변경 반영 */
+        width: 3rem;
+    }
 }

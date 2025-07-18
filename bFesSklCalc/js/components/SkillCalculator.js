@@ -7,13 +7,13 @@ import {
     MIN_RANK_MAX, MAX_RANK_MAX, DEFAULT_RANK_MAX,
     MIN_RANK_INCREMENT, MAX_RANK_INCREMENT, DEFAULT_RANK_INCREMENT,
     MIN_TARGET_VALUE, MAX_TARGET_VALUE,
-    DEFAULT_AUTO_INPUT_START, DEFAULT_AUTO_INPUT_END, DEFAULT_AUTO_INPUT_INCREMENT, // 이름 변경
+    DEFAULT_AUTO_INPUT_START, DEFAULT_AUTO_INPUT_END, DEFAULT_AUTO_INPUT_INCREMENT, 
     FALLBACK_RANK_INPUT_ON_BLANK,
-    FALLBACK_AUTO_INPUT_START_ON_BLANK, FALLBACK_AUTO_INPUT_END_ON_BLANK, FALLBACK_AUTO_INPUT_INCREMENT_ON_BLANK, // 이름 변경
+    FALLBACK_AUTO_INPUT_START_ON_BLANK, FALLBACK_AUTO_INPUT_END_ON_BLANK, FALLBACK_AUTO_INPUT_INCREMENT_ON_BLANK, 
     FALLBACK_MANUAL_X_ON_BLANK,
-    MIN_X_VALUES_COUNT, MAX_X_VALUES_COUNT // 새로운 상수 임포트
+    MIN_X_VALUES_COUNT, MAX_X_VALUES_COUNT 
 } from '../data.js';
-import { InputNumberElement } from '../utils/InputNumberElement.js'; // InputNumberElement 임포트
+import { InputNumberElement } from '../utils/InputNumberElement.js'; 
 
 export class SkillCalculator {
     constructor(containerId, messageDisplayCallback) {
@@ -26,14 +26,14 @@ export class SkillCalculator {
         this.rankMaxInput = this.container.querySelector('#rank-max');
         this.rankIncrementInput = this.container.querySelector('#rank-increment');
 
-        // 자동 입력 모달을 위한 새로운 요소들 (이름 변경)
-        this.autoInputTriggerBtn = this.container.querySelector('#autoInputTriggerBtn'); // ID 변경
-        this.autoInputSection = document.getElementById('auto-input-section'); // ID 변경
-        this.autoInputCloseBtn = this.autoInputSection.querySelector('.close-btn'); // ID 변경
-        this.autoInputStartInput = this.autoInputSection.querySelector('#auto-input-start'); // ID 변경
-        this.autoInputEndInput = this.autoInputSection.querySelector('#auto-input-end'); // ID 변경
-        this.autoInputIncrementInput = this.autoInputSection.querySelector('#auto-input-increment'); // ID 변경
-        this.applyAutoInputBtn = this.autoInputSection.querySelector('#applyAutoInputBtn'); // ID 변경
+        // 자동 입력 모달을 위한 새로운 요소들 (이름 변경 반영)
+        this.autoInputTriggerBtn = this.container.querySelector('#autoInputTriggerBtn'); 
+        this.autoInputSection = document.getElementById('auto-input-section'); 
+        this.autoInputCloseBtn = this.autoInputSection.querySelector('.close-btn'); 
+        this.autoInputStartInput = this.autoInputSection.querySelector('#auto-input-start'); 
+        this.autoInputEndInput = this.autoInputSection.querySelector('#auto-input-end'); 
+        this.autoInputIncrementInput = this.autoInputSection.querySelector('#auto-input-increment'); 
+        this.applyAutoInputBtn = this.autoInputSection.querySelector('#applyAutoInputBtn'); 
         
         // LocalStorage에서 설정 로드
         this.loadSettingsFromLocalStorage(); 
@@ -236,16 +236,17 @@ export class SkillCalculator {
             const valToUse = val === null || isNaN(val) ? '' : val; 
             tableHTML += `<th>
                             <div class="manual-input-wrapper">
-                                <input type="number" class="manual-x-input" data-col-index="${index}" value="${valToUse}" 
+                                <!-- 클래스 이름을 'target-value-input'으로 변경 -->
+                                <input type="number" class="target-value-input" data-col-index="${index}" value="${valToUse}" 
                                     min="${MIN_TARGET_VALUE}" max="${MAX_TARGET_VALUE}">
                                 <span class="percent-sign">%</span>
                             </div>
                         </th>`;
         });
-        tableHTML += '</tr></thead><tbody></tbody>'; // tbody is left empty and filled in _updateTableCells
+        tableHTML += '</tr></thead><tbody></tbody>';
         
         this.skillTable.innerHTML = tableHTML;
-        this.bindManualInputEvents(); // Bind event listeners to newly created input fields
+        this.bindManualInputEvents();
     }
 
     /**
@@ -339,7 +340,7 @@ export class SkillCalculator {
     }
 
     bindManualInputEvents() {
-        const manualInputs = this.skillTable.querySelectorAll('thead th .manual-x-input');
+        const manualInputs = this.skillTable.querySelectorAll('thead th .target-value-input');
         manualInputs.forEach((input, index) => {
             // Check if InputNumberElement instance is already bound to this input
             // (prevents creating new instances every time renderTableStructure is called)

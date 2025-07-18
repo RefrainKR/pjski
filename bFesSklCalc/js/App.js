@@ -4,7 +4,8 @@ import { SkillCalculator } from './components/SkillCalculator.js';
 import { CharacterRankManager } from './components/CharacterRankManager.js';
 import { BackupManager } from './components/BackupManager.js';
 import { MESSAGE_DISPLAY_DURATION } from './data.js';
-import { LOCAL_STORAGE_KEY, SKILL_CALCULATOR_SETTINGS_KEY } from './data.js'; // Import necessary constants
+// DraggableScroller 유틸리티를 import 합니다.
+import { DraggableScroller } from './utils/DraggableScroller.js';
 
 export class App {
     constructor() {
@@ -33,6 +34,7 @@ export class App {
 
         this.initTabNavigation();
         this.initDropdownSections();
+        this.initDraggableScrolling(); 
     }
 
     /**
@@ -145,6 +147,18 @@ export class App {
                 }
             });
         });
+    }
+
+    initDraggableScrolling() {
+        const draggableNavbar = document.querySelector('.navbar-actions');
+        const draggableSkillControls = document.querySelector('.skill-controls-top');
+        
+        if (draggableNavbar) {
+            new DraggableScroller(draggableNavbar);
+        }
+        if (draggableSkillControls) {
+            new DraggableScroller(draggableSkillControls);
+        }
     }
 }
 

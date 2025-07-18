@@ -9,34 +9,49 @@ export class CharacterRankManager {
      * @param {Function} messageDisplayCallback - 메시지를 표시하기 위한 콜백 함수.
      */
     constructor(initialContainerId, messageDisplayCallback) {
-        // 초기 컨테이너 ID를 저장하고, 실제 렌더링은 renderCharacterRanks 메서드에서 동적으로 처리
         this.initialContainerId = initialContainerId; 
         this.messageDisplayCallback = messageDisplayCallback;
         this.characterRanks = this.loadCharacterRanks();
-        this.inputElements = {}; // InputNumberElement 인스턴스를 저장할 객체
-
-        // constructor에서는 바로 렌더링하지 않고, App.js에서 필요할 때 renderCharacterRanks를 호출하도록 변경
-        // 이렇게 하면 DOM이 완전히 로드되지 않은 상태에서 querySelector를 호출하는 오류를 방지할 수 있습니다.
+        this.inputElements = {}; 
     }
 
     loadCharacterRanks() {
+        // 1. CHARACTER_DATA에 있는 모든 캐릭터에 대해 기본 랭크(1)와 비활성화(active: false) 상태로 초기화
+        const allCharactersDefaultRanks = {};
+        CHARACTER_DATA.forEach(group => {
+            group.characters.forEach(charName => {
+                allCharactersDefaultRanks[charName] = { rank: 1, active: false }; // 요청에 따라 초기값 '비활성화'로 변경
+            });
+        });
+
+        // 2. LocalStorage에서 저장된 데이터 불러오기
         const storedData = localStorage.getItem(LOCAL_STORAGE_KEY);
         if (storedData) {
             try {
-                return JSON.parse(storedData);
+                const parsedStoredData = JSON.parse(storedData);
+                // 3. 불러온 데이터를 기본값 위에 병합 (덮어쓰기)
+                if (typeof parsedStoredData === 'object' && parsedStoredData !== null) {
+                    for (const charName in parsedStoredData) {
+                        // CHARACTER_DATA에 존재하는 캐릭터에 대해서만 병합
+                        if (allCharactersDefaultRanks.hasOwnProperty(charName)) {
+                            const storedCharData = parsedStoredData[charName];
+                            
+                            // 랭크 값 유효성 검사 및 범위 제한 (1-100)
+                            const storedRank = parseInt(storedCharData.rank);
+                            allCharactersDefaultRanks[charName].rank = isNaN(storedRank) ? 1 : Math.max(1, Math.min(100, storedRank));
+                            
+                            // 활성화 상태 유효성 검사 (boolean 타입 확인)
+                            allCharactersDefaultRanks[charName].active = typeof storedCharData.active === 'boolean' ? storedCharData.active : false;
+                        }
+                    }
+                }
             } catch (e) {
-                console.error("Error parsing character ranks from LocalStorage:", e);
-                localStorage.removeItem(LOCAL_STORAGE_KEY); // Corrupted data, clear it
+                console.error("Error parsing character ranks from LocalStorage, resetting data:", e);
+                localStorage.removeItem(LOCAL_STORAGE_KEY); // 데이터 손상 시 LocalStorage에서 제거
+                // 이 경우 allCharactersDefaultRanks (위에서 초기화된 기본값)가 반환됩니다.
             }
         }
-        // 기본값으로 초기화: 모든 캐릭터 랭크 1, 활성화
-        const defaultRanks = {};
-        CHARACTER_DATA.forEach(group => {
-            group.characters.forEach(charName => {
-                defaultRanks[charName] = { rank: 1, active: true };
-            });
-        });
-        return defaultRanks;
+        return allCharactersDefaultRanks;
     }
 
     saveCharacterRanks() {
@@ -62,26 +77,22 @@ export class CharacterRankManager {
         CHARACTER_DATA.forEach(group => {
             const groupSection = document.createElement('div');
             groupSection.className = 'group-section';
-            groupSection.innerHTML = `<h2>${group.groupName}</h2>`;
+            // h2에 group-title-blue 클래스 추가
+            groupSection.innerHTML = `<h2 class="group-title-blue">${group.groupName}</h2>`;
 
             const characterGrid = document.createElement('div');
             characterGrid.className = 'character-grid';
 
             group.characters.forEach(charName => {
-                const charData = this.characterRanks[charName] || { rank: 1, active: true };
+                // this.characterRanks[charName]는 loadCharacterRanks에 의해 항상 존재함
+                const charData = this.characterRanks[charName]; 
                 const characterItem = document.createElement('div');
                 characterItem.className = 'character-item';
 
                 characterItem.innerHTML = `
                     <label>${charName}</label>
                     <div class="character-controls">
-                        <input type="number" 
-                               id="rank-${charName}" 
-                               value="${charData.rank}" 
-                               min="1" max="100" 
-                               data-char-name="${charName}">
                         <div class="toggle-wrapper">
-                            <span class="status-label">${charData.active ? '활성화' : '비활성화'}</span>
                             <label class="toggle-switch">
                                 <input type="checkbox" 
                                        id="toggle-${charName}" 
@@ -90,8 +101,13 @@ export class CharacterRankManager {
                                 <span class="slider"></span>
                             </label>
                         </div>
+                        <input type="number" 
+                               id="rank-${charName}" 
+                               value="${charData.rank}" 
+                               min="1" max="100" 
+                               data-char-name="${charName}">
                     </div>
-                `;
+                `; // input type="number"와 toggle-wrapper 순서 변경
                 characterGrid.appendChild(characterItem);
             });
             groupSection.appendChild(characterGrid);
@@ -112,6 +128,7 @@ export class CharacterRankManager {
                 100, // max rank
                 1, // defaultValue (blank 시 1로 되돌림)
                 (validatedValue) => {
+                    // 이 콜백이 호출될 때는 this.characterRanks[charName]가 항상 존재하도록 loadCharacterRanks를 수정함
                     this.characterRanks[charName].rank = validatedValue;
                     this.saveCharacterRanks();
                 }
@@ -127,11 +144,11 @@ export class CharacterRankManager {
                 const isActive = event.target.checked;
                 this.characterRanks[charName].active = isActive;
                 
-                // 상태 라벨 업데이트
-                const statusLabel = event.target.closest('.toggle-wrapper').querySelector('.status-label');
-                if (statusLabel) {
-                    statusLabel.textContent = isActive ? '활성화' : '비활성화';
-                }
+                // 상태 라벨 업데이트 로직 제거 (요청에 따라)
+                // const statusLabel = event.target.closest('.toggle-wrapper').querySelector('.status-label');
+                // if (statusLabel) {
+                //     statusLabel.textContent = isActive ? '활성화' : '비활성화';
+                // }
 
                 this.saveCharacterRanks();
             });
@@ -146,7 +163,24 @@ export class CharacterRankManager {
 
     // 외부에서 캐릭터 랭크 데이터를 설정할 때 사용 (백업 복원 시)
     setCharacterRanks(data) {
-        this.characterRanks = data;
+        // 이 메서드도 loadCharacterRanks와 유사하게 병합 로직을 적용하여
+        // 모든 캐릭터가 올바르게 초기화되도록 합니다.
+        const mergedRanks = {};
+        CHARACTER_DATA.forEach(group => {
+            group.characters.forEach(charName => {
+                // 기본값으로 초기화
+                mergedRanks[charName] = { rank: 1, active: false }; 
+                // 불러온 데이터에 해당 캐릭터가 있으면 덮어쓰기
+                if (data && data.hasOwnProperty(charName)) {
+                    const importedCharData = data[charName];
+                    const importedRank = parseInt(importedCharData.rank);
+                    mergedRanks[charName].rank = isNaN(importedRank) ? 1 : Math.max(1, Math.min(100, importedRank));
+                    mergedRanks[charName].active = typeof importedCharData.active === 'boolean' ? importedCharData.active : false;
+                }
+            });
+        });
+        this.characterRanks = mergedRanks;
+
         // 현재 활성화된 컨테이너에 렌더링 (드롭다운 또는 탭)
         if (document.getElementById('character-ranks-section').classList.contains('active')) {
             this.renderCharacterRanks('character-ranks-content');
