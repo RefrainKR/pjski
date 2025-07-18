@@ -77,8 +77,7 @@ export class CharacterRankManager {
         CHARACTER_DATA.forEach(group => {
             const groupSection = document.createElement('div');
             groupSection.className = 'group-section';
-            // h2에 group-title-blue 클래스 추가
-            groupSection.innerHTML = `<h2>${group.groupName}</h2>`;
+            groupSection.innerHTML = `<h3>${group.groupName}</h3>`;
 
             const characterGrid = document.createElement('div');
             characterGrid.className = 'character-grid';

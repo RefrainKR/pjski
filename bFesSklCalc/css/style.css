@@ -54,10 +54,13 @@ body {
 }
 
 h2, h3 {
-    margin-top: 0;
-    margin-bottom: 1rem; /* 16px */
     font-size: 1.5rem; /* 24px */
-    /* ... (4번 요청에서 추가될 스타일) ... */
+    color: #007bff;
+    border-bottom: 1px solid #eee;
+    margin-top: 0;
+    margin-bottom: 0.9375rem; /* 15px */
+    padding-bottom: 0.625rem; /* 10px */
+
 }
 h3 {
     font-size: 1.25rem; /* 20px */
@@ -210,15 +213,6 @@ h3 {
     border-radius: 0.5rem; /* 8px */
     padding: 0.9375rem; /* 15px */
     background-color: #fdfdfd;
-}
-
-.group-section h2.group-title-blue {
-    font-size: 1.1em;
-    color: #007bff;
-    margin-top: 0; /* 이미 0이지만 명시 */
-    margin-bottom: 0.9375rem; /* 15px */
-    border-bottom: 1px solid #eee;
-    padding-bottom: 0.625rem; /* 10px */
 }
 
 .character-grid {
@@ -450,9 +444,6 @@ input:checked + .slider:before {
     border-radius: 0.5rem; /* 8px */
     background-color: #ffffff;
 }
-.skill-calculator > h2 {
-    margin-bottom: 1.5rem; /* 24px, 설정 그룹과의 간격 */
-}
 
 .table-config-group { 
     margin-bottom: 1.25rem; /* 20px */
@@ -460,6 +451,11 @@ input:checked + .slider:before {
     gap: 1.25rem; /* 20px */
     flex-wrap: wrap; 
     align-items: flex-end; 
+
+    border: 1px solid #dee2e6; /* 연한 회색 테두리 */
+    border-radius: 0.5rem; /* 8px 둥근 모서리 */
+    padding: 1.25rem; /* 20px 내부 여백 */
+    background-color: #f8f9fa; /* 약간의 배경색 */
 }
 
 .config-group {
@@ -764,18 +760,15 @@ input:checked + .slider:before {
     /* --- 수정된 부분 --- */
     /* table-config-group도 위와 동일한 로직을 적용합니다. */
     .table-config-group {
-        margin-bottom: 1.25rem;
-        display: flex; 
-        gap: 1.25rem;
-        flex-wrap: wrap; 
-        align-items: flex-end; 
-        
-        /* --- 추가된 스타일 --- */
-        border: 1px solid #dee2e6; /* 연한 회색 테두리 */
-        border-radius: 0.5rem; /* 8px 둥근 모서리 */
-        padding: 1.25rem; /* 20px 내부 여백 */
-        background-color: #f8f9fa; /* 약간의 배경색 */
+        flex-direction: row; /* 가로 정렬 유지 */
+        flex-wrap: nowrap; /* 줄바꿈 방지 */
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        cursor: grab;
+        padding-bottom: 1rem; /* 스크롤 공간 확보 */
+        margin-bottom: 1rem;
     }
+    
     .table-config-group.active-drag {
         cursor: grabbing;
     }
