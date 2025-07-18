@@ -20,6 +20,7 @@ export class SkillCalculator {
         this.container = document.getElementById(containerId);
         this.skillLevelSelect = this.container.querySelector('#skill-level-select');
         this.skillTable = this.container.querySelector('#skill-comparison-table');
+        this.skillTableContainer = this.container.querySelector('.skill-table-container'); // 컨테이너 요소 참조 추가
         this.messageDisplayCallback = messageDisplayCallback;
 
         this.rankMinInput = this.container.querySelector('#rank-min');
@@ -64,6 +65,61 @@ export class SkillCalculator {
         // 초기 테이블 렌더링
         this._renderTableStructure(); // 테이블 구조를 한 번만 그림
         this._updateTableCells(); // 초기 셀 내용 업데이트
+
+        // 동적 컬럼 표시/숨김 기능 초기화
+        this._initColumnVisibilityObserver(); 
+    }
+
+    /**
+     * 테이블 컨테이너의 크기 변경을 감지하여 열의 표시 여부를 업데이트하는 ResizeObserver를 초기화합니다.
+     */
+    _initColumnVisibilityObserver() {
+        // ResizeObserver를 지원하지 않는 구형 브라우저에서는 실행하지 않음
+        if (!('ResizeObserver' in window)) {
+            return;
+        }
+
+        const observer = new ResizeObserver(() => {
+            this._updateColumnVisibility();
+        });
+
+        // skill-table-container 요소의 크기 변경을 감지 시작
+        observer.observe(this.skillTableContainer);
+    }
+
+    /**
+     * 컨테이너 너비에 맞춰 테이블 열을 동적으로 숨기거나 표시합니다.
+     */
+    _updateColumnVisibility() {
+        const containerWidth = this.skillTableContainer.clientWidth;
+        const yAxisHeader = this.skillTable.querySelector('tbody th');
+        if (!yAxisHeader) return; // 테이블 내용이 없으면 중단
+
+        // Y축 헤더(랭크)의 너비를 제외한 사용 가능한 너비 계산
+        const yAxisHeaderWidth = yAxisHeader.offsetWidth;
+        let availableWidth = containerWidth - yAxisHeaderWidth;
+        let currentWidth = 0;
+
+        // thead의 모든 th (첫 번째 코너 헤더 제외)를 가져옴
+        const xHeaders = this.skillTable.querySelectorAll('thead th:not(:first-child)');
+        
+        xHeaders.forEach((th, index) => {
+            const colIndex = index + 2; // CSS nth-child는 1부터 시작하고, 첫 번째는 Y축 헤더이므로 +2
+            currentWidth += th.offsetWidth;
+
+            // 해당 열의 모든 td 요소를 선택
+            const cells = this.skillTable.querySelectorAll(`tbody td:nth-child(${colIndex})`);
+
+            if (currentWidth > availableWidth) {
+                // 사용 가능한 너비를 초과하면 해당 열 숨김
+                th.style.visibility = 'hidden';
+                cells.forEach(cell => cell.style.visibility = 'hidden');
+            } else {
+                // 사용 가능한 너비 내에 있으면 해당 열 표시
+                th.style.visibility = 'visible';
+                cells.forEach(cell => cell.style.visibility = 'visible');
+            }
+        });
     }
 
     bindEvents() {
@@ -234,9 +290,9 @@ export class SkillCalculator {
         // X-axis header always consists of input fields
         xValues.forEach((val, index) => {
             const valToUse = val === null || isNaN(val) ? '' : val; 
+                // 클래스 이름 변경: manual-input-wrapper -> target-value-wrapper
             tableHTML += `<th>
-                            <div class="manual-input-wrapper">
-                                <!-- 클래스 이름을 'target-value-input'으로 변경 -->
+                            <div class="target-value-wrapper"> 
                                 <input type="number" class="target-value-input" data-col-index="${index}" value="${valToUse}" 
                                     min="${MIN_TARGET_VALUE}" max="${MAX_TARGET_VALUE}">
                                 <span class="percent-sign">%</span>

@@ -14,8 +14,8 @@ body {
 
 .container {
     max-width: 1200px; /* 고정 최대 너비 */
-    margin: 20px auto;
-    padding: 0 1rem; /* 반응형 패딩 (16px) */
+    margin:  auto;
+    padding: 20px 1rem; /* 반응형 패딩 (16px) */
     flex-grow: 1; /* Allow container to grow and push footer down */
 }
 
@@ -40,10 +40,10 @@ body {
 }
 
 .navbar-brand {
-    font-size: 1.8em;
+    font-size: 1.5rem; /* em -> rem 변경 */
     font-weight: bold;
-    letter-spacing: 0.5px;
-    padding: 0.5rem 0; /* 모바일에서 탭 상단에 공간 확보 */
+    letter-spacing: 0.0313rem; /* 0.5px */
+    padding: 0.5rem 0; 
 }
 
 .navbar-actions {
@@ -53,6 +53,16 @@ body {
     justify-content: center; /* 모바일에서 버튼 중앙 정렬 */
 }
 
+h2, h3 {
+    margin-top: 0;
+    margin-bottom: 1rem; /* 16px */
+    font-size: 1.5rem; /* 24px */
+    /* ... (4번 요청에서 추가될 스타일) ... */
+}
+h3 {
+    font-size: 1.25rem; /* 20px */
+}
+
 /* --- Start: Refactored Button Styles --- */
 
 /* 1. 통합 버튼 기본 클래스 (.btn) */
@@ -60,7 +70,7 @@ body {
 .btn {
     display: inline-block;
     padding: 0.625rem 0.9375rem; /* 10px 15px */
-    font-size: 1em;
+    font-size: 1rem; /* em -> rem */
     font-weight: bold;
     text-align: center;
     text-decoration: none;
@@ -163,7 +173,7 @@ body {
 }
 
 .dropdown-title {
-    font-size: 1.2em;
+    font-size: 1.125rem; /* em -> rem */
     font-weight: bold;
     color: #333;
 }
@@ -171,7 +181,7 @@ body {
 .close-btn {
     background: none;
     border: none;
-    font-size: 1.8em;
+    font-size: 1.75rem; /* em -> rem */
     cursor: pointer;
     color: #666;
     padding: 0;
@@ -205,7 +215,7 @@ body {
 .group-section h2.group-title-blue {
     font-size: 1.1em;
     color: #007bff;
-    margin-top: 0;
+    margin-top: 0; /* 이미 0이지만 명시 */
     margin-bottom: 0.9375rem; /* 15px */
     border-bottom: 1px solid #eee;
     padding-bottom: 0.625rem; /* 10px */
@@ -354,7 +364,7 @@ input:checked + .slider:before {
     padding: 1.25rem; /* 20px */
 }
 
-.auto-input-controls .control-group {
+.auto-input-controls .config-group {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
@@ -385,7 +395,7 @@ input:checked + .slider:before {
     border-radius: 0.5rem; /* 8px */
     box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.05); /* 2px 8px */
     overflow: hidden;
-    margin-top: 1.25rem; /* 20px */
+    margin-top: 0rem;
 }
 
 .tab-buttons {
@@ -399,7 +409,7 @@ input:checked + .slider:before {
     background-color: #f8f9fa;
     border: none;
     cursor: pointer;
-    font-size: 1.1em;
+    font-size: 1.05rem; /* em -> rem */
     font-weight: bold;
     color: #555;
     transition: all 0.3s ease;
@@ -440,8 +450,11 @@ input:checked + .slider:before {
     border-radius: 0.5rem; /* 8px */
     background-color: #ffffff;
 }
+.skill-calculator > h2 {
+    margin-bottom: 1.5rem; /* 24px, 설정 그룹과의 간격 */
+}
 
-.skill-controls-top {
+.table-config-group { 
     margin-bottom: 1.25rem; /* 20px */
     display: flex; 
     gap: 1.25rem; /* 20px */
@@ -449,7 +462,7 @@ input:checked + .slider:before {
     align-items: flex-end; 
 }
 
-.control-group {
+.config-group {
     display: flex; 
     flex-direction: column;
     gap: 0.3125rem; /* 5px */
@@ -463,43 +476,38 @@ input:checked + .slider:before {
     gap: 0.3125rem; /* 5px */
 }
 
-.control-group label {
+.config-group label {
     font-weight: bold;
     font-size: 0.9em;
     color: #555;
     margin-bottom: 0.125rem; /* 2px */
 }
 
-.control-group input[type="number"],
-.control-group select {
+.config-group input[type="number"],
+.config-group select {
     width: 5rem; /* 80px */
 }
 
-.control-group span {
+.config-group span {
     font-size: 1.2em;
     font-weight: bold;
     color: #777;
     margin: 0 0.3125rem; /* 5px */
 }
 
-/* Skill Table Interaction */
-.skill-table-interaction-row {
-    display: flex;
-    justify-content: space-between; 
-    align-items: center; 
-    margin-bottom: 0; 
-    padding-right: 0.3125rem; /* 5px */
+.table-action-buttons {
+    margin-bottom: 0.75rem; /* 12px */
 }
 
 .legend-container {
     display: flex;
-    gap: 0.9375rem; /* 15px */
+    justify-content: flex-start; /* 좌측 정렬로 변경 */
+    gap: 0.9375rem; 
     font-size: 0.9em;
     color: #666;
     flex-wrap: wrap;
-    justify-content: center;
+    margin-bottom: 0.5rem; /* 테이블과의 간격 조정 */
 }
-
 .legend-item {
     display: flex;
     align-items: center;
@@ -523,6 +531,7 @@ input:checked + .slider:before {
     overflow-y: auto;
     max-width: 100%;
     max-height: 80vh;
+    position: relative; /* << 추가: sticky 요소의 기준점 설정 */
 }
 
 .skill-table {
@@ -534,7 +543,7 @@ input:checked + .slider:before {
 
 .skill-table th, .skill-table td {
     border: 1px solid #ddd;
-    padding: 0.5rem; /* 8px */
+    /* padding: 0.5rem; -> 이 부분은 tbody의 th/td에만 적용되도록 분리하는 것이 좋습니다. */
     text-align: center;
     white-space: nowrap;
     color: #333; 
@@ -542,21 +551,21 @@ input:checked + .slider:before {
     box-sizing: border-box; 
 }
 
+/* thead의 th에 대한 스타일을 명확히 분리합니다. */
 .skill-table thead th {
     background-color: #f2f2f2;
     font-weight: bold;
     position: sticky; 
     top: 0;
     z-index: 10; 
+    padding: 0; /* 2. padding 제거 */
+    min-width: 4.0625rem; /* 65px */
 }
 
-.skill-table tbody th { 
-    background-color: #f2f2f2; 
-    font-weight: bold;
-    position: sticky;
-    left: 0;
-    z-index: 9; 
-    min-width: 3.75rem; /* 60px */
+/* tbody의 th와 td에만 패딩을 다시 적용합니다. */
+.skill-table tbody th,
+.skill-table tbody td {
+    padding: 0.5rem; /* 8px */
 }
 
 .skill-table tbody tr:nth-child(even) {
@@ -579,26 +588,25 @@ input:checked + .slider:before {
     background-color: #f5f5f5;
 }
 
-.manual-input-wrapper {
-    display: flex;
+.target-value-wrapper { /* 1. 이름 변경 */
+    display: flex; /* 2. flexbox 적용 */
     align-items: center; /* 세로 중앙 정렬 */
     justify-content: center;
-    height: 100%;
-    width: 100%;
+    height: 100%; /* 부모(th) 높이 꽉 채우기 */
+    width: 100%; /* 부모(th) 너비 꽉 채우기 */
     box-sizing: border-box;
-    padding: 0; /* 내부 여백 제거 */
 }
 
-/* 1) 클래스 이름을 target-value-input으로 변경하고 스타일을 수정합니다. */
+/* 기존 .target-value-input 스타일을 아래와 같이 수정합니다. */
 .target-value-input {
-    width: 100%; /* 부모 요소의 너비를 모두 사용 */
-    flex-grow: 1; /* 남는 공간을 모두 차지 */
-    padding: 0 0.3rem; /* 좌우 약간의 여백 */
-    border: none; /* 2) 테두리 제거 */
+    width: 100%; 
+    flex-grow: 1; 
+    padding: 0 0.15rem; /* 3. 좌우 패딩 축소 */
+    border: none;
     background-color: transparent;
     text-align: right; 
     font-weight: bold;
-    font-size: 0.9em; 
+    font-size: 0.9rem; /* em -> rem */
     color: #333;
     outline: none;
     -moz-appearance: textfield; 
@@ -609,12 +617,12 @@ input:checked + .slider:before {
     margin: 0;
 }
 
-/* '%' 기호는 공간을 차지하지 않도록 약간의 스타일 조정 */
-.manual-input-wrapper .percent-sign {
+/* '%' 기호 스타일은 거의 그대로 유지합니다. */
+.target-value-wrapper .percent-sign {
     font-weight: bold;
     font-size: 0.9em; 
     color: #333;
-    padding-right: 0.3rem; /* 오른쪽 여백 확보 */
+    padding-right: 0.3rem;
 }
 
 .skill-table.manual-mode tbody td.empty-cell {
@@ -664,7 +672,7 @@ input:checked + .slider:before {
 
 /* Footer Styles */
 .footer {
-    margin-top: 2.5rem; /* 40px */
+    margin-top: 0;
     padding: 0.9375rem 1.25rem; /* 15px 20px */
     background-color: #3f51b5;
     color: white;
@@ -754,25 +762,29 @@ input:checked + .slider:before {
     }
 
     /* --- 수정된 부분 --- */
-    /* skill-controls-top도 위와 동일한 로직을 적용합니다. */
-    .skill-controls-top {
-        flex-direction: row; /* 가로 정렬 유지 */
-        flex-wrap: nowrap; /* 줄바꿈 방지 */
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        cursor: grab;
-        padding-bottom: 1rem; /* 스크롤 공간 확보 */
-        margin-bottom: 1rem;
+    /* table-config-group도 위와 동일한 로직을 적용합니다. */
+    .table-config-group {
+        margin-bottom: 1.25rem;
+        display: flex; 
+        gap: 1.25rem;
+        flex-wrap: wrap; 
+        align-items: flex-end; 
+        
+        /* --- 추가된 스타일 --- */
+        border: 1px solid #dee2e6; /* 연한 회색 테두리 */
+        border-radius: 0.5rem; /* 8px 둥근 모서리 */
+        padding: 1.25rem; /* 20px 내부 여백 */
+        background-color: #f8f9fa; /* 약간의 배경색 */
     }
-    .skill-controls-top.active-drag {
+    .table-config-group.active-drag {
         cursor: grabbing;
     }
 
-    .skill-controls-top::-webkit-scrollbar { display: none; }
-    .skill-controls-top { -ms-overflow-style: none; scrollbar-width: none; }
+    .table-config-group::-webkit-scrollbar { display: none; }
+    .table-config-group { -ms-overflow-style: none; scrollbar-width: none; }
     /* --- 수정 끝 --- */
 
-    .control-group {
+    .config-group {
         flex-shrink: 0; /* 그룹이 줄어들지 않도록 설정 */
         width: auto; /* 원래 너비 유지 */
     }

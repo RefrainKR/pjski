@@ -151,7 +151,7 @@ export class App {
 
     initDraggableScrolling() {
         const draggableNavbar = document.querySelector('.navbar-actions');
-        const draggableSkillControls = document.querySelector('.skill-controls-top');
+        const draggableSkillControls = document.querySelector('.table-config-group');
         
         if (draggableNavbar) {
             new DraggableScroller(draggableNavbar);
