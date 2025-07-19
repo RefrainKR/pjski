@@ -19,7 +19,7 @@ import { ToggleButtonElement } from '../utils/ToggleButtonElement.js';
  */
 export class SkillComparisonTable {
     constructor(containerId, messageDisplayCallback) {
-        // DOM 요소 선택
+        // --- DOM 요소 선택 ---
         this.container = document.getElementById(containerId);
         this.messageDisplayCallback = messageDisplayCallback;
         this.skillLevelSelect = this.container.querySelector('#skill-level-select');
@@ -28,30 +28,35 @@ export class SkillComparisonTable {
         this.rankMinInput = this.container.querySelector('#rank-min');
         this.rankMaxInput = this.container.querySelector('#rank-max');
         this.rankIncrementInput = this.container.querySelector('#rank-increment');
-        this.autoInputTriggerBtn = this.container.querySelector('#autoInputTriggerBtn'); 
-        this.autoInputSection = document.getElementById('auto-input-section'); 
-        this.autoInputCloseBtn = this.autoInputSection.querySelector('.close-btn'); 
-        this.autoInputStartInput = this.autoInputSection.querySelector('#auto-input-start'); 
-        this.autoInputEndInput = this.autoInputSection.querySelector('#auto-input-end'); 
-        this.autoInputIncrementInput = this.autoInputSection.querySelector('#auto-input-increment'); 
-        this.applyAutoInputBtn = this.autoInputSection.querySelector('#applyAutoInputBtn'); 
+        
+        // 자동 입력 패널과 그 내부의 요소들 선택
+        this.autoInputPanel = document.getElementById('auto-input-panel');
+        this.applyAutoInputBtn = this.autoInputPanel.querySelector('#applyAutoInputBtn');
+        this.autoInputStartInput = this.autoInputPanel.querySelector('#auto-input-start');
+        this.autoInputEndInput = this.autoInputPanel.querySelector('#auto-input-end');
+        this.autoInputIncrementInput = this.autoInputPanel.querySelector('#auto-input-increment');
+        
+        // 표시 모드 설명 레이블 선택
         this.displayModeLabel = document.getElementById('display-mode-label');
 
+        // --- 컴포넌트 인스턴스 생성 ---
         const displayModes = [
-            { name: 'highest', text: '높은 값', label: '표시된 값: 각전/각후 중 높은 값' },
-            { name: 'difference', text: '차이 값', label: '표시된 값: 각전/각후 스킬 값의 차이' }
+            { name: 'highest', text: '높은 값', label: '표시된 값: 각전 / 각후 중 높은 값' },
+            { name: 'difference', text: '차이 값', label: '표시된 값: 각전 / 각후 스킬 값의 차이' }
         ];
+
         this.displayModeToggle = new ToggleButtonElement(
-            'btn-display-mode', // 버튼 ID
-            displayModes,       // 상태 배열
-            (modeName, state) => { // 상태 변경 시 실행될 콜백
-                this.displayModeLabel.textContent = state.label; // 설명 레이블 업데이트
-                this._updateCellDisplay(modeName); // 테이블 셀 내용 업데이트
+            'btn-display-mode',
+            displayModes,
+            (modeName, state) => {
+                this.displayModeLabel.textContent = state.label;
+                this._updateCellDisplay(modeName);
             }
         );
         
         this.loadSettingsFromLocalStorage(); 
         
+        // InputNumberElement 인스턴스 생성
         this.rankMinElement = new InputNumberElement(this.rankMinInput, MIN_RANK_MIN, MAX_RANK_MIN, DEFAULT_RANK_MIN, this.handleRankChange.bind(this), FALLBACK_RANK_INPUT_ON_BLANK);
         this.rankMaxElement = new InputNumberElement(this.rankMaxInput, MIN_RANK_MAX, MAX_RANK_MAX, DEFAULT_RANK_MAX, this.handleRankChange.bind(this), FALLBACK_RANK_INPUT_ON_BLANK);
         this.rankIncrementElement = new InputNumberElement(this.rankIncrementInput, MIN_RANK_INCREMENT, MAX_RANK_INCREMENT, DEFAULT_RANK_INCREMENT, this.handleRankChange.bind(this), FALLBACK_RANK_INPUT_ON_BLANK);
@@ -62,25 +67,25 @@ export class SkillComparisonTable {
 
         this.bindEvents();
 
-        // 초기값 설정
+        // --- 초기화 및 렌더링 ---
         this.rankMinElement.setValue(this.rankMinInput.value, true);
         this.rankMaxElement.setValue(this.rankMaxInput.value, true);
         this.rankIncrementElement.setValue(this.rankIncrementInput.value, true);
 
-        // 초기 렌더링
         this._renderTableStructure();
         this._calculateAndRenderAllCells();
         this._initColumnVisibilityObserver();
     }
 
     bindEvents() {
+        // 스킬 레벨 변경 시 테이블 재계산
         this.skillLevelSelect.addEventListener('change', () => {
             this.saveSettingsToLocalStorage();
             this._calculateAndRenderAllCells();
         });
-        this.autoInputTriggerBtn.addEventListener('click', () => this.openAutoInputModal());
+
+        // 자동 입력 패널의 '적용' 버튼 클릭 시 값 적용
         this.applyAutoInputBtn.addEventListener('click', () => this.applyAutoInputValues());
-        this.autoInputCloseBtn.addEventListener('click', () => this.closeAutoInputModal());
     }
 
     handleRankChange() {
@@ -98,18 +103,6 @@ export class SkillComparisonTable {
 
     handleAutoInputInputChange() {
         this.saveSettingsToLocalStorage();
-    }
-
-    openAutoInputModal() {
-        this.autoInputSection.classList.add('active');
-        const settings = JSON.parse(localStorage.getItem(SKILL_CALCULATOR_SETTINGS_KEY) || '{}');
-        this.autoInputStartElement.setValue(settings.autoInputStart, false); 
-        this.autoInputEndElement.setValue(settings.autoInputEnd, false);     
-        this.autoInputIncrementElement.setValue(settings.autoInputIncrement, false); 
-    }
-
-    closeAutoInputModal() {
-        this.autoInputSection.classList.remove('active');
     }
 
     applyAutoInputValues() {
@@ -153,7 +146,6 @@ export class SkillComparisonTable {
         this.saveSettingsToLocalStorage();
         this._renderTableStructure();
         this._calculateAndRenderAllCells();
-        this.closeAutoInputModal();
     }
     
     _calculateAndRenderAllCells() {
@@ -196,19 +188,18 @@ export class SkillComparisonTable {
             }
 
             const result = calculator.calculate(charRank, parsedTargetValue);
+            const formattedDifference = (result.difference > 0 ? '+' : '') + result.difference + '%';
             
             let cellClass = '';
             if (result.winner === 'after') cellClass = 'skill-cell-blue';
             else if (result.winner === 'before') cellClass = 'skill-cell-yellow';
             else cellClass = 'skill-cell-gray';
             
-            const formattedDifference = (result.difference > 0 ? '+' : '') + result.difference + '%';
-
             rowHTML += `<td class="${cellClass}" 
-                data-highest-value="${result.highest}%"
-                data-difference-value="${formattedDifference}"
-                data-winner="${result.winner}">
-            </td>`;
+                            data-highest-value="${result.highest}%"
+                            data-difference-value="${formattedDifference}"
+                            data-winner="${result.winner}">
+                        </td>`;
         });
         rowHTML += `</tr>`;
         return rowHTML;
@@ -295,7 +286,7 @@ export class SkillComparisonTable {
         } else {
             this.manualXValues = [];
         }
-        // 로컬 스토리지에 데이터가 없거나, 수동 X 값이 비어있을 경우 기본값으로 채움
+        
         if (this.manualXValues.length === 0) {
             for (let i = DEFAULT_AUTO_INPUT_START; i <= DEFAULT_AUTO_INPUT_END; i += DEFAULT_AUTO_INPUT_INCREMENT) {
                 this.manualXValues.push(i);

@@ -1,10 +1,11 @@
 // js/App.js
 
+import { MESSAGE_DISPLAY_DURATION } from './data.js';
 import { SkillComparisonTable } from './components/SkillComparisonTable.js';
 import { CharacterRankManager } from './components/CharacterRankManager.js';
 import { BackupManager } from './components/BackupManager.js';
-import { MESSAGE_DISPLAY_DURATION } from './data.js';
 import { DraggableScroller } from './utils/DraggableScroller.js';
+import { PopupManager } from './utils/PopupManager.js';
 
 export class App {
     constructor() {
@@ -23,16 +24,34 @@ export class App {
         this.characterRankManager = new CharacterRankManager('character-ranks-tab-content', this.messageDisplay.bind(this));
 
         // BackupManager 인스턴스화 (백업 섹션 컨테이너 전달 및 콜백 함수 제공)
-        // 'backup-section'은 헤더 드롭다운 섹션에 있으므로 바로 접근 가능
         this.backupManager = new BackupManager(
-            'backup-section', // 백업 섹션의 ID
+            'backup-panel', // 백업 섹션의 ID
             this.messageDisplay.bind(this),
             this.characterRankManager.getCharacterRanks.bind(this.characterRankManager),
             this.characterRankManager.setCharacterRanks.bind(this.characterRankManager)
         );
 
+        this.popupManager = new PopupManager();
+
+        // --- 콜백 등록 로직 추가 ---
+        // 1. '캐릭터 랭크' 패널이 열릴 때
+        this.popupManager.onOpen('character-ranks-panel', () => {
+            this.characterRankManager.renderCharacterRanks('character-ranks-content');
+        });
+
+        // 2. '백업' 패널이 열릴 때
+        this.popupManager.onOpen('backup-panel', () => {
+            this.backupManager.displayUserId();
+        });
+
+        // 3. '자동 입력' 패널이 열릴 때 (필요하다면)
+        // 현재는 SkillComparisonTable에서 값을 채우므로 특별한 동작은 불필요.
+        // 하지만 만약 필요하다면 아래와 같이 등록 가능
+        // this.popupManager.onOpen('auto-input-panel', () => {
+        //     console.log('자동 입력 패널 열림');
+        // });
+
         this.initTabNavigation();
-        this.initDropdownSections();
         this.initDraggableScrolling(); 
     }
 
@@ -94,60 +113,6 @@ export class App {
                 initialTargetTabContent.classList.add('active');
             }
         }
-    }
-
-    initDropdownSections() {
-        // 헤더의 버튼들
-        const rankManagementBtn = document.getElementById('rankManagementBtn');
-        const backupBtn = document.getElementById('backupBtn');
-        // 스킬 계산기 탭 내의 '자동 입력' 버튼은 SkillCalculator 클래스에서 직접 관리하므로 여기서 참조하지 않음.
-        // SkillCalculator는 autoInputTriggerBtn에 대한 이벤트 리스너를 자체적으로 바인딩합니다.
-
-        // 드롭다운 섹션들
-        const characterRanksDropdownSection = document.getElementById('character-ranks-section'); // 헤더 드롭다운
-        const backupDropdownSection = document.getElementById('backup-section'); // 헤더 드롭다운
-        const autoInputDropdownSection = document.getElementById('auto-input-section'); // 헤더 드롭다운
-
-        // 모든 드롭다운 섹션을 닫는 헬퍼 함수
-        const closeAllDropdowns = () => {
-            [characterRanksDropdownSection, backupDropdownSection, autoInputDropdownSection].forEach(section => {
-                if (section) section.classList.remove('active');
-            });
-        };
-
-        // '캐릭터 랭크 관리' 버튼 (헤더)
-        if (rankManagementBtn) {
-            rankManagementBtn.addEventListener('click', () => {
-                closeAllDropdowns();
-                if (characterRanksDropdownSection) {
-                    characterRanksDropdownSection.classList.add('active');
-                    // 드롭다운 열 때 캐릭터 랭크를 렌더링 (탭의 렌더링과 별개)
-                    this.characterRankManager.renderCharacterRanks('character-ranks-content'); // 드롭다운용 컨테이너 ID 전달
-                }
-            });
-        }
-
-        // '백업' 버튼 (헤더)
-        if (backupBtn) {
-            backupBtn.addEventListener('click', () => {
-                closeAllDropdowns();
-                if (backupDropdownSection) {
-                    backupDropdownSection.classList.add('active');
-                    this.backupManager.displayUserId(); // 백업 모달 열 때 사용자 ID 업데이트
-                }
-            });
-        }
-
-        // 모든 드롭다운 섹션의 닫기 버튼
-        document.querySelectorAll('.dropdown-section .close-btn').forEach(button => {
-            button.addEventListener('click', (event) => {
-                const targetId = event.target.dataset.target;
-                const targetSection = document.getElementById(targetId);
-                if (targetSection) {
-                    targetSection.classList.remove('active');
-                }
-            });
-        });
     }
 
     initDraggableScrolling() {

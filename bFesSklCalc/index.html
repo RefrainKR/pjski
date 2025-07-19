@@ -12,27 +12,25 @@
             <nav class="navbar">
                 <div class="navbar-brand">스킬값 계산</div>
                 <div class="navbar-actions">
-                    <button id="rankManagementBtn" class="btn btn-md btn-primary">랭크 관리</button>
-                    <button id="backupBtn" class="btn btn-md btn-secondary">백업</button>
+                    <button id="rankManagementBtn" class="btn btn-md btn-primary" data-popup-trigger="character-ranks-panel">캐릭터 랭크</button>
+                    <button id="backupBtn" class="btn btn-md btn-secondary" data-popup-trigger="backup-panel">백업</button>
                 </div>
             </nav>
 
-            <!-- 캐릭터 랭크 드롭다운 섹션 (내용 변경 없음) -->
-            <div id="character-ranks-section" class="dropdown-section">
-                <div class="dropdown-title-bar">
-                    <span class="dropdown-title">캐릭터 랭크 관리</span>
-                    <button class="close-btn" data-target="character-ranks-section">×</button>
+            <div id="character-ranks-panel" class="popup-panel" data-popup-id="character-ranks-panel" data-popup-position="header">
+                <div class="popup-panel-title-bar">
+                    <span class="popup-panel-title">캐릭터 랭크 관리</span>
+                    <button class="popup-close-btn">×</button>
                 </div>
                 <div id="character-ranks-content" class="scrollable-content">
                     <!-- JS에서 동적으로 생성 -->
                 </div>
             </div>
 
-            <!-- 백업/복원 드롭다운 섹션 (수정된 버튼 클래스 적용) -->
-            <div id="backup-section" class="dropdown-section">
-                <div class="dropdown-title-bar">
-                    <span class="dropdown-title">데이터 백업 / 복원</span>
-                    <button class="close-btn" data-target="backup-section">×</button>
+            <div id="backup-panel" class="popup-panel" data-popup-id="backup-panel" data-popup-position="header">
+                <div class="popup-panel-title-bar">
+                    <span class="popup-panel-title">데이터 백업 / 복원</span>
+                    <button class="popup-close-btn">×</button>
                 </div>
                 <div class="backup-actions scrollable-content">
                     <button id="exportDataBtn" class="btn btn-success">데이터 내보내기(JSON)</button>
@@ -43,11 +41,10 @@
                 </div>
             </div>
 
-            <!-- 자동 입력 모달 (누락된 input 필드들 추가) -->
-            <div id="auto-input-section" class="dropdown-section">
-                <div class="dropdown-title-bar">
-                    <span class="dropdown-title">자동 입력 설정</span>
-                    <button class="close-btn" data-target="auto-input-section">×</button>
+            <div id="auto-input-panel" class="popup-panel" data-popup-id="auto-input-panel" data-popup-position="trigger">
+                <div class="popup-panel-title-bar">
+                    <span class="popup-panel-title">자동 입력 설정</span>
+                    <button class="popup-close-btn">×</button>
                 </div>
                 <div class="auto-input-controls scrollable-content">
                     <div class="config-group">
@@ -105,8 +102,8 @@
                             </div>
 
                             <div class="table-action-buttons">
-                                <button id="autoInputTriggerBtn" class="btn btn-sm btn-warning">자동 입력</button>
-                                <button id="btn-display-mode" class="btn btn-sm btn-secondary">차이 값</button>
+                <button id="autoInputTriggerBtn" class="btn btn-sm btn-warning" data-popup-trigger="auto-input-panel">자동 입력</button>
+                            <button id="btn-display-mode" class="btn btn-sm btn-secondary">높은 값</button>
                                 <!-- 앞으로 여기에 추가되는 버튼도 btn-sm을 사용하면 됩니다 -->
                                 <!-- <button class="btn btn-sm btn-info">다른 기능</button> -->
                             </div>
@@ -170,6 +167,7 @@
     </div>
 
     <script type="module" src="js/data.js"></script>
+    <script type="module" src="js/utils/PopupManager.js"></script>
     <script type="module" src="js/utils/InputNumberElement.js"></script>
     <script type="module" src="js/utils/DraggableScroller.js"></script> 
     <script type="module" src="js/utils/ToggleButtonElement.js"></script>
