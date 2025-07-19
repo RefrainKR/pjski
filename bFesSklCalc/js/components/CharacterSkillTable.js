@@ -85,44 +85,20 @@ export class CharacterSkillTable extends BaseSkillTable {
     _populateTableBody() {
         const charRank = this.rankInputElement.getValue();
         const yValues = [1, 2, 3, 4]; // Y축: 스킬 레벨
-        const xValues = this.manualXValues;
         
         const tbody = this.table.querySelector('tbody');
         if (!tbody) return;
-        
         tbody.innerHTML = '';
 
         yValues.forEach(yValue => {
-            const rowHTML = this._renderRow(yValue, xValues, charRank);
+            // yValue는 skillLevel이므로, calculator를 매번 새로 생성
+            const calculator = new SkillCalculator(yValue);
+            // charRank는 모든 행에서 동일하므로, 고정된 값을 반환하는 함수를 넘김
+            const rowHTML = this._renderRow(yValue, this.manualXValues, calculator, () => charRank);
             tbody.insertAdjacentHTML('beforeend', rowHTML);
         });
 
         this._updateCellDisplay(this.displayModeToggle.currentStateName);
-    }
-
-    _renderRow(skillLevel, xValues, charRank) {
-        let rowHTML = `<tr><th>${skillLevel}</th>`;
-        try {
-            const calculator = new SkillCalculator(skillLevel);
-            xValues.forEach(targetValue => {
-                const parsedTargetValue = parseInt(targetValue);
-                 if (isNaN(parsedTargetValue) || parsedTargetValue === 0) {
-                    rowHTML += `<td class="empty-cell"></td>`;
-                    return;
-                }
-                const result = calculator.calculate(charRank, parsedTargetValue);
-                const formattedDifference = (result.difference > 0 ? '+' : '') + result.difference + '%';
-                
-                let cellClass = '';
-                if (result.winner === 'after') cellClass = 'skill-cell-blue';
-                else if (result.winner === 'before') cellClass = 'skill-cell-yellow';
-                else cellClass = 'skill-cell-gray';
-                
-                rowHTML += `<td class="${cellClass}" data-highest-value="${result.highest}%" data-difference-value="${formattedDifference}"></td>`;
-            });
-        } catch(e) { /* 스킬레벨 오류 등 */ }
-        rowHTML += `</tr>`;
-        return rowHTML;
     }
     
     getAxisLabels() {

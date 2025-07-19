@@ -57,43 +57,20 @@ export class SkillComparisonTable extends BaseSkillTable {
             for (let i = rankMin; i <= rankMax; i += rankIncrement) {
                 yValues.push(i);
             }
-            const xValues = this.manualXValues;
-
+            
             const tbody = this.table.querySelector('tbody');
             if (!tbody) return;
-            
             tbody.innerHTML = '';
 
             yValues.forEach(yValue => {
-                const rowHTML = this._renderRow(calculator, yValue, xValues);
+                // yValue 자체가 charRank이므로, 그대로 전달하는 함수를 넘김
+                const rowHTML = this._renderRow(yValue, this.manualXValues, calculator, (rank) => rank);
                 tbody.insertAdjacentHTML('beforeend', rowHTML);
             });
             this._updateCellDisplay(this.displayModeToggle.currentStateName);
         } catch (error) {
             this.messageDisplayCallback(error.message, 'error');
         }
-    }
-
-    _renderRow(calculator, charRank, xValues) {
-        let rowHTML = `<tr><th>${charRank}</th>`;
-        xValues.forEach(targetValue => {
-            const parsedTargetValue = parseInt(targetValue);
-            if (isNaN(parsedTargetValue) || parsedTargetValue === 0) {
-                rowHTML += `<td class="empty-cell"></td>`;
-                return;
-            }
-            const result = calculator.calculate(charRank, parsedTargetValue);
-            const formattedDifference = (result.difference > 0 ? '+' : '') + result.difference + '%';
-            
-            let cellClass = '';
-            if (result.winner === 'after') cellClass = 'skill-cell-blue';
-            else if (result.winner === 'before') cellClass = 'skill-cell-yellow';
-            else cellClass = 'skill-cell-gray';
-            
-            rowHTML += `<td class="${cellClass}" data-highest-value="${result.highest}%" data-difference-value="${formattedDifference}"></td>`;
-        });
-        rowHTML += `</tr>`;
-        return rowHTML;
     }
     
     getAxisLabels() {

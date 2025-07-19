@@ -89,6 +89,40 @@ export class BaseSkillTable {
         });
     }
 
+    _renderRow(yValue, xValues, calculator, getRankForRow) {
+        let rowHTML = `<tr><th>${yValue}</th>`;
+        xValues.forEach(targetValue => {
+            const parsedTargetValue = parseInt(targetValue);
+            if (isNaN(parsedTargetValue) || parsedTargetValue === 0) {
+                rowHTML += `<td class="empty-cell"></td>`;
+                return;
+            }
+            
+            // getRankForRow 콜백을 사용해 현재 행에 맞는 랭크 값을 가져옴
+            const charRank = getRankForRow(yValue);
+
+            // SkillCalculator를 호출하여 새로운 데이터 구조를 받음
+            const result = calculator.calculate(charRank, parsedTargetValue);
+            
+            // --- 핵심: integer 객체의 데이터만 사용 ---
+            const { winner, highest, difference } = result.integer;
+
+            const formattedDifference = (difference > 0 ? '+' : '') + difference + '%';
+            
+            let cellClass = '';
+            if (winner === 'after') cellClass = 'skill-cell-blue';
+            else if (winner === 'before') cellClass = 'skill-cell-yellow';
+            else cellClass = 'skill-cell-gray';
+            
+            rowHTML += `<td class="${cellClass}" 
+                            data-highest-value="${highest}%" 
+                            data-difference-value="${formattedDifference}">
+                        </td>`;
+        });
+        rowHTML += `</tr>`;
+        return rowHTML;
+    }
+
     _updateCellDisplay(mode) {
         const cells = this.table.querySelectorAll('tbody td:not(.empty-cell)');
         cells.forEach(cell => {
