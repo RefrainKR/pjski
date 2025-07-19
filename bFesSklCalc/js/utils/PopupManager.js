@@ -56,7 +56,7 @@ export class PopupManager {
 		// --- onOpen 콜백 실행 로직 추가 ---
         const panelId = panel.dataset.popupId;
         if (typeof this.onOpenCallbacks[panelId] === 'function') {
-            this.onOpenCallbacks[panelId]();
+            this.onOpenCallbacks[panelId](trigger); // << trigger 인자 추가
         }
     }
 
