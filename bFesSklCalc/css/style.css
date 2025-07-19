@@ -361,13 +361,31 @@ input[type="number"]:focus, input[type="text"]:focus, select:focus {
     .navbar { flex-direction: column; align-items: center; }
     .navbar-brand { margin-bottom: 0.5rem; }
     .navbar-actions, .table-config-group {
-        width: 100%; justify-content: flex-start; flex-wrap: nowrap;
+        width: 100%; box-sizing: border-box;
+        justify-content: flex-start; flex-wrap: nowrap;
         overflow-x: auto; -webkit-overflow-scrolling: touch; cursor: grab;
-        padding-bottom: 1rem;
+        padding-bottom: 1rem; 
     }
-    .navbar-actions.active-drag, .table-config-group.active-drag { cursor: grabbing; }
-    .navbar-actions::-webkit-scrollbar, .table-config-group::-webkit-scrollbar { display: none; }
-    .navbar-actions, .table-config-group { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    /* --- 드래그 스크롤을 위한 공용 클래스 (신규) --- */
+    .draggable-on-mobile {
+        width: 100%;
+        box-sizing: border-box; justify-content: flex-start;
+        flex-wrap: nowrap; overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        cursor: grab; padding-bottom: 1rem; /* 스크롤바 공간 확보 및 터치 영역 확보 */
+    }
+    .draggable-on-mobile.active-drag {
+        cursor: grabbing;
+    }
+    .draggable-on-mobile::-webkit-scrollbar {
+        display: none;
+    }
+    .draggable-on-mobile {
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+    }
+
     .navbar-actions .btn, .table-config-group .config-group { flex-shrink: 0; width: auto; margin: 0 0.25rem; }
     .popup-panel { width: 95%; }
     .skill-table th, .skill-table td { padding: 0.3rem; font-size: 0.8rem; }

@@ -46,6 +46,7 @@ export class App {
                 ? this.characterSkillTable 
                 : this.skillComparisonTable;
             
+            activeTable.setupAutoInputPanel();
             activeTable.bindApplyAutoInputEvent();
         });
 

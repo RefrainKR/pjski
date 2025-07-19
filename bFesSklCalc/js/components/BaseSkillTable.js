@@ -62,12 +62,17 @@ export class BaseSkillTable {
         });
     }
 
-    applyAutoInputValues() {
+    /**
+     * "자동 입력" 팝업이 열릴 때 호출되어, 입력 필드에 기본값을 설정합니다.
+     */
+    setupAutoInputPanel() {
         const settings = JSON.parse(localStorage.getItem(SKILL_CALCULATOR_SETTINGS_KEY) || '{}');
         this.autoInputStartElement.setValue(settings.autoInputStart || DEFAULT_AUTO_INPUT_START, false);
         this.autoInputEndElement.setValue(settings.autoInputEnd || DEFAULT_AUTO_INPUT_END, false);
         this.autoInputIncrementElement.setValue(settings.autoInputIncrement || DEFAULT_AUTO_INPUT_INCREMENT, false);
+    }
 
+    applyAutoInputValues() {
         let startVal = this.autoInputStartElement.getValue();
         let endVal = this.autoInputEndElement.getValue();
         let incrementVal = this.autoInputIncrementElement.getValue();
