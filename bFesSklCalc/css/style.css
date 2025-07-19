@@ -10,14 +10,6 @@ body {
     min-height: 100vh;
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1.25rem 1rem;
-    flex-grow: 1;
-}
-
-/* Header and Navigation Bar */
 .header {
     background-color: #3f51b5;
     color: white;
@@ -50,6 +42,21 @@ body {
     flex-wrap: wrap;
     justify-content: center;
 }
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.25rem 1rem;
+    flex-grow: 1;
+    min-height: 81vh;
+}
+
+.footer {
+    padding: 0.9375rem 1.25rem; background-color: #3f51b5;
+    color: white; text-align: center; font-size: 0.9rem;
+    box-shadow: 0 -0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+}
+.footer p { margin: 0; }
 
 /* Headings */
 h2, h3 {
@@ -337,13 +344,6 @@ input[type="number"]:focus, input[type="text"]:focus, select:focus {
     color: #555;
 }
 
-/* Footer & Message */
-.footer {
-    padding: 0.9375rem 1.25rem; background-color: #3f51b5;
-    color: white; text-align: center; font-size: 0.9rem;
-    box-shadow: 0 -0.125rem 0.25rem rgba(0, 0, 0, 0.05);
-}
-.footer p { margin: 0; }
 .message {
     position: fixed; bottom: 1.25rem; left: 50%;
     transform: translateX(-50%); background-color: #4CAF50;
