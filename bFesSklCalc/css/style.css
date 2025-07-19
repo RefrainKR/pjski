@@ -68,12 +68,9 @@ h3 {
 
 /* --- Start: Refactored Button Styles --- */
 
-/* 1. 통합 버튼 기본 클래스 (.btn) */
-/* 모든 버튼의 공통 스타일 (구조, 패딩, 폰트, 테두리 등) */
+/* 1. .btn: 버튼의 기본 구조, 테두리, 전환 효과 등 크기와 무관한 공통 스타일 */
 .btn {
     display: inline-block;
-    padding: 0.625rem 0.9375rem; /* 10px 15px */
-    font-size: 1rem; /* em -> rem */
     font-weight: bold;
     text-align: center;
     text-decoration: none;
@@ -82,10 +79,19 @@ h3 {
     border: 1px solid transparent;
     border-radius: 0.3125rem; /* 5px */
     transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
+}
+
+/* 2. .btn-md: 중간 크기 버튼 (기존 .btn과 동일) */
+.btn-md {
+    padding: 0.625rem 0.9375rem; /* 10px 15px */
+    font-size: 1rem; /* 16px */
+}
+
+/* 3. .btn-sm: 작은 크기 버튼 (새로 추가) */
+.btn-sm {
+    padding: 0.375rem 0.75rem; /* 6px 12px */
+    font-size: 0.875rem; /* 14px, legend 텍스트 크기와 유사 */
 }
 
 /* 2. 색상/용도별 서브 클래스 */
@@ -438,13 +444,6 @@ input:checked + .slider:before {
     display: block;
 }
 
-/* Skill Calculator Styles */
-.skill-calculator {
-    padding: 0.9375rem; /* 15px */
-    border-radius: 0.5rem; /* 8px */
-    background-color: #ffffff;
-}
-
 .table-config-group { 
     margin-bottom: 1.25rem; /* 20px */
     display: flex; 
@@ -497,12 +496,11 @@ input:checked + .slider:before {
 
 .legend-container {
     display: flex;
-    justify-content: flex-start; /* 좌측 정렬로 변경 */
+    justify-content: flex-end;
     gap: 0.9375rem; 
     font-size: 0.9em;
     color: #666;
     flex-wrap: wrap;
-    margin-bottom: 0.5rem; /* 테이블과의 간격 조정 */
 }
 .legend-item {
     display: flex;
@@ -666,6 +664,20 @@ input:checked + .slider:before {
     color: #555;
 }
 
+.table-display-info {
+    display: flex;
+    justify-content: space-between; /* 양쪽 끝으로 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
+    margin-bottom: 0.5rem; /* 테이블과의 간격 */
+    gap: 1rem; /* 내부 요소 간의 간격 */
+}
+
+.display-mode-label {
+    font-size: 0.9rem;
+    color: #333;
+    font-weight: bold;
+}
+
 /* Footer Styles */
 .footer {
     margin-top: 0;
@@ -768,7 +780,7 @@ input:checked + .slider:before {
         padding-bottom: 1rem; /* 스크롤 공간 확보 */
         margin-bottom: 1rem;
     }
-    
+
     .table-config-group.active-drag {
         cursor: grabbing;
     }

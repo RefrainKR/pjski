@@ -12,9 +12,8 @@
             <nav class="navbar">
                 <div class="navbar-brand">스킬값 계산</div>
                 <div class="navbar-actions">
-                    <!-- 수정된 버튼 클래스 적용 -->
-                    <button id="rankManagementBtn" class="btn btn-primary">캐릭터 랭크</button>
-                    <button id="backupBtn" class="btn btn-secondary">백업</button>
+                    <button id="rankManagementBtn" class="btn btn-md btn-primary">랭크 관리</button>
+                    <button id="backupBtn" class="btn btn-md btn-secondary">백업</button>
                 </div>
             </nav>
 
@@ -36,10 +35,10 @@
                     <button class="close-btn" data-target="backup-section">×</button>
                 </div>
                 <div class="backup-actions scrollable-content">
-                    <button id="exportDataBtn" class="btn btn-success">데이터 내보내기 (JSON)</button>
-                    <label for="importFile" class="btn btn-info">데이터 가져오기 (JSON 파일 선택)</label>
+                    <button id="exportDataBtn" class="btn btn-success">데이터 내보내기(JSON)</button>
+                    <label for="importFile" class="btn btn-info">데이터 가져오기(JSON)</label>
                     <input type="file" id="importFile" accept=".json">
-                    <button id="clearDataBtn" class="btn btn-secondary">모든 데이터 지우기</button>
+                    <button id="clearDataBtn" class="btn btn-secondary">데이터 지우기</button>
                     <div id="user-id-display" class="user-id-display"></div>
                 </div>
             </div>
@@ -71,15 +70,15 @@
         <main class="container">
             <div class="tabs">
                 <div class="tab-buttons">
-                    <button class="tab-button active" data-tab="skill-calculator-tab">스킬 계산기</button>
+                    <button class="tab-button active" data-tab="skill-calculator-tab">랭크별</button>
                     <button class="tab-button" data-tab="character-tab">캐릭터별</button>
                     <button class="tab-button" data-tab="tab3">탭3</button>
                 </div>
                 <div class="tab-content-wrapper">
                     <!-- 스킬 계산기 탭 내용 -->
                     <div id="skill-calculator-tab" class="tab-content active">
-                        <section id="skill-calculator-container" class="skill-calculator">
-                            <h2>스킬 비교 계산기</h2>
+                        <section id="skill-calculator-container">
+                            <h2>랭크별 비교</h2>
 
                             <div class="table-config-group">
                                 <div class="config-group">
@@ -106,13 +105,21 @@
                             </div>
 
                             <div class="table-action-buttons">
-                                <button id="autoInputTriggerBtn" class="btn btn-warning">자동 입력</button>
+                                <button id="autoInputTriggerBtn" class="btn btn-sm btn-warning">자동 입력</button>
+                                <button id="btn-display-mode" class="btn btn-sm btn-secondary">차이 값</button>
+                                <!-- 앞으로 여기에 추가되는 버튼도 btn-sm을 사용하면 됩니다 -->
+                                <!-- <button class="btn btn-sm btn-info">다른 기능</button> -->
                             </div>
                             
-                            <div class="legend-container">
-                                <div class="legend-item"><span class="legend-color legend-blue"></span> 각후 유리</div>
-                                <div class="legend-item"><span class="legend-color legend-yellow"></span> 각전 유리</div>
-                                <div class="legend-item"><span class="legend-color legend-gray"></span> 동일</div>
+                            <div class="table-display-info">
+                                <!-- 3. 설명 메시지 창 -->
+                                <div id="display-mode-label" class="display-mode-label"></div>
+                                <!-- 3. 범례 컨테이너를 이 안으로 이동 -->
+                                <div class="legend-container">
+                                    <div class="legend-item"><span class="legend-color legend-blue"></span> 각후 유리</div>
+                                    <div class="legend-item"><span class="legend-color legend-yellow"></span> 각전 유리</div>
+                                    <div class="legend-item"><span class="legend-color legend-gray"></span> 동일</div>
+                                </div>
                             </div>
 
                             <div class="skill-table-container">
@@ -165,7 +172,8 @@
     <script type="module" src="js/data.js"></script>
     <script type="module" src="js/utils/InputNumberElement.js"></script>
     <script type="module" src="js/utils/DraggableScroller.js"></script> 
-    <script type="module" src="js/components/SkillCalculator.js"></script>
+    <script type="module" src="js/utils/ToggleButtonElement.js"></script>
+    <script type="module" src="js/components/SkillComparisonTable.js"></script>
     <script type="module" src="js/components/CharacterRankManager.js"></script>
     <script type="module" src="js/components/BackupManager.js"></script>
     <script type="module" src="js/components/TabManager.js"></script>

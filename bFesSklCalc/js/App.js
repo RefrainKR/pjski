@@ -1,10 +1,9 @@
 // js/App.js
 
-import { SkillCalculator } from './components/SkillCalculator.js';
+import { SkillComparisonTable } from './components/SkillComparisonTable.js';
 import { CharacterRankManager } from './components/CharacterRankManager.js';
 import { BackupManager } from './components/BackupManager.js';
 import { MESSAGE_DISPLAY_DURATION } from './data.js';
-// DraggableScroller 유틸리티를 import 합니다.
 import { DraggableScroller } from './utils/DraggableScroller.js';
 
 export class App {
@@ -16,12 +15,12 @@ export class App {
 
         // SkillCalculator 인스턴스화
         // skill-calculator-container는 main 태그 안에 있으므로 바로 접근 가능
-        this.skillCalculator = new SkillCalculator('skill-calculator-container', this.messageDisplay.bind(this));
+        this.skillComparisonTable = new SkillComparisonTable('skill-calculator-container', this.messageDisplay.bind(this));
 
         // CharacterRankManager 인스턴스화 (캐릭터 랭크 탭의 컨테이너를 전달)
         // 'character-ranks-content-tab'은 탭 안에 있으므로, 초기에는 null일 수 있음.
         // CharacterRankManager 내부에서 해당 요소를 찾도록 하고, 탭 활성화 시 렌더링을 트리거.
-        this.characterRankManager = new CharacterRankManager('character-ranks-content-tab', this.messageDisplay.bind(this));
+        this.characterRankManager = new CharacterRankManager('character-ranks-tab-content', this.messageDisplay.bind(this));
 
         // BackupManager 인스턴스화 (백업 섹션 컨테이너 전달 및 콜백 함수 제공)
         // 'backup-section'은 헤더 드롭다운 섹션에 있으므로 바로 접근 가능
@@ -71,15 +70,17 @@ export class App {
                 // 모든 탭 콘텐츠 숨기기
                 tabContents.forEach(content => content.classList.remove('active'));
 
-                // 클릭된 버튼에 해당하는 탭 콘텐츠 보여주기
                 const targetTabId = button.dataset.tab;
                 const targetTabContent = document.getElementById(targetTabId);
                 if (targetTabContent) {
                     targetTabContent.classList.add('active');
-                    // '캐릭터 랭크' 탭이 활성화될 때만 CharacterRankManager 렌더링
+                    
+                    // '캐릭터 랭크' 탭 관련 렌더링 로직을 제거 또는 주석 처리합니다.
+                    /* 
                     if (targetTabId === 'character-tab') {
                         this.characterRankManager.renderCharacterRanks();
                     }
+                    */
                 }
             });
         });
