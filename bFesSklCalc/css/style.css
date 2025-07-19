@@ -156,12 +156,12 @@ input[type="number"]:focus, input[type="text"]:focus, select:focus { border-colo
 .skill-table th.corner-header, .skill-table tbody th { width: 3.75rem; }
 .skill-table tbody tr:nth-child(even) { background-color: var(--light-gray-bg); }
 .skill-table tbody tr:hover { background-color: var(--medium-gray-bg); }
-.skill-cell-blue { background-color: var(--cell-blue-bg); }
-.skill-cell-yellow { background-color: var(--cell-yellow-bg); }
-.skill-cell-gray { background-color: var(--cell-gray-bg); }
+.skill-cell-after { background-color: var(--cell-blue-bg); }
+.skill-cell-before { background-color: var(--cell-yellow-bg); }
+.skill-cell-draw { background-color: var(--cell-gray-bg); }
 .skill-table thead th .target-value-input { background-color: transparent; color: var(--text-color); }
 .target-value-wrapper { display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; }
-.target-value-input { width: 100%; flex-grow: 1; padding: 0 0.15rem; border: none; text-align: right; font-weight: bold; font-size: 1rem; outline: none; -moz-appearance: textfield; }
+.target-value-input { width: 100%; flex-grow: 1; padding: 0 0.15rem; border: none; text-align: right; font-weight: bold; font-size: 0.95rem; outline: none; -moz-appearance: textfield; }
 .target-value-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .target-value-wrapper .percent-sign { font-weight: bold; font-size: 1rem; color: var(--text-color); padding-right: 0.3rem; }
 .skill-table th.corner-header .diagonal-box { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }

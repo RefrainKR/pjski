@@ -17,6 +17,7 @@ export class App {
             containerId: 'rank-skill-container',
             messageDisplayCallback: this.messageDisplay.bind(this),
             displayModeBtnId: 'btn-display-mode',
+            numberFormatBtnId: 'btn-number-format'
         });
         
         this.characterSkillTable = new CharacterSkillTable({
@@ -24,6 +25,7 @@ export class App {
             messageDisplayCallback: this.messageDisplay.bind(this),
             characterRankManager: this.characterRankManager,
             displayModeBtnId: 'btn-display-mode-char',
+            numberFormatBtnId: 'btn-number-format-char'
         });
 
         this.backupManager = new BackupManager(
@@ -84,9 +86,14 @@ export class App {
             let generatedXValues = [];
             for (let i = startVal; i <= endVal; i += incrementVal) { generatedXValues.push(i); }
             
+            // --- 핵심 수정: X축 개수 제한 로직 추가 ---
             if (generatedXValues.length < MIN_X_VALUES_COUNT) {
-                while (generatedXValues.length < MIN_X_VALUES_COUNT) { generatedXValues.push(0); }
+                this.messageDisplay('생성된 대상값이 최소 개수에 미치지 못하여 빈공간을 생성합니다.', 'info');
+                while (generatedXValues.length < MIN_X_VALUES_COUNT) {
+                    generatedXValues.push(0);
+                }
             } else if (generatedXValues.length > MAX_X_VALUES_COUNT) {
+                this.messageDisplay('생성된 대상값이 최대 개수를 초과하였습니다.', 'info');
                 generatedXValues = generatedXValues.slice(0, MAX_X_VALUES_COUNT);
             }
 

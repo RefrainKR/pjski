@@ -63,11 +63,10 @@ export class SkillComparisonTable extends BaseSkillTable {
             tbody.innerHTML = '';
 
             yValues.forEach(yValue => {
-                // yValue 자체가 charRank이므로, 그대로 전달하는 함수를 넘김
-                const rowHTML = this._renderRow(yValue, this.manualXValues, calculator, (rank) => rank);
+                const rowHTML = this._renderRow(calculator, yValue, this.manualXValues, (rank) => rank);
                 tbody.insertAdjacentHTML('beforeend', rowHTML);
             });
-            this._updateCellDisplay(this.displayModeToggle.currentStateName);
+            this._updateCellDisplay();
         } catch (error) {
             this.messageDisplayCallback(error.message, 'error');
         }

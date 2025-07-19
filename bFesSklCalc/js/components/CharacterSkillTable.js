@@ -93,14 +93,14 @@ export class CharacterSkillTable extends BaseSkillTable {
         yValues.forEach(yValue => {
             // yValue는 skillLevel이므로, calculator를 매번 새로 생성
             const calculator = new SkillCalculator(yValue);
-            // charRank는 모든 행에서 동일하므로, 고정된 값을 반환하는 함수를 넘김
-            const rowHTML = this._renderRow(yValue, this.manualXValues, calculator, () => charRank);
+            
+            const rowHTML = this._renderRow(calculator, yValue, this.manualXValues, charRank);
             tbody.insertAdjacentHTML('beforeend', rowHTML);
         });
 
-        this._updateCellDisplay(this.displayModeToggle.currentStateName);
+        this._updateCellDisplay();
     }
-    
+
     getAxisLabels() {
         return { y: '스킬Lv', x: '대상값' };
     }

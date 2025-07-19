@@ -19,6 +19,9 @@ export class BaseSkillTable {
         this.skillTableContainer = this.container.querySelector('.skill-table-container');
         this.displayModeLabel = this.container.querySelector('.display-mode-label');
 
+        this.displayMode = 'highest';
+        this.numberFormat = 'integer'; // 'integer' or 'decimal'
+
         this.displayModeToggle = new ToggleButtonElement(
             config.displayModeBtnId,
             [
@@ -26,8 +29,18 @@ export class BaseSkillTable {
                 { name: 'difference', text: '차이 값', label: '표시된 값: 각전 / 각후 스킬 값의 차이' }
             ],
             (modeName, state) => {
+                this.displayMode = modeName;
                 this.displayModeLabel.textContent = state.label;
-                this._updateCellDisplay(modeName);
+                this._updateCellDisplay();
+            }
+        );
+
+        this.numberFormatToggle = new ToggleButtonElement(
+            config.numberFormatBtnId,
+            [ { name: 'integer', text: '정수' }, { name: 'decimal', text: '소수점' } ],
+            (modeName) => {
+                this.numberFormat = modeName;
+                this._updateCellDisplay();
             }
         );
 
@@ -89,45 +102,59 @@ export class BaseSkillTable {
         });
     }
 
-    _renderRow(yValue, xValues, calculator, getRankForRow) {
+    _renderRow(calculator, yValue, xValues, optionalRank = null) {
+        const charRank = this.container.id === 'rank-skill-container' ? yValue : optionalRank;
         let rowHTML = `<tr><th>${yValue}</th>`;
+
         xValues.forEach(targetValue => {
             const parsedTargetValue = parseInt(targetValue);
             if (isNaN(parsedTargetValue) || parsedTargetValue === 0) {
                 rowHTML += `<td class="empty-cell"></td>`;
                 return;
             }
-            
-            // getRankForRow 콜백을 사용해 현재 행에 맞는 랭크 값을 가져옴
-            const charRank = getRankForRow(yValue);
 
-            // SkillCalculator를 호출하여 새로운 데이터 구조를 받음
-            const result = calculator.calculate(charRank, parsedTargetValue);
+            // 계산기는 항상 두 종류의 데이터를 모두 계산
+            const result = calculator.calculate(charRank, parsedTargetValue, { includeDecimal: true });
             
-            // --- 핵심: integer 객체의 데이터만 사용 ---
-            const { winner, highest, difference } = result.integer;
+            const intData = result.integer;
+            const decData = result.decimal;
 
-            const formattedDifference = (difference > 0 ? '+' : '') + difference + '%';
+            const formattedIntDiff = (intData.difference > 0 ? '+' : '') + intData.difference + '%';
+            const formattedDecDiff = (decData.difference > 0 ? '+' : '') + decData.difference.toFixed(1) + '%';
             
-            let cellClass = '';
-            if (winner === 'after') cellClass = 'skill-cell-blue';
-            else if (winner === 'before') cellClass = 'skill-cell-yellow';
-            else cellClass = 'skill-cell-gray';
-            
-            rowHTML += `<td class="${cellClass}" 
-                            data-highest-value="${highest}%" 
-                            data-difference-value="${formattedDifference}">
-                        </td>`;
+            // 셀의 색상은 항상 게임 로직 기준인 정수 승패(intData.winner)를 따름
+            rowHTML += `<td class="skill-cell-${intData.winner}" 
+                    data-int-highest="${intData.highest}%"
+                    data-int-diff="${formattedIntDiff}" 
+                    data-dec-highest="${decData.highest.toFixed(1)}%"
+                    data-dec-diff="${formattedDecDiff}">
+                </td>`;
         });
         rowHTML += `</tr>`;
         return rowHTML;
     }
 
-    _updateCellDisplay(mode) {
+    _updateCellDisplay() {
+        if (!this.table || !this.table.querySelector('tbody')) return;
         const cells = this.table.querySelectorAll('tbody td:not(.empty-cell)');
+        
         cells.forEach(cell => {
-            cell.textContent = (mode === 'highest') ? cell.dataset.highestValue : cell.dataset.differenceValue;
+            const format = this.numberFormat.substring(0, 3);
+            // --- 핵심 수정: 'difference'를 'diff'로 일관되게 사용 ---
+            const type = this.displayMode === 'highest' ? 'highest' : 'diff';
+            const dataKey = `data-${format}-${type}`;
+            
+            cell.textContent = cell.dataset[this.toCamelCase(dataKey)];
         });
+    }
+
+    /**
+     * data-key-name 형식의 문자열을 dataset이 사용하는 keyName 형식으로 변환합니다.
+     * @param {string} str - 변환할 문자열 (예: 'data-int-highest').
+     * @returns {string} 변환된 문자열 (예: 'intHighest').
+     */
+    toCamelCase(str) {
+        return str.replace('data-', '').replace(/-./g, match => match.charAt(1).toUpperCase());
     }
 
     loadManualXValues() {
