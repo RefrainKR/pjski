@@ -2,9 +2,10 @@ import { SkillComparisonTable } from './components/SkillComparisonTable.js';
 import { CharacterSkillTable } from './components/CharacterSkillTable.js';
 import { CharacterRankManager } from './components/CharacterRankManager.js';
 import { BackupManager } from './components/BackupManager.js';
-import { MESSAGE_DISPLAY_DURATION } from './data.js';
+import { MESSAGE_DISPLAY_DURATION, SKILL_CALCULATOR_SETTINGS_KEY, DEFAULT_AUTO_INPUT_START, DEFAULT_AUTO_INPUT_END, DEFAULT_AUTO_INPUT_INCREMENT, MIN_X_VALUES_COUNT, MAX_X_VALUES_COUNT } from './data.js';
 import { DraggableScroller } from './utils/DraggableScroller.js';
 import { PopupManager } from './utils/PopupManager.js';
+import { InputNumberElement } from './utils/InputNumberElement.js';
 
 export class App {
     constructor() {
@@ -40,20 +41,59 @@ export class App {
             this.backupManager.displayUserId();
         });
 
-        // "자동 입력" 팝업이 열릴 때, 어떤 테이블이 열었는지에 따라 "적용" 버튼의 이벤트를 연결
-        this.popupManager.onOpen('auto-input-panel', (trigger) => {
-            const activeTable = trigger.id.includes('-char')
-                ? this.characterSkillTable 
-                : this.skillComparisonTable;
-            
-            activeTable.setupAutoInputPanel();
-            activeTable.bindApplyAutoInputEvent();
-        });
-
+        this.initAutoInputPanel();
         this.initTabNavigation();
         this.initDraggableScrolling(); 
-
         this.bindCustomEvents();
+    }
+    
+    initAutoInputPanel() {
+        const autoInputPanel = document.getElementById('auto-input-panel');
+        const applyBtn = autoInputPanel.querySelector('#applyAutoInputBtn');
+        const startInput = autoInputPanel.querySelector('#auto-input-start');
+        const endInput = autoInputPanel.querySelector('#auto-input-end');
+        const incrementInput = autoInputPanel.querySelector('#auto-input-increment');
+
+        const startElement = new InputNumberElement(startInput, 10, 140, DEFAULT_AUTO_INPUT_START, null);
+        const endElement = new InputNumberElement(endInput, 10, 140, DEFAULT_AUTO_INPUT_END, null);
+        const incrementElement = new InputNumberElement(incrementInput, 1, 50, DEFAULT_AUTO_INPUT_INCREMENT, null);
+
+        let activeTable = null;
+
+        this.popupManager.onOpen('auto-input-panel', (trigger) => {
+            activeTable = trigger.id.includes('-char')
+                ? this.characterSkillTable 
+                : this.skillComparisonTable;
+
+            const settings = JSON.parse(localStorage.getItem(SKILL_CALCULATOR_SETTINGS_KEY) || '{}');
+            startElement.setValue(settings.autoInputStart || DEFAULT_AUTO_INPUT_START, false);
+            endElement.setValue(settings.autoInputEnd || DEFAULT_AUTO_INPUT_END, false);
+            incrementElement.setValue(settings.autoInputIncrement || DEFAULT_AUTO_INPUT_INCREMENT, false);
+        });
+
+        applyBtn.addEventListener('click', () => {
+            if (!activeTable) return;
+
+            let startVal = startElement.getValue();
+            let endVal = endElement.getValue();
+            let incrementVal = incrementElement.getValue();
+            
+            if (startVal > endVal) [startVal, endVal] = [endVal, startVal];
+            if (incrementVal <= 0) incrementVal = 1;
+
+            let generatedXValues = [];
+            for (let i = startVal; i <= endVal; i += incrementVal) { generatedXValues.push(i); }
+            
+            if (generatedXValues.length < MIN_X_VALUES_COUNT) {
+                while (generatedXValues.length < MIN_X_VALUES_COUNT) { generatedXValues.push(0); }
+            } else if (generatedXValues.length > MAX_X_VALUES_COUNT) {
+                generatedXValues = generatedXValues.slice(0, MAX_X_VALUES_COUNT);
+            }
+
+            activeTable.updateXValuesAndRender(generatedXValues);
+            
+            this.popupManager.close(autoInputPanel);
+        });
     }
 
     messageDisplay(message, type) {
@@ -97,19 +137,14 @@ export class App {
     }
 
     initDraggableScrolling() {
-        const draggableElements = document.querySelectorAll('.navbar-actions, .table-config-group');
+        const draggableElements = document.querySelectorAll('.draggable-on-mobile');
         draggableElements.forEach(el => new DraggableScroller(el));
     }
 
     bindCustomEvents() {
         document.body.addEventListener('characterRanksUpdated', () => {
-            // 캐릭터 랭크 정보가 업데이트되었다는 신호를 받으면,
-            
-            // 현재 활성화된 탭을 확인합니다.
             const activeTab = document.querySelector('.tab-button.active');
             if (activeTab && activeTab.dataset.tab === 'character-skill-tab') {
-                // 만약 '캐릭터별' 탭이 활성화된 상태라면,
-                // characterSkillTable의 refresh 메서드를 호출하여 드롭다운을 즉시 갱신합니다.
                 this.characterSkillTable.refresh();
             }
         });

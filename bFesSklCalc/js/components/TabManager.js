@@ -1,5 +1,7 @@
 // js/components/TabManager.js
 
+// 현재 해당 기능은 App.js에서 관리
+
 export class TabManager {
     constructor(tabButtonSelector, tabContentSelector) {
         this.tabButtons = document.querySelectorAll(tabButtonSelector);

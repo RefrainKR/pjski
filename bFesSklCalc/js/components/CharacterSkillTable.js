@@ -10,8 +10,9 @@ export class CharacterSkillTable extends BaseSkillTable {
         this.characterSelect = this.container.querySelector('#character-select');
         this.rankInput = this.container.querySelector('#character-rank-input');
 
+        // InputNumberElement의 콜백은 이제 랭크 업데이트만 담당합니다.
         this.rankInputElement = new InputNumberElement(this.rankInput, 1, 100, 1, (newRank) => {
-            this.handleRankInputChange(newRank);
+            this.updateManagerRank(newRank);
         });
         
         this.bindSpecificEvents();
@@ -19,6 +20,39 @@ export class CharacterSkillTable extends BaseSkillTable {
 
     bindSpecificEvents() {
         this.characterSelect.addEventListener('change', () => this.handleCharacterSelectChange());
+        // 사용자가 직접 랭크를 입력하고 포커스를 잃었을 때도 테이블을 다시 그리도록 이벤트를 추가합니다.
+        this.rankInput.addEventListener('change', () => this.renderTable());
+    }
+
+    // 캐릭터 랭크를 업데이트하는 로직을 별도 메서드로 분리
+    updateManagerRank(newRank) {
+        const selectedCharName = this.characterSelect.value;
+        if (selectedCharName !== 'direct') {
+            this.characterRankManager.updateCharacterRank(selectedCharName, newRank);
+        }
+    }
+
+    handleCharacterSelectChange() {
+        const selectedOption = this.characterSelect.selectedOptions[0];
+        if (!selectedOption) {
+            this.renderTable();
+            return;
+        }
+        
+        const selectedValue = selectedOption.value;
+
+        if (selectedValue === 'direct') {
+            this.rankInput.disabled = false;
+        } else {
+            const rank = parseInt(selectedOption.dataset.rank);
+            // 콜백 없이 값만 설정하고,
+            this.rankInputElement.setValue(rank, false);
+            // 랭크 매니저의 값도 동기화합니다.
+            this.updateManagerRank(rank);
+        }
+        
+        // 마지막에 한 번만 테이블을 다시 그립니다.
+        this.renderTable();
     }
 
     refresh() {
@@ -46,33 +80,6 @@ export class CharacterSkillTable extends BaseSkillTable {
         if (stillExists) {
             this.characterSelect.value = currentSelectedValue;
         }
-    }
-
-    handleCharacterSelectChange() {
-        const selectedOption = this.characterSelect.selectedOptions[0];
-        if (!selectedOption) {
-            this.renderTable();
-            return;
-        }
-        
-        const selectedValue = selectedOption.value;
-
-        if (selectedValue === 'direct') {
-            this.rankInput.disabled = false;
-        } else {
-            const rank = parseInt(selectedOption.dataset.rank);
-            this.rankInputElement.setValue(rank, false); 
-        }
-        
-        this.renderTable();
-    }
-
-    handleRankInputChange(newRank) {
-        const selectedCharName = this.characterSelect.value;
-        if (selectedCharName !== 'direct') {
-            this.characterRankManager.updateCharacterRank(selectedCharName, newRank);
-        }
-        this.renderTable();
     }
 
     _populateTableBody() {

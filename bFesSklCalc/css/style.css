@@ -360,14 +360,6 @@ input[type="number"]:focus, input[type="text"]:focus, select:focus {
 @media (max-width: 768px) {
     .navbar { flex-direction: column; align-items: center; }
     .navbar-brand { margin-bottom: 0.5rem; }
-    .navbar-actions, .table-config-group {
-        width: 100%; box-sizing: border-box;
-        justify-content: flex-start; flex-wrap: nowrap;
-        overflow-x: auto; -webkit-overflow-scrolling: touch; cursor: grab;
-        padding-bottom: 1rem; 
-    }
-    
-    /* --- 드래그 스크롤을 위한 공용 클래스 (신규) --- */
     .draggable-on-mobile {
         width: 100%;
         box-sizing: border-box; justify-content: flex-start;

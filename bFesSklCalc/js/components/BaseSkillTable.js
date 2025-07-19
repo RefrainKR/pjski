@@ -1,9 +1,7 @@
 import {
     MIN_TARGET_VALUE, MAX_TARGET_VALUE, FALLBACK_MANUAL_X_ON_BLANK,
     DEFAULT_AUTO_INPUT_START, DEFAULT_AUTO_INPUT_END, DEFAULT_AUTO_INPUT_INCREMENT,
-    SKILL_CALCULATOR_SETTINGS_KEY, MIN_X_VALUES_COUNT, MAX_X_VALUES_COUNT,
-    FALLBACK_AUTO_INPUT_START_ON_BLANK, FALLBACK_AUTO_INPUT_END_ON_BLANK,
-    FALLBACK_AUTO_INPUT_INCREMENT_ON_BLANK
+    SKILL_CALCULATOR_SETTINGS_KEY
 } from '../data.js';
 import { InputNumberElement } from '../utils/InputNumberElement.js';
 import { ToggleButtonElement } from '../utils/ToggleButtonElement.js';
@@ -20,13 +18,6 @@ export class BaseSkillTable {
         this.skillTableContainer = this.container.querySelector('.skill-table-container');
         this.displayModeLabel = this.container.querySelector('.display-mode-label');
 
-        // 공용 자동 입력 패널과 그 내부 요소들을 참조
-        const autoInputPanel = document.getElementById('auto-input-panel');
-        this.applyAutoInputBtn = autoInputPanel.querySelector('#applyAutoInputBtn');
-        this.autoInputStartInput = autoInputPanel.querySelector('#auto-input-start');
-        this.autoInputEndInput = autoInputPanel.querySelector('#auto-input-end');
-        this.autoInputIncrementInput = autoInputPanel.querySelector('#auto-input-increment');
-        
         this.displayModeToggle = new ToggleButtonElement(
             config.displayModeBtnId,
             [
@@ -38,62 +29,16 @@ export class BaseSkillTable {
                 this._updateCellDisplay(modeName);
             }
         );
-        
-        // InputNumberElement 생성 시 콜백으로 null을 전달해도 에러가 나지 않도록 InputNumberElement 자체를 수정해야 합니다.
-        this.autoInputStartElement = new InputNumberElement(this.autoInputStartInput, MIN_TARGET_VALUE, MAX_TARGET_VALUE, DEFAULT_AUTO_INPUT_START, null, FALLBACK_AUTO_INPUT_START_ON_BLANK);
-        this.autoInputEndElement = new InputNumberElement(this.autoInputEndInput, MIN_TARGET_VALUE, MAX_TARGET_VALUE, DEFAULT_AUTO_INPUT_END, null, FALLBACK_AUTO_INPUT_END_ON_BLANK);
-        this.autoInputIncrementElement = new InputNumberElement(this.autoInputIncrementInput, 1, 50, DEFAULT_AUTO_INPUT_INCREMENT, null, FALLBACK_AUTO_INPUT_INCREMENT_ON_BLANK);
 
         this.loadManualXValues();
     }
     
     /**
-     * App.js가 호출하여 '적용' 버튼에 이 테이블의 applyAutoInputValues 메서드를 연결합니다.
+     * App.js로부터 자동 생성된 x축 값 배열을 받아 테이블을 다시 그립니다.
+     * @param {Array<number>} newXValues - 새로운 x축 값 배열.
      */
-    bindApplyAutoInputEvent() {
-        // 기존 핸들러를 제거하고 새로 추가하여 중복 방지
-        const newBtn = this.applyAutoInputBtn.cloneNode(true);
-        this.applyAutoInputBtn.parentNode.replaceChild(newBtn, this.applyAutoInputBtn);
-        this.applyAutoInputBtn = newBtn;
-        
-        this.applyAutoInputBtn.addEventListener('click', () => {
-            this.applyAutoInputValues();
-            // 팝업 닫기는 App.js의 PopupManager에서 처리하는 것이 더 적합
-        });
-    }
-
-    /**
-     * "자동 입력" 팝업이 열릴 때 호출되어, 입력 필드에 기본값을 설정합니다.
-     */
-    setupAutoInputPanel() {
-        const settings = JSON.parse(localStorage.getItem(SKILL_CALCULATOR_SETTINGS_KEY) || '{}');
-        this.autoInputStartElement.setValue(settings.autoInputStart || DEFAULT_AUTO_INPUT_START, false);
-        this.autoInputEndElement.setValue(settings.autoInputEnd || DEFAULT_AUTO_INPUT_END, false);
-        this.autoInputIncrementElement.setValue(settings.autoInputIncrement || DEFAULT_AUTO_INPUT_INCREMENT, false);
-    }
-
-    applyAutoInputValues() {
-        let startVal = this.autoInputStartElement.getValue();
-        let endVal = this.autoInputEndElement.getValue();
-        let incrementVal = this.autoInputIncrementElement.getValue();
-        
-        if (startVal > endVal) {
-            [startVal, endVal] = [endVal, startVal];
-            this.autoInputStartElement.setValue(startVal, false);
-            this.autoInputEndElement.setValue(endVal, false);
-        }
-        if (incrementVal <= 0) incrementVal = 1;
-        
-        let generatedXValues = [];
-        for (let i = startVal; i <= endVal; i += incrementVal) { generatedXValues.push(i); }
-        
-        if (generatedXValues.length < MIN_X_VALUES_COUNT) {
-            while (generatedXValues.length < MIN_X_VALUES_COUNT) { generatedXValues.push(0); }
-        } else if (generatedXValues.length > MAX_X_VALUES_COUNT) {
-            generatedXValues = generatedXValues.slice(0, MAX_X_VALUES_COUNT);
-        }
-
-        this.manualXValues = generatedXValues;
+    updateXValuesAndRender(newXValues) {
+        this.manualXValues = newXValues;
         this.saveManualXValues();
         this.renderTable();
     }
@@ -108,11 +53,11 @@ export class BaseSkillTable {
         const axisLabels = this.getAxisLabels();
 
         let tableHTML = `<thead><tr><th class="corner-header">
-                    <div class="diagonal-box">
-                        <span class="diag-y">${axisLabels.y}</span>
-                        <span class="diag-x">${axisLabels.x}</span>
-                    </div>
-                </th>`;
+                        <div class="diagonal-box">
+                            <span class="diag-y">${axisLabels.y}</span>
+                            <span class="diag-x">${axisLabels.x}</span>
+                        </div>
+                    </th>`;
 
         xValues.forEach((val, index) => {
             const valToUse = val === null || isNaN(val) ? '' : val;
