@@ -533,6 +533,7 @@ input:checked + .slider:before {
     border-collapse: collapse;
     margin-top: 0.3125rem; /* 5px */
     min-width: 43.75rem; /* 700px */
+    table-layout: fixed; /* <<<< 핵심! 셀 너비를 고정된 레이아웃으로 변경 */
 }
 
 .skill-table th, .skill-table td {
@@ -552,14 +553,23 @@ input:checked + .slider:before {
     position: sticky; 
     top: 0;
     z-index: 10; 
-    padding: 0; /* 2. padding 제거 */
-    min-width: 4.0625rem; /* 65px */
+    padding: 0;
+    width: 4.0625rem; /* << min-width -> width 로 변경하여 너비 고정 (65px) */
 }
 
 /* tbody의 th와 td에만 패딩을 다시 적용합니다. */
 .skill-table tbody th,
 .skill-table tbody td {
     padding: 0.5rem; /* 8px */
+}
+
+.skill-table tbody th { 
+    background-color: #f2f2f2; 
+    font-weight: bold;
+    position: sticky;
+    left: 0; /* <<<< 이것이 핵심! 왼쪽 가장자리에 고정시킴 */
+    z-index: 9; /* thead의 z-index보다는 낮게 설정 */
+    min-width: 3.75rem; /* 60px */
 }
 
 .skill-table tbody tr:nth-child(even) {
@@ -630,7 +640,8 @@ input:checked + .slider:before {
     z-index: 11; 
     padding: 0; 
     vertical-align: top; 
-    overflow: hidden; 
+    overflow: hidden;
+    width: 3.75rem; /* 60px */
 }
 
 .skill-table th.corner-header .diagonal-box {
@@ -654,7 +665,6 @@ input:checked + .slider:before {
     font-size: 0.9em;
     color: #555;
 }
-
 .skill-table th.corner-header .diag-target {
     position: absolute;
     top: -0.25rem; /* -4px */
