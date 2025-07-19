@@ -304,13 +304,13 @@ input[type="number"]:focus, input[type="text"]:focus, select:focus {
     background-color: transparent;
     text-align: right; 
     font-weight: bold;
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: #333;
     outline: none;
     -moz-appearance: textfield; 
 }
 .target-value-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.target-value-wrapper .percent-sign { font-weight: bold; font-size: 0.9rem; color: #333; padding-right: 0.3rem; }
+.target-value-wrapper .percent-sign { font-weight: bold; font-size: 1rem; color: #333; padding-right: 0.3rem; }
 
 /* Diagonal Corner Header */
 .skill-table th.corner-header .diagonal-box {
