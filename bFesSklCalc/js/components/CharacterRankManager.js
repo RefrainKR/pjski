@@ -1,5 +1,6 @@
 import { CHARACTER_DATA, LOCAL_STORAGE_KEY } from '../data.js';
 import { InputNumberElement } from '../utils/InputNumberElement.js';
+import { storageManager } from '../utils/StorageManager.js';
 
 export class CharacterRankManager {
     constructor(initialContainerId, messageDisplayCallback) {
@@ -17,30 +18,23 @@ export class CharacterRankManager {
             });
         });
 
-        const storedData = localStorage.getItem(LOCAL_STORAGE_KEY);
-        if (storedData) {
-            try {
-                const parsedStoredData = JSON.parse(storedData);
-                if (typeof parsedStoredData === 'object' && parsedStoredData !== null) {
-                    for (const charName in parsedStoredData) {
-                        if (allCharactersDefaultRanks.hasOwnProperty(charName)) {
-                            const storedCharData = parsedStoredData[charName];
-                            const storedRank = parseInt(storedCharData.rank);
-                            allCharactersDefaultRanks[charName].rank = isNaN(storedRank) ? 1 : Math.max(1, Math.min(100, storedRank));
-                            allCharactersDefaultRanks[charName].active = typeof storedCharData.active === 'boolean' ? storedCharData.active : false;
-                        }
-                    }
+        const parsedStoredData = storageManager.load(LOCAL_STORAGE_KEY, {});
+       
+        if (typeof parsedStoredData === 'object' && parsedStoredData !== null) {
+            for (const charName in parsedStoredData) {
+                if (allCharactersDefaultRanks.hasOwnProperty(charName)) {
+                    const storedCharData = parsedStoredData[charName];
+                    const storedRank = parseInt(storedCharData.rank);
+                    allCharactersDefaultRanks[charName].rank = isNaN(storedRank) ? 1 : Math.max(1, Math.min(100, storedRank));
+                    allCharactersDefaultRanks[charName].active = typeof storedCharData.active === 'boolean' ? storedCharData.active : false;
                 }
-            } catch (e) {
-                console.error("Error parsing character ranks from LocalStorage, resetting data:", e);
-                localStorage.removeItem(LOCAL_STORAGE_KEY);
             }
         }
         return allCharactersDefaultRanks;
     }
 
     saveCharacterRanks() {
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.characterRanks));
+        storageManager.save(LOCAL_STORAGE_KEY, this.characterRanks);
         this.messageDisplayCallback('캐릭터 랭크가 저장되었습니다.', 'success');
     }
 

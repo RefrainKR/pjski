@@ -1,6 +1,7 @@
 // js/components/BackupManager.js
 
 import { LOCAL_STORAGE_KEY } from '../data.js';
+import { storageManager } from '../utils/StorageManager.js';
 
 export class BackupManager {
     /**
@@ -105,8 +106,8 @@ export class BackupManager {
 
     clearData() {
         if (confirm('정말로 모든 캐릭터 랭크 데이터를 지우시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
-            localStorage.removeItem(LOCAL_STORAGE_KEY);
-            this.setCharacterRanksCallback({}); // CharacterRankManager의 데이터를 빈 객체로 초기화
+            storageManager.remove(LOCAL_STORAGE_KEY); // localStorage.removeItem -> storageManager.remove
+            this.setCharacterRanksCallback({});
             this.messageDisplayCallback('모든 데이터가 지워졌습니다.', 'success');
         }
     }

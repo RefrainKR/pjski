@@ -5,6 +5,7 @@ import {
 } from '../data.js';
 import { InputNumberElement } from '../utils/InputNumberElement.js';
 import { ToggleButtonElement } from '../utils/ToggleButtonElement.js';
+import { storageManager } from '../utils/StorageManager.js';
 
 /**
  * 스킬 테이블들의 공통 기능을 제공하는 추상 상위 클래스.
@@ -96,7 +97,7 @@ export class BaseSkillTable {
     }
 
     loadManualXValues() {
-        const storedSettings = JSON.parse(localStorage.getItem(SKILL_CALCULATOR_SETTINGS_KEY) || '{}');
+        const storedSettings = storageManager.load(SKILL_CALCULATOR_SETTINGS_KEY, {});
         this.manualXValues = storedSettings.manualXValues || [];
         if (this.manualXValues.length === 0) {
             for (let i = DEFAULT_AUTO_INPUT_START; i <= DEFAULT_AUTO_INPUT_END; i += DEFAULT_AUTO_INPUT_INCREMENT) {
@@ -106,9 +107,9 @@ export class BaseSkillTable {
     }
     
     saveManualXValues() {
-        const storedSettings = JSON.parse(localStorage.getItem(SKILL_CALCULATOR_SETTINGS_KEY) || '{}');
+        const storedSettings = storageManager.load(SKILL_CALCULATOR_SETTINGS_KEY, {});
         storedSettings.manualXValues = this.manualXValues;
-        localStorage.setItem(SKILL_CALCULATOR_SETTINGS_KEY, JSON.stringify(storedSettings));
+        storageManager.save(SKILL_CALCULATOR_SETTINGS_KEY, storedSettings);
     }
     
     _initColumnVisibilityObserver() {

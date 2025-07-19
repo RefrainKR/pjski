@@ -1,3 +1,5 @@
+// js/utils/PopupManager.js
+
 export class PopupManager {
     constructor() {
         this.popupTriggers = document.querySelectorAll('[data-popup-trigger]');

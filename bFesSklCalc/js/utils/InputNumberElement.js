@@ -1,3 +1,5 @@
+// js/utils/InputNumberElement.js
+
 /**
  * input type="number" 필드의 유효성 검사 및 사용자 인터랙션을 관리하는 클래스입니다.
  * (수정) Tab 키의 완벽한 동작을 보장하는 최종 버전입니다.

@@ -2,6 +2,7 @@ import { SKILL_CALCULATOR_SETTINGS_KEY, MIN_RANK_MIN, MAX_RANK_MIN, DEFAULT_RANK
 import { BaseSkillTable } from './BaseSkillTable.js';
 import { InputNumberElement } from '../utils/InputNumberElement.js';
 import { SkillCalculator } from '../logic/SkillCalculator.js';
+import { storageManager } from '../utils/StorageManager.js';
 
 export class SkillComparisonTable extends BaseSkillTable {
     constructor(config) {
@@ -100,7 +101,7 @@ export class SkillComparisonTable extends BaseSkillTable {
     }
     
     loadSettings() {
-        const storedSettings = JSON.parse(localStorage.getItem(SKILL_CALCULATOR_SETTINGS_KEY) || '{}');
+        const storedSettings = storageManager.load(SKILL_CALCULATOR_SETTINGS_KEY, {});
         this.skillLevelSelect.value = storedSettings.skillLevel || '1';
         this.rankMinInput.value = storedSettings.rankMin ?? '';
         this.rankMaxInput.value = storedSettings.rankMax ?? '';
@@ -108,7 +109,7 @@ export class SkillComparisonTable extends BaseSkillTable {
     }
 
     saveSettings() {
-        const storedSettings = JSON.parse(localStorage.getItem(SKILL_CALCULATOR_SETTINGS_KEY) || '{}');
+        const storedSettings = storageManager.load(SKILL_CALCULATOR_SETTINGS_KEY, {});
         const newSettings = {
             ...storedSettings,
             skillLevel: this.skillLevelSelect.value,
@@ -116,6 +117,6 @@ export class SkillComparisonTable extends BaseSkillTable {
             rankMax: this.rankMaxInput.value,
             rankIncrement: this.rankIncrementInput.value
         };
-        localStorage.setItem(SKILL_CALCULATOR_SETTINGS_KEY, JSON.stringify(newSettings));
+        storageManager.save(SKILL_CALCULATOR_SETTINGS_KEY, newSettings);
     }
 }
