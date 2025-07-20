@@ -61,8 +61,8 @@ body {
 .navbar-actions { display: flex; gap: 0.625rem; flex-wrap: wrap; justify-content: center; }
 
 /* Headings */
-h2, h3 { font-size: 1.5rem; color: var(--accent-color); border-bottom: 1px solid var(--subtle-border-color); margin-top: 0; margin-bottom: 1.5rem; padding-bottom: 0.625rem; }
-h3 { font-size: 1.25rem; margin-bottom: 1rem; }
+h2, h3 { font-size: 1.5rem; color: var(--accent-color); border-bottom: 1px solid var(--subtle-border-color); margin-top: 0; margin-bottom: 1.2rem; padding-bottom: 0.4rem; }
+h3 { font-size: 1.25rem; margin-bottom: 0.75rem; }
 
 /* Buttons */
 .btn { display: inline-block; font-weight: bold; text-align: center; text-decoration: none; vertical-align: middle; cursor: pointer; border: 1px solid transparent; border-radius: 0.3125rem; transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease; user-select: none; }
@@ -126,7 +126,7 @@ input[type="number"]:focus, input[type="text"]:focus, select:focus { border-colo
 .tab-content.active { display: block; }
 
 /* Table Config Group */
-.table-config-group { margin-bottom: 1.25rem; display: flex; gap: 1.25rem; flex-wrap: wrap; align-items: flex-end; border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 1.25rem; background-color: var(--light-gray-bg); }
+.table-config-group { margin-bottom: 0.625rem; display: flex; gap: 1.25rem; flex-wrap: wrap; align-items: flex-end; border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 0.625rem; background-color: var(--light-gray-bg); }
 .config-group { display: flex; flex-direction: column; gap: 0.1875rem; }
 .config-group label { font-weight: bold; font-size: 0.9rem; color: var(--subtle-text-color); }
 .config-group input[type="number"], .config-group select { width: 4rem; }
@@ -139,7 +139,7 @@ input[type="number"]:focus, input[type="text"]:focus, select:focus { border-colo
 .table-display-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem; gap: 1rem; }
 .display-mode-label { font-size: 0.9rem; font-weight: bold; color: #34495e; flex-shrink: 0; }
 .legend-container { display: flex; justify-content: flex-end; gap: 0.9375rem; font-size: 0.9rem; color: #666; flex-wrap: wrap; flex-grow: 1; }
-.legend-item { display: flex; align-items: center; }
+.legend-item { display: flex; align-items: center; white-space: nowrap;}
 .legend-color { display: inline-block; width: 0.9375rem; height: 0.9375rem; border-radius: 0.1875rem; margin-right: 0.3125rem; border: 1px solid #ccc; }
 .legend-blue { background-color: var(--cell-blue-bg); }
 .legend-yellow { background-color: var(--cell-yellow-bg); }
@@ -185,6 +185,10 @@ input[type="number"]:focus, input[type="text"]:focus, select:focus { border-colo
     .draggable-on-mobile.active-drag { cursor: grabbing; }
     .draggable-on-mobile::-webkit-scrollbar { display: none; }
     .draggable-on-mobile { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .table-display-info.draggable-on-mobile { margin-bottom: -0.8rem; }
+    .table-display-info.draggable-on-mobile .legend-container { flex-wrap: nowrap; }
+
     .navbar-actions .btn, .table-config-group .config-group { flex-shrink: 0; width: auto; margin: 0 0.25rem; }
     .popup-panel { width: 95%; }
     .skill-table th, .skill-table td { padding: 0.3rem; font-size: 0.8rem; }
