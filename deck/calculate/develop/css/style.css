@@ -18,13 +18,13 @@
     --secondary-hover-color: #5a6268;
     --body-bg-color: #f4f7f6;
     --component-bg-color: #ffffff;
-    --light-gray-bg: #f8f9fa;      /* 가장 연한 배경색 (설정 패널 등) */
-    --medium-gray-bg: #e9ecef;     /* 중간 배경색 (팝업 헤더 등) */
-    --table-header-bg: #f2f2f2;    /* 테이블 헤더 배경색 */
-    --border-color: #dee2e6;       /* 일반 테두리 색 */
-    --subtle-border-color: #eee;   /* h2 밑줄 등 연한 테두리 */
-    --text-color: #333;            /* 기본 텍스트 */
-    --subtle-text-color: #555;     /* 보조 텍스트 */
+    --light-gray-bg: #f8f9fa;
+    --medium-gray-bg: #e9ecef;
+    --table-header-bg: #f2f2f2;
+    --border-color: #dee2e6;
+    --subtle-border-color: #eee;
+    --text-color: #333;
+    --subtle-text-color: #555;
     --white-color: #ffffff;
     --black-color: #212529;
 
@@ -39,23 +39,11 @@
 }
 
 /* General Body and Container Styles */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0; padding: 0;
-    background-color: var(--body-bg-color);
-    color: var(--text-color);
-    display: flex; flex-direction: column; min-height: 100vh;
-}
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: var(--body-bg-color); color: var(--text-color); display: flex; flex-direction: column; min-height: 100vh; }
 .container { max-width: 1200px; margin: 0 auto; padding: 1.25rem 1rem; flex-grow: 1; min-height: 81vh; }
 
 /* Header and Navigation Bar */
-.header {
-    background-color: var(--primary-color);
-    color: var(--white-color);
-    padding: 0.625rem 0;
-    box-shadow: 0 0.125rem 0.25rem var(--shadow-color);
-    position: relative; z-index: 1000;
-}
+.header { background-color: var(--primary-color); color: var(--white-color); padding: 0.625rem 0; box-shadow: 0 0.125rem 0.25rem var(--shadow-color); position: relative; z-index: 1000; }
 .navbar { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 0 1rem; flex-wrap: wrap; }
 .navbar-brand { font-size: 1.5rem; font-weight: bold; letter-spacing: 0.0313rem; padding: 0.5rem 0; }
 .navbar-actions { display: flex; gap: 0.625rem; flex-wrap: wrap; justify-content: center; }
@@ -108,11 +96,15 @@ input:checked + .slider { background-color: var(--success-color); }
 input:focus + .slider { box-shadow: 0 0 1px var(--accent-color); }
 input:checked + .slider:before { transform: translateX(1.25rem); }
 
-/* General Inputs */
-input[type="number"], input[type="text"], select { display: inline-block; height: 2.25rem; padding: 0.4rem 0.6rem; font-size: 1rem; font-family: inherit; color: var(--text-color); background-color: var(--component-bg-color); border: 1px solid #ccc; border-radius: 0.25rem; box-sizing: border-box; vertical-align: middle; }
-input[type="number"] { padding-right: 0.6rem; -webkit-appearance: textfield; -moz-appearance: textfield; }
-input[type="number"]:focus, input[type="text"]:focus, select:focus { border-color: var(--accent-color); outline: none; box-shadow: 0 0 0 0.2rem var(--focus-shadow-color); }
-.character-controls input[type="number"] { width: 60px; text-align: center; margin-left: auto; }
+/* --- General Inputs --- */
+.input { display: inline-block; font-family: inherit; color: var(--text-color); background-color: var(--component-bg-color); border: 1px solid #ccc; border-radius: 0.25rem; box-sizing: border-box; vertical-align: middle; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+.input:focus { border-color: var(--accent-color); outline: none; box-shadow: 0 0 0 0.2rem var(--focus-shadow-color); }
+input.input[type="number"] { -webkit-appearance: textfield; -moz-appearance: textfield; }
+.input-md { padding: 0.4rem 0.6rem; font-size: 1rem; }
+.input-sm { padding: 0.375rem 0.75rem; font-size: 0.875rem; }
+select.input { -webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 0.6rem center; background-size: 16px 12px; }
+select.input-md { padding-right: 2rem; }
+select.input-sm { padding-right: 2rem; }
 
 /* Tabs */
 .tabs { background-color: var(--component-bg-color); border-radius: 0.5rem; box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.05); overflow: hidden; }
@@ -121,24 +113,25 @@ input[type="number"]:focus, input[type="text"]:focus, select:focus { border-colo
 .tab-button:last-child { border-right: none; }
 .tab-button:hover { background-color: var(--medium-gray-bg); color: var(--text-color); }
 .tab-button.active { background-color: var(--primary-color); color: var(--white-color); border-bottom: 0.1875rem solid var(--accent-color); padding-bottom: calc(0.9375rem - 0.1875rem); }
-.tab-content-wrapper { padding: 1.25rem; }
+.tab-content-wrapper { padding: 1.25rem; font-size: 0.875rem; }
 .tab-content { display: none; }
 .tab-content.active { display: block; }
 
 /* Table Config Group */
 .table-config-group { margin-bottom: 0.625rem; display: flex; gap: 1.25rem; flex-wrap: wrap; align-items: flex-end; border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 0.625rem; background-color: var(--light-gray-bg); }
 .config-group { display: flex; flex-direction: column; gap: 0.1875rem; }
-.config-group label { font-weight: bold; font-size: 0.9rem; color: var(--subtle-text-color); }
-.config-group input[type="number"], .config-group select { width: 4rem; }
+.config-group label { font-weight: bold; color: var(--subtle-text-color); }
+.config-group .input { width: 4rem; }
 .rank-range-inputs { display: flex; align-items: center; gap: 0.3125rem; }
 .rank-range-inputs span { font-weight: bold; }
-#character-skill-container .config-group select { width: 7rem; }
+#character-skill-container .config-group .input { width: 7rem; }
+.character-controls .input { width: 60px; text-align: center; margin-left: auto; }
 
 /* Table Actions & Info */
 .table-action-buttons { margin-bottom: 0.75rem; display:flex; gap: 0.5rem; }
 .table-display-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem; gap: 1rem; }
-.display-mode-label { font-size: 0.9rem; font-weight: bold; color: #34495e; flex-shrink: 0; }
-.legend-container { display: flex; justify-content: flex-end; gap: 0.9375rem; font-size: 0.9rem; color: #666; flex-wrap: wrap; flex-grow: 1; }
+.display-mode-label { font-weight: bold; color: #34495e; flex-shrink: 0; }
+.legend-container { display: flex; justify-content: flex-end; gap: 0.9375rem; color: #666; flex-wrap: wrap; flex-grow: 1; }
 .legend-item { display: flex; align-items: center; white-space: nowrap;}
 .legend-color { display: inline-block; width: 0.9375rem; height: 0.9375rem; border-radius: 0.1875rem; margin-right: 0.3125rem; border: 1px solid #ccc; }
 .legend-blue { background-color: var(--cell-blue-bg); }
@@ -148,26 +141,79 @@ input[type="number"]:focus, input[type="text"]:focus, select:focus { border-colo
 /* Skill Table */
 .skill-table-container { overflow-x: auto; overflow-y: auto; max-width: 100%; max-height: 70vh; position: relative; }
 .skill-table { width: 100%; border-collapse: collapse; margin-top: 0.3125rem; table-layout: fixed; }
-.skill-table th, .skill-table td { border: 1px solid var(--border-color); text-align: center; white-space: nowrap; color: var(--text-color); min-height: 2.375rem; box-sizing: border-box; }
-.skill-table thead th { background-color: var(--table-header-bg); font-weight: bold; position: sticky; top: 0; z-index: 10; padding: 0; width: 4.0625rem; }
-.skill-table tbody th, .skill-table tbody td { padding: 0.5rem; }
-.skill-table tbody th { background-color: var(--table-header-bg); font-weight: bold; position: sticky; left: 0; z-index: 5; }
-.skill-table th.corner-header { position: sticky; top: 0; left: 0; z-index: 11; background-color: var(--table-header-bg); padding: 0; vertical-align: top; overflow: hidden; }
-.skill-table th.corner-header, .skill-table tbody th { width: 3.75rem; }
+.skill-table th, .skill-table td {
+    border: 1px solid var(--border-color);
+    text-align: center;
+    white-space: nowrap;
+    color: var(--text-color);
+    box-sizing: border-box;
+    font-size: 0.95rem; /* 기준 폰트 크기 */
+    /* font-weight: bold;  /* td에는 bold가 적용이 되어서는 안됨 */
+}
+.skill-table thead th {
+    background-color: var(--table-header-bg);
+    position: sticky; top: 0; z-index: 10;
+    padding: 0;
+    width: 4.0625rem;
+    vertical-align: middle;
+}
+.skill-table tbody th, .skill-table tbody td {
+    padding: 0.5rem; /* 데이터 셀의 높이를 결정 */
+}
+.skill-table tbody th {
+    background-color: var(--table-header-bg);
+    font-weight: bold;
+    position: sticky; left: 0; z-index: 5;
+}
 .skill-table tbody tr:nth-child(even) { background-color: var(--light-gray-bg); }
 .skill-table tbody tr:hover { background-color: var(--medium-gray-bg); }
 .skill-cell-after { background-color: var(--cell-blue-bg); }
 .skill-cell-before { background-color: var(--cell-yellow-bg); }
 .skill-cell-draw { background-color: var(--cell-gray-bg); }
-.skill-table thead th .target-value-input { background-color: transparent; color: var(--text-color); }
-.target-value-wrapper { display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; }
-.target-value-input { width: 100%; flex-grow: 1; padding: 0 0.15rem; border: none; text-align: right; font-weight: bold; font-size: 0.95rem; outline: none; -moz-appearance: textfield; }
+.skill-table thead th .target-value-input {
+    background-color: transparent;
+    color: var(--text-color);
+    font-family: inherit;
+    /* font-size, font-weight 는 부모 th에서 상속받음 */
+}
+.target-value-wrapper {
+    display: flex; align-items: center; justify-content: center;
+    height: 100%; width: 100%;
+    padding: 0.5rem; /* 데이터 셀과 동일한 상하 패딩으로 높이 맞춤 */
+    box-sizing: border-box;
+}
+.target-value-input,
+.target-value-wrapper .percent-sign {
+    font-size: 0.95rem;   /* << 기준 폰트 크기와 동일하게 지정 */
+    font-weight: bold;    /* << 기준 폰트 굵기와 동일하게 지정 */
+    color: var(--text-color);
+}
+.target-value-input {
+    width: 100%; flex-grow: 1; padding: 0 0.15rem; border: none;
+    background-color: transparent;
+    text-align: right;
+    outline: none;
+    -moz-appearance: textfield;
+    font-family: inherit;
+}
 .target-value-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.target-value-wrapper .percent-sign { font-weight: bold; font-size: 1rem; color: var(--text-color); padding-right: 0.3rem; }
+.target-value-wrapper .percent-sign {
+    padding-right: 0.3rem;
+}
+
+/* --- 코너 헤더 스타일 (예외 처리) --- */
+/* -- \ 표시 --*/
+.skill-table th.corner-header { position: sticky; top: 0; left: 0; z-index: 11; background-color: var(--table-header-bg); padding: 0; vertical-align: top; overflow: hidden; }
+.skill-table th.corner-header, .skill-table tbody th { width: 3.75rem; }
 .skill-table th.corner-header .diagonal-box { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 .skill-table th.corner-header .diagonal-box::before { content: ''; position: absolute; top: 50%; left: 50%; width: 142%; height: 1px; background-color: #ccc; transform-origin: center; transform: translate(-50%, -50%) rotate(25deg); }
-.skill-table th.corner-header .diag-y { position: absolute; bottom: 0rem; left: 0.1rem; font-size: 0.85rem; font-weight: bold; color: var(--subtle-text-color); }
-.skill-table th.corner-header .diag-x { position: absolute; top: 0rem; right: 0.1rem; font-size: 0.85rem; font-weight: bold; color: var(--subtle-text-color); }
+/* 코너 헤더 내부 텍스트는 작은 폰트 크기 유지 */
+.skill-table th.corner-header .diag-x,
+.skill-table th.corner-header .diag-y {
+    position: absolute; font-size: 0.85rem; font-weight: bold; color: var(--subtle-text-color);
+}
+.skill-table th.corner-header .diag-y { bottom: 0rem; left: 0.1rem; }
+.skill-table th.corner-header .diag-x { top: 0rem; right: 0.1rem; }
 
 /* Footer & Message */
 .footer { padding: 0.9375rem 1.25rem; background-color: var(--primary-color); color: var(--white-color); text-align: center; font-size: 0.9rem; box-shadow: 0 -0.125rem 0.25rem var(--shadow-color); }
@@ -185,12 +231,8 @@ input[type="number"]:focus, input[type="text"]:focus, select:focus { border-colo
     .draggable-on-mobile.active-drag { cursor: grabbing; }
     .draggable-on-mobile::-webkit-scrollbar { display: none; }
     .draggable-on-mobile { -ms-overflow-style: none; scrollbar-width: none; }
-
     .table-display-info.draggable-on-mobile { margin-bottom: -0.8rem; }
     .table-display-info.draggable-on-mobile .legend-container { flex-wrap: nowrap; }
-
     .navbar-actions .btn, .table-config-group .config-group { flex-shrink: 0; width: auto; margin: 0 0.25rem; }
     .popup-panel { width: 95%; }
-    .skill-table th, .skill-table td { padding: 0.3rem; font-size: 0.8rem; }
-    .target-value-input { width: 3rem; }
 }

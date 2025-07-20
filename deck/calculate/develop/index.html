@@ -34,7 +34,7 @@
                 <div class="backup-actions scrollable-content">
                     <button id="exportDataBtn" class="btn btn-md btn-success">저장(JSON)</button>
                     <label for="importFile" class="btn btn-md btn-info">불러오기(JSON)</label>
-                    <input type="file" id="importFile" accept=".json" style="display: none;">
+                    <input type="file" id="importFile" class="input" accept=".json" style="display: none;">
                     <button id="clearDataBtn" class="btn btn-md btn-secondary">삭제</button>
                     <div id="user-id-display" class="user-id-display"></div>
                 </div>
@@ -48,15 +48,15 @@
                 <div class="auto-input-controls scrollable-content">
                     <div class="config-group">
                         <label for="auto-input-start">시작값:</label>
-                        <input type="number" id="auto-input-start">
+                        <input type="number" id="auto-input-start" class="input input-md">
                     </div>
                     <div class="config-group">
                         <label for="auto-input-end">끝나는값:</label>
-                        <input type="number" id="auto-input-end">
+                        <input type="number" id="auto-input-end" class="input input-md">
                     </div>
                     <div class="config-group">
                         <label for="auto-input-increment">증가값:</label>
-                        <input type="number" id="auto-input-increment">
+                        <input type="number" id="auto-input-increment" class="input input-md">
                     </div>
                     <button id="applyAutoInputBtn" class="btn btn-md btn-primary">적 용</button>
                 </div>
@@ -71,17 +71,17 @@
                     <button class="tab-button" data-tab="info-tab">정 보</button>
                 </div>
                 <div class="tab-content-wrapper">
-                    <div id="character-skill-tab" class="tab-content">
+                    <div id="character-skill-tab" class="tab-content active">
                         <section id="character-skill-container">
                             <h2>캐릭터별 비교</h2>
                             <div class="table-config-group draggable-on-mobile">
                                 <div class="config-group">
                                     <label for="character-select">캐릭터 선택:</label>
-                                    <select id="character-select"></select>
+                                    <select id="character-select" class="input input-sm"></select>
                                 </div>
                                 <div class="config-group">
                                     <label for="character-rank-input">랭크 입력:</label>
-                                    <input type="number" id="character-rank-input">
+                                    <input type="number" id="character-rank-input" class="input input-sm">
                                 </div>
                             </div>
                             <div class="table-action-buttons">
@@ -102,25 +102,25 @@
                             </div>
                         </section>
                     </div>
-                    <div id="rank-skill-tab" class="tab-content active">
+                    <div id="rank-skill-tab" class="tab-content">
                         <section id="rank-skill-container">
                             <h2>랭크별 비교</h2>
                             <div class="table-config-group draggable-on-mobile">
                                 <div class="config-group">
                                     <label for="skill-level-select">스킬 레벨:</label>
-                                    <select id="skill-level-select">
+                                    <select id="skill-level-select" class="input input-sm">
                                         <option value="1">1</option> <option value="2">2</option> <option value="3">3</option> <option value="4">4</option>
                                     </select>
                                 </div>
                                 <div class="config-group">
                                     <label>랭크 범위:</label>
                                     <div class="rank-range-inputs"> 
-                                        <input type="number" id="rank-min"><span>~</span><input type="number" id="rank-max">
+                                        <input type="number" id="rank-min" class="input input-sm"><span>~</span><input type="number" id="rank-max" class="input input-sm">
                                     </div>
                                 </div>
                                 <div class="config-group">
                                     <label for="rank-increment">랭크 증가량:</label>
-                                    <input type="number" id="rank-increment">
+                                    <input type="number" id="rank-increment" class="input input-sm">
                                 </div>
                             </div>
                             <div class="table-action-buttons">
@@ -141,7 +141,6 @@
                             </div>
                         </section>
                     </div>
-                    <!-- 정보 탭 (기존 탭 3) -->
                     <div id="info-tab" class="tab-content">
                         <h3>정보</h3>
                         <p>이곳은 정보 탭의 콘텐츠입니다.</p>
@@ -149,10 +148,9 @@
                 </div>
             </div>
         </main>
-
         <footer class="footer">
             <div id="message-display" class="message"></div>
-            <p>프로젝트 세카이 스킬 계산기</p>
+            <p>프로젝트 세카이 스킬 비교기</p>
         </footer>
     </div>
 
