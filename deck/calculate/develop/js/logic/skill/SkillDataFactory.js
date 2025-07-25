@@ -1,4 +1,5 @@
-import { BloomFesGameRule } from '../../../lib/gameRules/skill/BloomFes.js';
+
+import { BloomFesSkill } from '/lib/projectSekai/skill/BloomFesSkill.js';
 
 /**
  * 게임 규칙 계산 결과를 분석하고 조합하여,
@@ -6,7 +7,7 @@ import { BloomFesGameRule } from '../../../lib/gameRules/skill/BloomFes.js';
  */
 export class SkillDataFactory {
     constructor(skillLevel) {
-        this.gameRuleCalculator = new BloomFesGameRule(skillLevel);
+        this.bloomFesSkill = new BloomFesSkill(skillLevel);
     }
 
     /**
@@ -27,7 +28,7 @@ export class SkillDataFactory {
         const results = {};
 
         // 1. 정수 계산 및 분석
-        const intValues = this.gameRuleCalculator.calculateInteger(charRank, targetValue);
+        const intValues = this.bloomFesSkill.calculateInteger(charRank, targetValue);
         const intAnalysis = this._analyze(intValues);
         results.integer = { ...intValues, ...intAnalysis };
 
@@ -40,7 +41,7 @@ export class SkillDataFactory {
 
         // 2. 소수점 계산 및 분석 (옵션)
         if (includeDecimal) {
-            const decValues = this.gameRuleCalculator.calculateDecimal(charRank, targetValue);
+            const decValues = this.bloomFesSkill.calculateDecimal(charRank, targetValue);
             const decAnalysis = this._analyze(decValues);
             results.decimal = { ...decValues, ...decAnalysis };
 

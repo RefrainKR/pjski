@@ -1,11 +1,11 @@
-import { SkillComparisonTable } from './components/SkillComparisonTable.js';
-import { CharacterSkillTable } from './components/CharacterSkillTable.js';
-import { CharacterRankManager } from './components/CharacterRankManager.js';
-import { BackupManager } from './components/BackupManager.js';
-import { MESSAGE_DISPLAY_DURATION, SKILL_CALCULATOR_SETTINGS_KEY, DEFAULT_AUTO_INPUT_START, DEFAULT_AUTO_INPUT_END, DEFAULT_AUTO_INPUT_INCREMENT, MIN_X_VALUES_COUNT, MAX_X_VALUES_COUNT } from './data.js';
-import { DraggableScroller } from './utils/DraggableScroller.js';
-import { PopupManager } from './utils/PopupManager.js';
-import { InputNumberElement } from './utils/InputNumberElement.js';
+import { SkillComparisonTable } from '/components/SkillComparisonTable.js';
+import { CharacterSkillTable } from '/components/CharacterSkillTable.js';
+import { CharacterRankManager } from '/components/CharacterRankManager.js';
+import { BackupManager } from '/components/BackupManager.js';
+import { MESSAGE_DISPLAY_DURATION, SKILL_CALCULATOR_SETTINGS_KEY, DEFAULT_AUTO_INPUT_START, DEFAULT_AUTO_INPUT_END, DEFAULT_AUTO_INPUT_INCREMENT, MIN_X_VALUES_COUNT, MAX_X_VALUES_COUNT } from '/data.js';
+import { DraggableScroller } from '/lib/utils/DraggableScroller.js';
+import { PopupManager } from '/lib/utils/PopupManager.js';
+import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
 
 export class App {
     constructor() {

@@ -1,8 +1,11 @@
-import { SKILL_CALCULATOR_SETTINGS_KEY, MIN_RANK_MIN, MAX_RANK_MIN, DEFAULT_RANK_MIN, MIN_RANK_MAX, MAX_RANK_MAX, DEFAULT_RANK_MAX, MIN_RANK_INCREMENT, MAX_RANK_INCREMENT, DEFAULT_RANK_INCREMENT, FALLBACK_RANK_INPUT_ON_BLANK } from '../data.js';
-import { BaseSkillTable } from './BaseSkillTable.js';
-import { InputNumberElement } from '../utils/InputNumberElement.js';
-import { SkillCalculator } from '../logic/SkillCalculator.js';
-import { storageManager } from '../utils/StorageManager.js';
+
+import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
+import { storageManager } from '/lib/utils/StorageManager.js';
+
+import { SKILL_CALCULATOR_SETTINGS_KEY, MIN_RANK_MIN, MAX_RANK_MIN, DEFAULT_RANK_MIN, MIN_RANK_MAX, MAX_RANK_MAX, DEFAULT_RANK_MAX, MIN_RANK_INCREMENT, MAX_RANK_INCREMENT, DEFAULT_RANK_INCREMENT, FALLBACK_RANK_INPUT_ON_BLANK } from '/data.js';
+
+import { SkillDataFactory } from '/logic/skill/SkillDataFactory.js';
+import { BaseSkillTable } from '/components/BaseSkillTable.js';
 
 export class SkillComparisonTable extends BaseSkillTable {
     constructor(config) {
@@ -47,7 +50,7 @@ export class SkillComparisonTable extends BaseSkillTable {
     _populateTableBody() {
         try {
             const skillLevel = parseInt(this.skillLevelSelect.value);
-            const calculator = new SkillCalculator(skillLevel);
+            const calculator = new SkillDataFactory(skillLevel);
             
             const rankMin = this.rankMinElement.getValue();
             const rankMax = this.rankMaxElement.getValue();

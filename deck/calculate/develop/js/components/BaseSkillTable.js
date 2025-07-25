@@ -1,11 +1,13 @@
+
+import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
+import { ToggleButtonElement } from '/lib/utils/ToggleButtonElement.js';
+import { storageManager } from '/lib/utils/StorageManager.js';
+
 import {
-    MIN_TARGET_VALUE, MAX_TARGET_VALUE, FALLBACK_MANUAL_X_ON_BLANK,
+    MIN_TARGET_VALUE, MAX_TARGET_VALUE,
     DEFAULT_AUTO_INPUT_START, DEFAULT_AUTO_INPUT_END, DEFAULT_AUTO_INPUT_INCREMENT,
     SKILL_CALCULATOR_SETTINGS_KEY
-} from '../data.js';
-import { InputNumberElement } from '../utils/InputNumberElement.js';
-import { ToggleButtonElement } from '../utils/ToggleButtonElement.js';
-import { storageManager } from '../utils/StorageManager.js';
+} from '/data.js';
 
 /**
  * 스킬 테이블들의 공통 기능을 제공하는 추상 상위 클래스.

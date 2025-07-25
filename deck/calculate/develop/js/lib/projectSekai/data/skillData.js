@@ -1,3 +1,4 @@
+
 export const SKILL_DATA = {
     "bloomFes": { // 카드 종류: bloomFes (camelCase)
         "after": { // 각후 스킬: after (camelCase)

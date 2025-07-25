@@ -1,8 +1,4 @@
-// js/utils/ToggleButtonElement.js
 
-/**
- * 여러 상태를 순환하는 범용 토글 버튼을 관리하는 유틸리티 클래스입니다.
- */
 export class ToggleButtonElement {
     /**
      * @param {string} elementId - 제어할 버튼 요소의 ID.
@@ -39,7 +35,7 @@ export class ToggleButtonElement {
         }
         
         this.bindEvents();
-        this.updateUI(); // 초기 UI 설정
+        this.updateUI();
     }
 
     bindEvents() {
@@ -47,7 +43,6 @@ export class ToggleButtonElement {
     }
 
     toggleState() {
-        // 인덱스를 순환시킴 (다음 상태로 이동, 마지막이면 처음으로)
         this.currentIndex = (this.currentIndex + 1) % this.states.length;
         this.updateUI();
     }
@@ -56,7 +51,6 @@ export class ToggleButtonElement {
         const currentState = this.states[this.currentIndex];
         this.button.textContent = currentState.text;
 
-        // 상태 변경 콜백 호출
         if (typeof this.onStateChange === 'function') {
             this.onStateChange(currentState.name, currentState);
         }

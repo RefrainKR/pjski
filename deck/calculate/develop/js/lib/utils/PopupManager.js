@@ -1,4 +1,3 @@
-// js/utils/PopupManager.js
 
 export class PopupManager {
     constructor() {

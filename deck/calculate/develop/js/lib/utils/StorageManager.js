@@ -1,9 +1,4 @@
-// js/utils/StorageManager.js
 
-/**
- * localStorage와의 모든 상호작용을 중앙에서 관리하는 유틸리티 모듈입니다.
- * JSON 직렬화/역직렬화 및 에러 처리를 자동으로 수행합니다.
- */
 export const storageManager = {
     /**
      * 스토리지에서 데이터를 불러옵니다.

@@ -1,6 +1,9 @@
-import { CHARACTER_DATA, LOCAL_STORAGE_KEY } from '../data.js';
-import { InputNumberElement } from '../utils/InputNumberElement.js';
-import { storageManager } from '../utils/StorageManager.js';
+
+import { GROUP_DATA } from '/lib/projectSekai/data/groupData.js';
+
+import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
+import { storageManager } from '/lib/utils/StorageManager.js';
+import { LOCAL_STORAGE_KEY } from '/data.js';
 
 export class CharacterRankManager {
     constructor(initialContainerId, messageDisplayCallback) {
@@ -12,7 +15,7 @@ export class CharacterRankManager {
 
     loadCharacterRanks() {
         const allCharactersDefaultRanks = {};
-        CHARACTER_DATA.forEach(group => {
+        GROUP_DATA.forEach(group => {
             group.characters.forEach(charName => {
                 allCharactersDefaultRanks[charName] = { rank: 1, active: false };
             });
@@ -48,7 +51,7 @@ export class CharacterRankManager {
         container.innerHTML = '';
         this.inputElements = {};
 
-        CHARACTER_DATA.forEach(group => {
+        GROUP_DATA.forEach(group => {
             const groupSection = document.createElement('div');
             groupSection.className = 'group-section';
             groupSection.innerHTML = `<h3>${group.groupName}</h3>`;
@@ -114,7 +117,7 @@ export class CharacterRankManager {
 
     setCharacterRanks(data) {
         const mergedRanks = {};
-        CHARACTER_DATA.forEach(group => {
+        GROUP_DATA.forEach(group => {
             group.characters.forEach(charName => {
                 mergedRanks[charName] = { rank: 1, active: false };
                 if (data && data.hasOwnProperty(charName)) {

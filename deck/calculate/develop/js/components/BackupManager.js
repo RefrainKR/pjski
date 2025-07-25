@@ -1,7 +1,6 @@
-// js/components/BackupManager.js
 
-import { LOCAL_STORAGE_KEY } from '../data.js';
-import { storageManager } from '../utils/StorageManager.js';
+import { storageManager } from '/lib/utils/StorageManager.js';
+import { LOCAL_STORAGE_KEY } from '/data.js';
 
 export class BackupManager {
     /**
@@ -42,22 +41,13 @@ export class BackupManager {
     }
 
     displayUserId() {
-        // Firestore userId가 구현될 경우 여기에 표시 로직 추가
-        // 현재는 LocalStorage 기반이므로 임시 메시지 또는 비워둠
         if (this.userIdDisplay) {
             this.userIdDisplay.textContent = '현재 사용자 ID: (로컬 저장소)';
-            // 실제 Firestore 연동 시:
-            // const auth = getAuth();
-            // if (auth.currentUser) {
-            //    this.userIdDisplay.textContent = `현재 사용자 ID: ${auth.currentUser.uid}`;
-            // } else {
-            //    this.userIdDisplay.textContent = '로그인되지 않음';
-            // }
         }
     }
 
     exportData() {
-        const data = this.getCharacterRanksCallback(); // CharacterRankManager로부터 데이터 가져오기
+        const data = this.getCharacterRanksCallback();
         if (!data) {
             this.messageDisplayCallback('내보낼 데이터가 없습니다.', 'info');
             return;
@@ -106,7 +96,7 @@ export class BackupManager {
 
     clearData() {
         if (confirm('정말로 모든 캐릭터 랭크 데이터를 지우시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
-            storageManager.remove(LOCAL_STORAGE_KEY); // localStorage.removeItem -> storageManager.remove
+            storageManager.remove(LOCAL_STORAGE_KEY);
             this.setCharacterRanksCallback({});
             this.messageDisplayCallback('모든 데이터가 지워졌습니다.', 'success');
         }

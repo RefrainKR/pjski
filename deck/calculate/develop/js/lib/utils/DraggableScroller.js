@@ -1,4 +1,3 @@
-// js/utils/DraggableScroller.js
 
 export class DraggableScroller {
     /**

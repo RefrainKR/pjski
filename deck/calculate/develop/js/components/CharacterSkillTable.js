@@ -1,6 +1,7 @@
-import { BaseSkillTable } from './BaseSkillTable.js';
-import { InputNumberElement } from '../utils/InputNumberElement.js';
-import { SkillCalculator } from '../logic/SkillCalculator.js';
+
+import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
+import { SkillDataFactory } from '/logic/skill/SkillDataFactory.js';
+import { BaseSkillTable } from '/components/BaseSkillTable.js';
 
 export class CharacterSkillTable extends BaseSkillTable {
     constructor(config) {
@@ -92,7 +93,7 @@ export class CharacterSkillTable extends BaseSkillTable {
 
         yValues.forEach(yValue => {
             // yValue는 skillLevel이므로, calculator를 매번 새로 생성
-            const calculator = new SkillCalculator(yValue);
+            const calculator = new SkillDataFactory(yValue);
             
             const rowHTML = this._renderRow(calculator, yValue, this.manualXValues, charRank);
             tbody.insertAdjacentHTML('beforeend', rowHTML);
