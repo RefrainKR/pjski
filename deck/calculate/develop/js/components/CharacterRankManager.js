@@ -15,8 +15,8 @@ export class CharacterRankManager {
 
     loadCharacterRanks() {
         const allCharactersDefaultRanks = {};
-        GROUP_DATA.forEach(group => {
-            group.characters.forEach(charName => {
+        GROUP_DATA.forEach(groupData => {
+            groupData.characters.forEach(charName => {
                 allCharactersDefaultRanks[charName] = { rank: 1, active: false };
             });
         });
@@ -51,15 +51,15 @@ export class CharacterRankManager {
         container.innerHTML = '';
         this.inputElements = {};
 
-        GROUP_DATA.forEach(group => {
-            const groupSection = document.createElement('div');
-            groupSection.className = 'group-section';
-            groupSection.innerHTML = `<h3>${group.groupName}</h3>`;
+        GROUP_DATA.forEach(groupData => {
+            const groupDataSection = document.createElement('div');
+            groupDataSection.className = 'groupData-section';
+            groupDataSection.innerHTML = `<h3>${groupData.group}</h3>`;
 
             const characterGrid = document.createElement('div');
             characterGrid.className = 'character-grid';
 
-            group.characters.forEach(charName => {
+            groupData.characters.forEach(charName => {
                 const charData = this.characterRanks[charName]; 
                 const characterItem = document.createElement('div');
                 characterItem.className = 'character-item';
@@ -78,8 +78,8 @@ export class CharacterRankManager {
                 `;
                 characterGrid.appendChild(characterItem);
             });
-            groupSection.appendChild(characterGrid);
-            container.appendChild(groupSection);
+            groupDataSection.appendChild(characterGrid);
+            container.appendChild(groupDataSection);
         });
 
         this.bindCharacterInputEvents(container);
@@ -88,14 +88,19 @@ export class CharacterRankManager {
     bindCharacterInputEvents(container) {
         container.querySelectorAll('.character-item input[type="number"]').forEach(inputElement => {
             const charName = inputElement.dataset.charName;
+            
             this.inputElements[charName] = new InputNumberElement(
                 inputElement, 1, 100, 1,
                 (validatedValue) => {
-                    this.characterRanks[charName].rank = validatedValue;
-                    this.saveCharacterRanks();
+                    if (this.characterRanks[charName].rank !== validatedValue) {
+                        this.characterRanks[charName].rank = validatedValue;
+                        this.saveCharacterRanks();
+                        this.dispatchEvent(charName);
+                    }
                 }
             );
-            this.inputElements[charName].setValue(parseInt(inputElement.value), true);
+            
+            this.inputElements[charName].setValue(parseInt(inputElement.value), false);
         });
 
         container.querySelectorAll('.character-item input[type="checkbox"]').forEach(checkbox => {
@@ -103,22 +108,23 @@ export class CharacterRankManager {
                 const charName = event.target.dataset.charName;
                 this.characterRanks[charName].active = event.target.checked;
                 this.saveCharacterRanks();
-
-                const updateEvent = new CustomEvent('characterRanksUpdated', {
-                    bubbles: true,
-                    detail: {
-                        updatedCharacter: charName
-                    }
-                });
-                document.body.dispatchEvent(updateEvent);
+                this.dispatchEvent(charName);
             });
         });
+    }
+    
+    dispatchEvent(charName) {
+        const updateEvent = new CustomEvent('characterRanksUpdated', {
+            bubbles: true,
+            detail: { updatedCharacter: charName }
+        });
+        document.body.dispatchEvent(updateEvent);
     }
 
     setCharacterRanks(data) {
         const mergedRanks = {};
-        GROUP_DATA.forEach(group => {
-            group.characters.forEach(charName => {
+        GROUP_DATA.forEach(groupData => {
+            groupData.characters.forEach(charName => {
                 mergedRanks[charName] = { rank: 1, active: false };
                 if (data && data.hasOwnProperty(charName)) {
                     const importedCharData = data[charName];
@@ -162,16 +168,17 @@ export class CharacterRankManager {
     }
 
     /**
-     * 특정 캐릭터의 랭크를 업데이트하고 저장합니다.
+     * 특정 캐릭터의 랭크를 업데이트하고, UI에 반영하며, 저장하고, 변경 사항을 알립니다.
      * @param {string} charName - 업데이트할 캐릭터의 이름.
      * @param {number} rank - 새로운 랭크 값.
      */
     updateCharacterRank(charName, rank) {
         if (this.characterRanks[charName]) {
+            if (this.characterRanks[charName].rank === rank) return;
+            
             this.characterRanks[charName].rank = rank;
-            // 랭크 패널의 입력 필드 값도 동기화
             if (this.inputElements[charName]) {
-                this.inputElements[charName].setValue(rank, false); // 콜백 없이 값만 업데이트
+                this.inputElements[charName].setValue(rank, false); 
             }
             this.saveCharacterRanks();
         }

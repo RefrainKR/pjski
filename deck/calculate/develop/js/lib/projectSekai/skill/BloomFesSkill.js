@@ -1,5 +1,6 @@
 
-import { SKILL_DATA } from '../data/skillData.js';
+import { SKILL_DATA } from '/lib/projectSekai/data/skillData.js';
+// import { SKILL_DATA } from '../data/skillData.js';
 
 export class BloomFesSkill {
     constructor(skillLevel) {

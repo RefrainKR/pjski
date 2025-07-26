@@ -25,7 +25,6 @@ export class CharacterSkillTable extends BaseSkillTable {
         this.rankInput.addEventListener('change', () => this.renderTable());
     }
 
-    // 캐릭터 랭크를 업데이트하는 로직을 별도 메서드로 분리
     updateManagerRank(newRank) {
         const selectedCharName = this.characterSelect.value;
         if (selectedCharName !== 'direct') {
@@ -46,13 +45,8 @@ export class CharacterSkillTable extends BaseSkillTable {
             this.rankInput.disabled = false;
         } else {
             const rank = parseInt(selectedOption.dataset.rank);
-            // 콜백 없이 값만 설정하고,
             this.rankInputElement.setValue(rank, false);
-            // 랭크 매니저의 값도 동기화합니다.
-            this.updateManagerRank(rank);
         }
-        
-        // 마지막에 한 번만 테이블을 다시 그립니다.
         this.renderTable();
     }
 

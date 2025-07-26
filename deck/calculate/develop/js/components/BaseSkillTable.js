@@ -27,8 +27,8 @@ export class BaseSkillTable {
         this.displayModeToggle = new ToggleButtonElement(
             config.displayModeBtnId,
             [
-                { name: 'highest', text: '높은 값', label: '표시된 값: 각전 / 각후 중 높은 값' },
-                { name: 'difference', text: '차이 값', label: '표시된 값: 각전 / 각후 스킬 값의 차이' }
+                { name: 'highest', text: '높은 값', label: '값: 각전, 각후 중 높은 값' },
+                { name: 'difference', text: '차이 값', label: '표시된 값: 각전 - 각후 값' }
             ],
             (modeName, state) => {
                 this.displayMode = modeName;
