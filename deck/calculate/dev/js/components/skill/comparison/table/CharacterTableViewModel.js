@@ -5,6 +5,8 @@ import { SkillDataFactory } from '/logic/skill/SkillDataFactory.js';
 
 import { BaseTableViewModel } from '/components/skill/comparison/table/BaseTableViewModel.js';
 
+import { MIN_RANK, MAX_RANK, DEFAULT_RANK } from '/data.js';
+
 export class CharacterTableViewModel extends BaseTableViewModel {
     constructor(config) {
         super(config);
@@ -14,7 +16,7 @@ export class CharacterTableViewModel extends BaseTableViewModel {
         this.rankInput = this.container.querySelector('#character-rank-input');
 
         // InputNumberElement의 콜백은 이제 랭크 업데이트만 담당합니다.
-        this.rankInputElement = new InputNumberElement(this.rankInput, 1, 100, 1, (newRank) => {
+        this.rankInputElement = new InputNumberElement(this.rankInput, MIN_RANK, MAX_RANK, DEFAULT_RANK, (newRank) => {
             this.updateManagerRank(newRank);
         });
         

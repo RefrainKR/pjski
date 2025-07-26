@@ -2,7 +2,7 @@
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
 import { storageManager } from '/lib/utils/StorageManager.js';
 
-import { SKILL_CALCULATOR_SETTINGS_KEY, MIN_RANK_MIN, MAX_RANK_MIN, DEFAULT_RANK_MIN, MIN_RANK_MAX, MAX_RANK_MAX, DEFAULT_RANK_MAX, MIN_RANK_INCREMENT, MAX_RANK_INCREMENT, DEFAULT_RANK_INCREMENT, FALLBACK_RANK_INPUT_ON_BLANK } from '/data.js';
+import { SKILL_CALCULATOR_SETTINGS_KEY, MIN_RANK_MIN, MAX_RANK_MIN, DEFAULT_RANK_MIN, MIN_RANK_MAX, MAX_RANK_MAX, DEFAULT_RANK_MAX, INCREMENT_MIN_RANK, INCREMENT_MAX_RANK, INCREMENT_DEFAULT_RANK, FALLBACK_RANK_INPUT_ON_BLANK } from '/data.js';
 
 import { SkillDataFactory } from '/logic/skill/SkillDataFactory.js';
 
@@ -19,7 +19,7 @@ export class RankTableViewModel extends BaseTableViewModel {
 
         this.rankMinElement = new InputNumberElement(this.rankMinInput, MIN_RANK_MIN, MAX_RANK_MIN, DEFAULT_RANK_MIN, this.handleInputChange.bind(this), FALLBACK_RANK_INPUT_ON_BLANK);
         this.rankMaxElement = new InputNumberElement(this.rankMaxInput, MIN_RANK_MAX, MAX_RANK_MAX, DEFAULT_RANK_MAX, this.handleInputChange.bind(this), FALLBACK_RANK_INPUT_ON_BLANK);
-        this.rankIncrementElement = new InputNumberElement(this.rankIncrementInput, MIN_RANK_INCREMENT, MAX_RANK_INCREMENT, DEFAULT_RANK_INCREMENT, this.handleInputChange.bind(this), FALLBACK_RANK_INPUT_ON_BLANK);
+        this.rankIncrementElement = new InputNumberElement(this.rankIncrementInput, INCREMENT_MIN_RANK, INCREMENT_MAX_RANK, INCREMENT_DEFAULT_RANK, this.handleInputChange.bind(this), FALLBACK_RANK_INPUT_ON_BLANK);
 
         this.loadSettings();
         this.bindSpecificEvents();

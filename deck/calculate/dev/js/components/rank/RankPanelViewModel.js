@@ -4,7 +4,7 @@ import { GROUP_DATA } from '/lib/projectSekai/data/groupData.js';
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
 import { storageManager } from '/lib/utils/StorageManager.js';
 
-import { LOCAL_STORAGE_KEY } from '/data.js';
+import { LOCAL_STORAGE_KEY, MIN_RANK, MAX_RANK, DEFAULT_RANK } from '/data.js';
 
 export class RankPanelViewModel {
     constructor(initialContainerId, messageDisplayCallback) {
@@ -18,7 +18,7 @@ export class RankPanelViewModel {
         const allCharactersDefaultRanks = {};
         GROUP_DATA.forEach(groupData => {
             groupData.characters.forEach(charName => {
-                allCharactersDefaultRanks[charName] = { rank: 1, active: false };
+                allCharactersDefaultRanks[charName] = { rank: DEFAULT_RANK, active: false };
             });
         });
 
@@ -29,7 +29,7 @@ export class RankPanelViewModel {
                 if (allCharactersDefaultRanks.hasOwnProperty(charName)) {
                     const storedCharData = parsedStoredData[charName];
                     const storedRank = parseInt(storedCharData.rank);
-                    allCharactersDefaultRanks[charName].rank = isNaN(storedRank) ? 1 : Math.max(1, Math.min(100, storedRank));
+                    allCharactersDefaultRanks[charName].rank = isNaN(storedRank) ? MIN_RANK : Math.max(MIN_RANK, Math.min(MAX_RANK, storedRank));
                     allCharactersDefaultRanks[charName].active = typeof storedCharData.active === 'boolean' ? storedCharData.active : false;
                 }
             }
@@ -74,7 +74,7 @@ export class RankPanelViewModel {
                                 <span class="slider"></span>
                             </label>
                         </div>
-                        <input type="number" value="${charData.rank}" min="1" max="100" data-char-name="${charName}">
+                        <input type="number" class="input input-sm" value="${charData.rank}" min="${MIN_RANK}" max="${MAX_RANK}" value="${DEFAULT_RANK}" data-char-name="${charName}">
                     </div>
                 `;
                 characterGrid.appendChild(characterItem);
@@ -91,7 +91,7 @@ export class RankPanelViewModel {
             const charName = inputElement.dataset.charName;
             
             this.inputElements[charName] = new InputNumberElement(
-                inputElement, 1, 100, 1,
+                inputElement, MIN_RANK, MAX_RANK, DEFAULT_RANK,
                 (validatedValue) => {
                     if (this.characterRanks[charName].rank !== validatedValue) {
                         this.characterRanks[charName].rank = validatedValue;

@@ -2,7 +2,11 @@ import { DraggableScroller } from '/lib/utils/DraggableScroller.js';
 import { PopupManager } from '/lib/utils/PopupManager.js';
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
 
-import { MESSAGE_DISPLAY_DURATION, SKILL_CALCULATOR_SETTINGS_KEY, DEFAULT_AUTO_INPUT_START, DEFAULT_AUTO_INPUT_END, DEFAULT_AUTO_INPUT_INCREMENT, MIN_X_VALUES_COUNT, MAX_X_VALUES_COUNT } from '/data.js';
+import { MESSAGE_DISPLAY_DURATION, SKILL_CALCULATOR_SETTINGS_KEY
+    , MIN_AUTO_INPUT, MAX_AUTO_INPUT, MIN_AUTO_INPUT_INCREMENT, MAX_AUTO_INPUT_INCREMENT
+    , DEFAULT_AUTO_INPUT_START, DEFAULT_AUTO_INPUT_END, DEFAULT_AUTO_INPUT_INCREMENT
+    , MIN_X_VALUES_COUNT, MAX_X_VALUES_COUNT
+} from '/data.js';
 
 import { RankTableViewModel } from '/components/skill/comparison/table/RankTableViewModel.js';
 import { CharacterTableViewModel } from '/components/skill/comparison/table/CharacterTableViewModel.js';
@@ -58,9 +62,9 @@ export class App {
         const endInput = autoInputPanel.querySelector('#auto-input-end');
         const incrementInput = autoInputPanel.querySelector('#auto-input-increment');
 
-        const startElement = new InputNumberElement(startInput, 10, 140, DEFAULT_AUTO_INPUT_START, null);
-        const endElement = new InputNumberElement(endInput, 10, 140, DEFAULT_AUTO_INPUT_END, null);
-        const incrementElement = new InputNumberElement(incrementInput, 1, 50, DEFAULT_AUTO_INPUT_INCREMENT, null);
+        const startElement = new InputNumberElement(startInput, MIN_AUTO_INPUT, MAX_AUTO_INPUT, DEFAULT_AUTO_INPUT_START, null);
+        const endElement = new InputNumberElement(endInput, MIN_AUTO_INPUT, MAX_AUTO_INPUT, DEFAULT_AUTO_INPUT_END, null);
+        const incrementElement = new InputNumberElement(incrementInput, MIN_AUTO_INPUT_INCREMENT, MAX_AUTO_INPUT_INCREMENT, DEFAULT_AUTO_INPUT_INCREMENT, null);
 
         let activeTable = null;
 

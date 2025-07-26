@@ -4,7 +4,7 @@ import { GROUP_DATA } from '/lib/projectSekai/data/groupData.js';
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
 import { storageManager } from '/lib/utils/StorageManager.js';
 
-import { LOCAL_STORAGE_KEY } from '/data.js';
+import { LOCAL_STORAGE_KEY, RANK_MIN, RANK_MAX } from '/data.js';
 
 export class RankPanelViewModel {
     constructor(initialContainerId, messageDisplayCallback) {
@@ -74,7 +74,7 @@ export class RankPanelViewModel {
                                 <span class="slider"></span>
                             </label>
                         </div>
-                        <input type="number" value="${charData.rank}" min="1" max="100" data-char-name="${charName}">
+                        <input type="number" class="input input-sm" value="${charData.rank}" min="${RANK_MIN}" max="${RANK_MAX}" data-char-name="${charName}">
                     </div>
                 `;
                 characterGrid.appendChild(characterItem);

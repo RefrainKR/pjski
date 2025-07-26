@@ -3,18 +3,22 @@ export const LOCAL_STORAGE_KEY = 'characterRanksData';
 export const SKILL_CALCULATOR_SETTINGS_KEY = 'skillCalculatorSettings';
 export const MESSAGE_DISPLAY_DURATION = 3000; // 메시지 자동 사라짐 시간 (ms)
 
+// --- Rank --- //
+export const RANK_MIN = 1;
+export const RANK_MAX = 100;
+
 // --- Skill Calculator Input Constants ---
 export const MIN_RANK_MIN = 1;
-export const MAX_RANK_MIN = 90;
+export const MAX_RANK_MIN = 80;
 export const DEFAULT_RANK_MIN = 1; // blank 시 이 값으로 되돌림
 
-export const MIN_RANK_MAX = 10;
+export const MIN_RANK_MAX = 60;
 export const MAX_RANK_MAX = 100;
 export const DEFAULT_RANK_MAX = 100; // blank 시 이 값으로 되돌림
 
-export const MIN_RANK_INCREMENT = 1;
-export const MAX_RANK_INCREMENT = 10;
-export const DEFAULT_RANK_INCREMENT = 1; // blank 시 이 값으로 되돌림
+export const INCREMENT_MIN_RANK = 1;
+export const INCREMENT_MAX_RANK = 10;
+export const INCREMENT_DEFAULT_RANK = 1; // blank 시 이 값으로 되돌림
 
 export const MIN_TARGET_VALUE = 10; // manual-x-input 및 자동 입력 시작값의 최소
 export const MAX_TARGET_VALUE = 140; // manual-x-input 및 자동 입력 끝나는값의 최대
@@ -25,8 +29,8 @@ export const DEFAULT_AUTO_INPUT_END = 140;
 export const DEFAULT_AUTO_INPUT_INCREMENT = 5;
 
 // 자동 입력 테이블 X축 생성 개수 제한 (새로 추가됨)
-export const MIN_X_VALUES_COUNT = 10;
-export const MAX_X_VALUES_COUNT = 30;
+export const MIN_X_VALUES_COUNT = 5;
+export const MAX_X_VALUES_COUNT = 25;
 
 // blank 시 되돌릴 특정 값 (InputNumberElement의 fallbackValueOnBlank로 사용)
 // null은 previousValue 또는 defaultValue로 되돌림을 의미
