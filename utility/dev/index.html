@@ -20,8 +20,8 @@
     <nav class="navbar">
         <ul class="main-nav draggable-on-mobile">
             <!-- 메인 툴 전환 버튼들 -->
-            <li><button class="nav-button active" data-action="toggle-tool" data-target="tool-skill-comparison">스킬 비교기</button></li>
-            <li><button class="nav-button" data-action="toggle-tool" data-target="tool-placeholder-2">??2</button></li>
+             <li><button class="nav-button active" data-action="toggle-tool" data-target="tool-skill-comparison">스킬 비교기</button></li>
+            <li><button class="nav-button" data-action="toggle-tool" data-target="tool-event-point-calculator">이벤트 비교기</button></li>
             <li><button class="nav-button" data-action="toggle-tool" data-target="tool-placeholder-3">??3</button></li>
 
             <li class="nav-separator"></li>
@@ -77,96 +77,147 @@
         </div>
     </div>
     <main class="container">
-        <!-- 1. 스킬 비교기 기능 섹션 -->
-        <section id="tool-skill-comparison" class="tool-section active">
-            <div class="tabs">
-                <div class="tab-buttons">
-                    <button class="tab-button active" data-tab="character-skill-tab">캐릭터별</button>
-                    <button class="tab-button" data-tab="rank-skill-tab">랭크별</button>
-                    <button class="tab-button" data-tab="info-tab">정 보</button>
+        <div id="message-display" class="message"></div>
+
+        <section id="tool-skill-comparison" class="tool-section tabs">
+            <div class="tab-buttons">
+                <button class="tab-button active" data-tab="character-skill-tab">캐릭터별</button>
+                <button class="tab-button" data-tab="rank-skill-tab">랭크별</button>
+                <button class="tab-button" data-tab="info-tab">정 보</button>
+            </div>
+            <div class="tab-content-wrapper">
+                <div id="character-skill-tab" class="tab-content active">
+                    <h2>캐릭터별 비교</h2>
+                    <div class="table-config-group draggable-on-mobile">
+                        <div class="config-group">
+                            <label for="character-select">캐릭터 선택:</label>
+                            <select id="character-select" class="input input-sm"></select>
+                        </div>
+                        <div class="config-group">
+                            <label for="character-rank-input">랭크 입력:</label>
+                            <input type="number" id="character-rank-input" class="input input-sm" value="1">
+                        </div>
+                    </div>
+                    <div class="table-action-buttons">
+                        <button id="autoInputTriggerBtn-char" class="btn btn-sm btn-primary" data-popup-trigger="auto-input-panel">자동 입력</button>
+                        <button id="btn-display-mode-char" class="btn btn-sm btn-secondary">높은 값</button>
+                        <button id="btn-number-format-char" class="btn btn-sm btn-secondary">정수</button>
+                    </div>
+                    <div class="table-display-info draggable-on-mobile">
+                        <div id="display-mode-label-char" class="display-mode-label"></div>
+                        <div class="legend-container">
+                            <div class="legend-item"><span class="legend-color legend-blue"></span> 각후 유리</div>
+                            <div class="legend-item"><span class="legend-color legend-yellow"></span> 각전 유리</div>
+                            <div class="legend-item"><span class="legend-color legend-gray"></span> 동일</div>
+                        </div>
+                    </div>
+                    <div class="skill-table-container">
+                        <table id="character-skill-table" class="skill-table"></table>
+                    </div>
                 </div>
-                <div class="tab-content-wrapper">
-                    <div id="character-skill-tab" class="tab-content active">
-                        <section id="character-skill-container">
-                            <h2>캐릭터별 비교</h2>
-                            <div class="table-config-group draggable-on-mobile">
-                                <div class="config-group">
-                                    <label for="character-select">캐릭터 선택:</label>
-                                    <select id="character-select" class="input input-sm"></select>
-                                </div>
-                                <div class="config-group">
-                                    <label for="character-rank-input">랭크 입력:</label>
-                                    <input type="number" id="character-rank-input" class="input input-sm" value="1">
-                                </div>
+                <div id="rank-skill-tab" class="tab-content">
+                    <h2>랭크별 비교</h2>
+                    <div class="table-config-group draggable-on-mobile">
+                        <div class="config-group">
+                            <label for="skill-level-select">스킬 레벨:</label>
+                            <select id="skill-level-select" class="input input-sm">
+                                <option value="1">1</option> <option value="2">2</option> <option value="3">3</option> <option value="4">4</option>
+                            </select>
+                        </div>
+                        <div class="config-group">
+                            <label>랭크 범위:</label>
+                            <div class="rank-range-inputs"> 
+                                <input type="number" id="rank-min" class="input input-sm"><span>~</span><input type="number" id="rank-max" class="input input-sm">
                             </div>
-                            <div class="table-action-buttons">
-                                <button id="autoInputTriggerBtn-char" class="btn btn-sm btn-primary" data-popup-trigger="auto-input-panel">자동 입력</button>
-                                <button id="btn-display-mode-char" class="btn btn-sm btn-secondary">높은 값</button>
-                                <button id="btn-number-format-char" class="btn btn-sm btn-secondary">정수</button>
-                            </div>
-                            <div class="table-display-info draggable-on-mobile">
-                                <div id="display-mode-label-char" class="display-mode-label"></div>
-                                <div class="legend-container">
-                                    <div class="legend-item"><span class="legend-color legend-blue"></span> 각후 유리</div>
-                                    <div class="legend-item"><span class="legend-color legend-yellow"></span> 각전 유리</div>
-                                    <div class="legend-item"><span class="legend-color legend-gray"></span> 동일</div>
-                                </div>
-                            </div>
-                            <div class="skill-table-container">
-                                <table id="character-skill-table" class="skill-table"></table>
-                            </div>
-                        </section>
+                        </div>
+                        <div class="config-group">
+                            <label for="rank-increment">랭크 증가량:</label>
+                            <input type="number" id="rank-increment" class="input input-sm">
+                        </div>
                     </div>
-                    <div id="rank-skill-tab" class="tab-content">
-                        <section id="rank-skill-container">
-                            <h2>랭크별 비교</h2>
-                            <div class="table-config-group draggable-on-mobile">
-                                <div class="config-group">
-                                    <label for="skill-level-select">스킬 레벨:</label>
-                                    <select id="skill-level-select" class="input input-sm">
-                                        <option value="1">1</option> <option value="2">2</option> <option value="3">3</option> <option value="4">4</option>
-                                    </select>
-                                </div>
-                                <div class="config-group">
-                                    <label>랭크 범위:</label>
-                                    <div class="rank-range-inputs"> 
-                                        <input type="number" id="rank-min" class="input input-sm"><span>~</span><input type="number" id="rank-max" class="input input-sm">
-                                    </div>
-                                </div>
-                                <div class="config-group">
-                                    <label for="rank-increment">랭크 증가량:</label>
-                                    <input type="number" id="rank-increment" class="input input-sm">
-                                </div>
-                            </div>
-                            <div class="table-action-buttons">
-                                <button id="autoInputTriggerBtn" class="btn btn-sm btn-primary" data-popup-trigger="auto-input-panel">자동 입력</button>
-                                <button id="btn-display-mode" class="btn btn-sm btn-secondary">높은 값</button>
-                                <button id="btn-number-format" class="btn btn-sm btn-secondary">정수</button>
-                            </div>
-                            <div class="table-display-info draggable-on-mobile">
-                                <div id="display-mode-label" class="display-mode-label"></div>
-                                <div class="legend-container">
-                                    <div class="legend-item"><span class="legend-color legend-blue"></span> 각후 유리</div>
-                                    <div class="legend-item"><span class="legend-color legend-yellow"></span> 각전 유리</div>
-                                    <div class="legend-item"><span class="legend-color legend-gray"></span> 동일</div>
-                                </div>
-                            </div>
-                            <div class="skill-table-container">
-                                <table id="rank-skill-table" class="skill-table"></table>
-                            </div>
-                        </section>
+                    <div class="table-action-buttons">
+                        <button id="autoInputTriggerBtn" class="btn btn-sm btn-primary" data-popup-trigger="auto-input-panel">자동 입력</button>
+                        <button id="btn-display-mode" class="btn btn-sm btn-secondary">높은 값</button>
+                        <button id="btn-number-format" class="btn btn-sm btn-secondary">정수</button>
                     </div>
-                    <div id="info-tab" class="tab-content">
-                        <h3>정보</h3>
-                        <p>이곳은 정보 탭의 콘텐츠입니다.</p>
+                    <div class="table-display-info draggable-on-mobile">
+                        <div id="display-mode-label" class="display-mode-label"></div>
+                        <div class="legend-container">
+                            <div class="legend-item"><span class="legend-color legend-blue"></span> 각후 유리</div>
+                            <div class="legend-item"><span class="legend-color legend-yellow"></span> 각전 유리</div>
+                            <div class="legend-item"><span class="legend-color legend-gray"></span> 동일</div>
+                        </div>
                     </div>
+                    <div class="skill-table-container">
+                        <table id="rank-skill-table" class="skill-table"></table>
+                    </div>
+                </div>
+                <div id="info-tab" class="tab-content">
+                    <h3>정보</h3>
+                    <p>이곳은 정보 탭의 콘텐츠입니다.</p>
                 </div>
             </div>
         </section>
-        <!-- 2. 나중에 추가될 ??2 기능 섹션 -->
-        <section id="tool-placeholder-2" class="tool-section">
-            <h2>기능 2 (개발 예정)</h2>
-            <p>이곳에 새로운 유틸리티 기능이 추가될 예정입니다.</p>
+
+        <section id="tool-event-point-calculator" class="tool-section tabs">
+            <div class="tab-buttons">
+                <button class="tab-button active" data-tab="ep-calc-main">로앤파</button>
+            </div>
+            <div class="tab-content-wrapper">
+                <div id="ep-calc-main" class="tab-content active">
+                    <div class="section-header">
+                        <button id="ep-save-btn" class="btn btn-sm btn-success">저장</button>
+                        <button id="ep-reset-btn" class="btn btn-sm btn-secondary">초기화</button>
+                    </div>
+                    <div class="ep-calculator">
+                        <div class="ep-section">
+                            <h3>이벤트 정보</h3>
+                            <div class="config-grid">
+                                <div class="config-item"><label for="ep-start-date">시작일</label><input type="date" id="ep-start-date" class="input input-md"></div>
+                                <div class="config-item"><label for="ep-end-date">종료일</label><input type="date" id="ep-end-date" class="input input-md"></div>
+                                <div class="config-item"><label for="ep-start-time">시작 시간</label><select id="ep-start-time" class="input input-md"><option value="15">15시</option><option value="20">20시</option></select></div>
+                            </div>
+                        </div>
+                        <div class="ep-section">
+                            <h3>내 정보</h3>
+                            <div class="config-grid">
+                                <div class="config-item"><label for="ep-current-points">현재 EP</label><input type="number" id="ep-current-points" class="input input-md" min="0" value="0"></div>
+                                <div class="config-item"><label for="ep-current-energy">현재 불</label><input type="number" id="ep-current-energy" class="input input-md" min="0" value="10"></div>
+                                <div class="config-item"><label for="ep-extra-energy">추가 불 (캔, 랭크업)</label><input type="number" id="ep-extra-energy" class="input input-md" min="0" value="0"></div>
+                            </div>
+                        </div>
+                        <div class="ep-section">
+                            <h3>획득량 정보</h3>
+                            <div class="config-grid">
+                                <div class="config-item"><label for="ep-per-5-energy">5불당 평균 EP</label><input type="number" id="ep-per-5-energy" class="input input-md" min="0" value="25000"></div>
+                                <div class="config-item"><label for="ep-challenge-live">챌린지 라이브 EP</label><input type="number" id="ep-challenge-live" class="input input-md" min="0" value="50000"></div>
+                                <div class="config-item"><label for="ep-mysekai">마이세카이 EP (10게이지당)</label><select id="ep-mysekai" class="input input-md"><option value="0">안함</option><option value="1">1불</option><option value="10">10불</option></select></div>
+                            </div>
+                        </div>
+                        <!-- 출력 섹션 -->
+                        <div class="ep-section ep-results">
+                            <h3>예측 결과</h3>
+                            <div class="timer-display">
+                                <p>현재 시간: <span id="ep-current-time">--</span></p>
+                                <p>남은 시간: <span id="ep-time-left">--</span></p>
+                            </div>
+                            <div class="result-grid">
+                                <p>일반 라이브:</p> <span id="ep-result-live">0</span>
+                                <p>챌린지 라이브:</p> <span id="ep-result-challenge">0</span>
+                                <p>마이세카이:</p> <span id="ep-result-mysekai">0</span>
+                                <p class="total">최종 예측 EP:</p> <span id="ep-result-total" class="total">0</span>
+                            </div>
+                            <h3>앞으로 남은 양</h3>
+                            <div class="result-grid">
+                                <p>자연불:</p> <span id="ep-remain-natural-energy">0</span>
+                                <p>광고불:</p> <span id="ep-remain-ad-energy">0</span>
+                                <p>챌린지 라이브:</p> <span id="ep-remain-challenge">0 회</span>
+                                <p>마이세카이:</p> <span id="ep-remain-mysekai">0 회</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- 3. 나중에 추가될 ??3 기능 섹션 -->
@@ -176,7 +227,6 @@
         </section>
     </main>
     <footer class="footer">
-        <div id="message-display" class="message"></div>
         <p>프로세카 유틸리티</p>
     </footer>
 </div>

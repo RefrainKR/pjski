@@ -4,7 +4,7 @@ import { storageManager } from '/lib/utils/StorageManager.js';
 
 import { SKILL_CALCULATOR_SETTINGS_KEY, MIN_RANK_MIN, MAX_RANK_MIN, DEFAULT_RANK_MIN, MIN_RANK_MAX, MAX_RANK_MAX, DEFAULT_RANK_MAX, INCREMENT_MIN_RANK, INCREMENT_MAX_RANK, INCREMENT_DEFAULT_RANK, FALLBACK_RANK_INPUT_ON_BLANK } from '/data.js';
 
-import { SkillDataFactory } from '/logic/skill/SkillDataFactory.js';
+import { SkillDataFactory } from '/logic/SkillDataFactory.js';
 
 import { BaseTableViewModel } from '/components/skill/comparison/BaseTableViewModel.js';
 

@@ -1,7 +1,7 @@
 
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
 
-import { SkillDataFactory } from '/logic/skill/SkillDataFactory.js';
+import { SkillDataFactory } from '/logic/SkillDataFactory.js';
 
 import { BaseTableViewModel } from '/components/skill/comparison/BaseTableViewModel.js';
 
