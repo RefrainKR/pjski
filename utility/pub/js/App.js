@@ -14,6 +14,9 @@ import {
 import { RankTableViewModel } from '/components/skill/comparison/RankTableViewModel.js';
 import { CharacterTableViewModel } from '/components/skill/comparison/CharacterTableViewModel.js';
 import { RankPanelViewModel } from '/components/rank/RankPanelViewModel.js';
+
+import { EventPointCalculatorViewModel } from '/components/event/EventPointCalculatorViewModel.js';
+
 import { BackupViewModel } from '/components/backup/BackupViewModel.js';
 
 export class App {
@@ -23,7 +26,7 @@ export class App {
         this.rankPanelViewModel = new RankPanelViewModel(null, this.messageDisplay.bind(this));
         
         this.rankTableViewModel = new RankTableViewModel({
-            containerId: 'rank-skill-container',
+            containerId: 'rank-skill-tab',
             messageDisplayCallback: this.messageDisplay.bind(this),
             displayModeBtnId: 'btn-display-mode',
             numberFormatBtnId: 'btn-number-format',
@@ -31,12 +34,17 @@ export class App {
         });
         
         this.characterTableViewModel = new CharacterTableViewModel({
-            containerId: 'character-skill-container',
+            containerId: 'character-skill-tab',
             messageDisplayCallback: this.messageDisplay.bind(this),
             rankPanelViewModel: this.rankPanelViewModel,
             displayModeBtnId: 'btn-display-mode-char',
             numberFormatBtnId: 'btn-number-format-char',
             multiplierBtnId: 'btn-multiplier-char'
+        });
+
+        this.eventPointCalculatorViewModel = new EventPointCalculatorViewModel({
+            containerId: 'tool-event-point-calculator',
+            messageDisplayCallback: this.messageDisplay.bind(this)
         });
 
         this.backupViewModel = new BackupViewModel(

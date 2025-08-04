@@ -1,7 +1,7 @@
 
 import { storageManager } from '/lib/utils/StorageManager.js';
 
-import { LOCAL_STORAGE_KEY } from '/data.js';
+import { CHARACTER_RANKS_KEY } from '/data.js';
 
 export class BackupViewModel {
     /**
@@ -90,7 +90,7 @@ export class BackupViewModel {
 
     clearData() {
         if (confirm('정말로 모든 캐릭터 랭크 데이터를 지우시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
-            storageManager.remove(LOCAL_STORAGE_KEY);
+            storageManager.remove(CHARACTER_RANKS_KEY);
             this.setCharacterRanksCallback({});
             this.messageDisplayCallback('모든 데이터가 지워졌습니다.', 'success');
         }

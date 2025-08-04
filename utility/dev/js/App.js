@@ -42,7 +42,10 @@ export class App {
             multiplierBtnId: 'btn-multiplier-char'
         });
 
-        this.eventPointCalculatorViewModel = new EventPointCalculatorViewModel('tool-event-point-calculator');
+        this.eventPointCalculatorViewModel = new EventPointCalculatorViewModel({
+            containerId: 'tool-event-point-calculator',
+            messageDisplayCallback: this.messageDisplay.bind(this)
+        });
 
         this.backupViewModel = new BackupViewModel(
             'backup-panel',

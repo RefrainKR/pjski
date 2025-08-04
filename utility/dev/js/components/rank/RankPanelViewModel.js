@@ -4,7 +4,7 @@ import { GROUP_DATA } from '/lib/projectSekai/data/groupData.js';
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
 import { storageManager } from '/lib/utils/StorageManager.js';
 
-import { LOCAL_STORAGE_KEY, MIN_RANK, MAX_RANK, DEFAULT_RANK } from '/data.js';
+import { CHARACTER_RANKS_KEY, MIN_RANK, MAX_RANK, DEFAULT_RANK } from '/data.js';
 
 export class RankPanelViewModel {
     constructor(initialContainerId, messageDisplayCallback) {
@@ -22,7 +22,7 @@ export class RankPanelViewModel {
             });
         });
 
-        const parsedStoredData = storageManager.load(LOCAL_STORAGE_KEY, {});
+        const parsedStoredData = storageManager.load(CHARACTER_RANKS_KEY, {});
        
         if (typeof parsedStoredData === 'object' && parsedStoredData !== null) {
             for (const charName in parsedStoredData) {
@@ -38,7 +38,7 @@ export class RankPanelViewModel {
     }
 
     saveCharacterRanks() {
-        storageManager.save(LOCAL_STORAGE_KEY, this.characterRanks);
+        storageManager.save(CHARACTER_RANKS_KEY, this.characterRanks);
         this.messageDisplayCallback('캐릭터 랭크가 저장되었습니다.', 'success');
     }
 
