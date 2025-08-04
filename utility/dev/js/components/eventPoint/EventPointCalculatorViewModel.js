@@ -1,9 +1,9 @@
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
-import { eventPointLogic } from '/logic/EventPointLogic.js';
 import { storageManager } from '/lib/utils/StorageManager.js';
 
-import { EP_SETTINGS_KEY, DEFAULT_EP_SETTINGS } from '/data.js';
+import { eventPointLogic } from '/logic/EventPointLogic.js';
 
+import { EP_SETTINGS_KEY, DEFAULT_EP_SETTINGS } from '/data.js';
 
 export class EventPointCalculatorViewModel {
     constructor(config) {

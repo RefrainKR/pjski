@@ -23,7 +23,7 @@ export const INCREMENT_MIN_RANK = 1;
 export const INCREMENT_MAX_RANK = 10;
 export const INCREMENT_DEFAULT_RANK = 1; // blank 시 이 값으로 되돌림
 
-export const MIN_TARGET_VALUE = 10; // manual-x-input 및 자동 입력 시작값의 최소
+export const MIN_TARGET_VALUE = 0; // manual-x-input 및 자동 입력 시작값의 최소
 export const MAX_TARGET_VALUE = 140; // manual-x-input 및 자동 입력 끝나는값의 최대
 
 // 자동 입력 모달의 기본값 (이름 변경됨)
@@ -38,7 +38,7 @@ export const DEFAULT_AUTO_INPUT_INCREMENT = 5;
 
 // 자동 입력 테이블 X축 생성 개수 제한 (새로 추가됨)
 export const MIN_X_VALUES_COUNT = 5;
-export const MAX_X_VALUES_COUNT = 25;
+export const MAX_X_VALUES_COUNT = 20;
 
 // blank 시 되돌릴 특정 값 (InputNumberElement의 fallbackValueOnBlank로 사용)
 // null은 previousValue 또는 defaultValue로 되돌림을 의미

@@ -1,9 +1,8 @@
-
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
 
 import { SkillDataFactory } from '/logic/SkillDataFactory.js';
 
-import { BaseTableViewModel } from '/components/skill/comparison/BaseTableViewModel.js';
+import { BaseTableViewModel } from '/components/skillComparison/table/BaseTableViewModel.js';
 
 import { MIN_RANK, MAX_RANK, DEFAULT_RANK } from '/data.js';
 

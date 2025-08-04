@@ -3,6 +3,14 @@ import { PopupManager } from '/lib/utils/PopupManager.js';
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
 import { storageManager } from '/lib/utils/StorageManager.js';
 
+import { BackupViewModel } from '/components/backup/BackupViewModel.js';
+
+import { SkillComparisonViewModel } from '/components/skillComparison/SkillComparisonViewModel.js';
+
+import { RankPanelViewModel } from '/components/rankPanel/RankPanelViewModel.js';
+
+import { EventPointCalculatorViewModel } from '/components/eventPoint/EventPointCalculatorViewModel.js';
+
 import { 
     MESSAGE_DISPLAY_DURATION, 
     SKILL_CALCULATOR_SETTINGS_KEY, 
@@ -11,35 +19,35 @@ import {
     MIN_X_VALUES_COUNT, MAX_X_VALUES_COUNT 
 } from '/data.js';
 
-import { RankTableViewModel } from '/components/skill/comparison/RankTableViewModel.js';
-import { CharacterTableViewModel } from '/components/skill/comparison/CharacterTableViewModel.js';
-import { RankPanelViewModel } from '/components/rank/RankPanelViewModel.js';
-
-import { EventPointCalculatorViewModel } from '/components/event/EventPointCalculatorViewModel.js';
-
-import { BackupViewModel } from '/components/backup/BackupViewModel.js';
-
 export class App {
     constructor() {
         this.messageDisplayElement = document.getElementById('message-display');
         
         this.rankPanelViewModel = new RankPanelViewModel(null, this.messageDisplay.bind(this));
-        
-        this.rankTableViewModel = new RankTableViewModel({
-            containerId: 'rank-skill-tab',
-            messageDisplayCallback: this.messageDisplay.bind(this),
-            displayModeBtnId: 'btn-display-mode',
-            numberFormatBtnId: 'btn-number-format',
-            multiplierBtnId: 'btn-multiplier'
-        });
-        
-        this.characterTableViewModel = new CharacterTableViewModel({
-            containerId: 'character-skill-tab',
+
+        this.skillComparisonViewModel = new SkillComparisonViewModel({
+            // SkillComparisonViewModel 자체가 사용할 정보
+            containerId: 'tool-skill-comparison',
+            
+            // 하위 ViewModel들이 공통으로 사용할 정보
             messageDisplayCallback: this.messageDisplay.bind(this),
             rankPanelViewModel: this.rankPanelViewModel,
-            displayModeBtnId: 'btn-display-mode-char',
-            numberFormatBtnId: 'btn-number-format-char',
-            multiplierBtnId: 'btn-multiplier-char'
+            
+            // RankTableViewModel이 사용할 정보
+            rankTableConfig: {
+                containerId: 'rank-skill-tab',
+                displayModeBtnId: 'btn-display-mode',
+                numberFormatBtnId: 'btn-number-format',
+                multiplierBtnId: 'btn-multiplier'
+            },
+            
+            // CharacterTableViewModel이 사용할 정보
+            characterTableConfig: {
+                containerId: 'character-skill-tab',
+                displayModeBtnId: 'btn-display-mode-char',
+                numberFormatBtnId: 'btn-number-format-char',
+                multiplierBtnId: 'btn-multiplier-char'
+            }
         });
 
         this.eventPointCalculatorViewModel = new EventPointCalculatorViewModel({
@@ -62,7 +70,6 @@ export class App {
         // --- 모든 초기화 메서드 호출 ---
         this.initMainMenu();
         this.initAutoInputPanel();
-        this.initTabNavigation();
         this.initDraggableScrolling(); 
         this.bindCustomEvents();
     }
@@ -105,25 +112,42 @@ export class App {
         const endInput = autoInputPanel.querySelector('#auto-input-end');
         const incrementInput = autoInputPanel.querySelector('#auto-input-increment');
 
+        // 팝업 내부의 InputNumberElement들은 App.js가 직접 관리합니다.
         const startElement = new InputNumberElement(startInput, MIN_AUTO_INPUT, MAX_AUTO_INPUT, DEFAULT_AUTO_INPUT_START, null);
         const endElement = new InputNumberElement(endInput, MIN_AUTO_INPUT, MAX_AUTO_INPUT, DEFAULT_AUTO_INPUT_END, null);
         const incrementElement = new InputNumberElement(incrementInput, MIN_AUTO_INPUT_INCREMENT, MAX_AUTO_INPUT_INCREMENT, DEFAULT_AUTO_INPUT_INCREMENT, null);
 
-        let activeTable = null;
+        let activeTableViewModel = null; // 어떤 테이블 뷰모델에 적용할지 저장하는 변수
 
         this.popupManager.onOpen('auto-input-panel', (trigger) => {
-            activeTable = trigger.id.includes('-char')
-                ? this.characterTableViewModel 
-                : this.rankTableViewModel;
+            // 팝업을 연 버튼이 어떤 메인 툴 섹션에 속해 있는지 확인
+            const parentToolSection = trigger.closest('.tool-section');
+            
+            // "스킬 비교기" 툴에서 열었을 경우
+            if (parentToolSection && parentToolSection.id === 'tool-skill-comparison') {
+                // SkillComparisonViewModel에게 현재 활성화된 하위 테이블 뷰모델이 누구인지 물어봄
+                activeTableViewModel = this.skillComparisonViewModel.getActiveTableViewModel();
+            } 
+            // 나중에 다른 툴(예: 이벤트 점수기)에 자동 입력 기능이 추가되면,
+            // else if (parentToolSection.id === 'tool-event-point-calculator') {
+            //     activeTableViewModel = this.eventPointCalculatorViewModel; // (예시)
+            // }
+            else {
+                activeTableViewModel = null;
+            }
 
-            const settings = storageManager.load(SKILL_CALCULATOR_SETTINGS_KEY, {});
-            startElement.setValue(settings.autoInputStart || DEFAULT_AUTO_INPUT_START, false);
-            endElement.setValue(settings.autoInputEnd || DEFAULT_AUTO_INPUT_END, false);
-            incrementElement.setValue(settings.autoInputIncrement || DEFAULT_AUTO_INPUT_INCREMENT, false);
+            // 활성화된 테이블이 있을 경우에만 팝업 필드 초기화
+            if (activeTableViewModel) {
+                const settings = storageManager.load(SKILL_CALCULATOR_SETTINGS_KEY, {});
+                startElement.setValue(settings.autoInputStart || DEFAULT_AUTO_INPUT_START, false);
+                endElement.setValue(settings.autoInputEnd || DEFAULT_AUTO_INPUT_END, false);
+                incrementElement.setValue(settings.autoInputIncrement || DEFAULT_AUTO_INPUT_INCREMENT, false);
+            }
         });
 
         applyBtn.addEventListener('click', () => {
-            if (!activeTable) return;
+            // "적용" 버튼 클릭 시, 팝업이 열릴 때 저장해 둔 activeTableViewModel을 사용
+            if (!activeTableViewModel) return;
 
             let startVal = startElement.getValue();
             let endVal = endElement.getValue();
@@ -145,38 +169,10 @@ export class App {
                 generatedXValues = generatedXValues.slice(0, MAX_X_VALUES_COUNT);
             }
 
-            activeTable.updateXValuesAndRender(generatedXValues);
+            // 저장된 activeTableViewModel에 결과 전달
+            activeTableViewModel.updateXValuesAndRender(generatedXValues);
             this.popupManager.close(autoInputPanel);
         });
-    }
-
-    initTabNavigation() {
-        const tabButtons = document.querySelectorAll('.tab-buttons .tab-button');
-        const tabContents = document.querySelectorAll('.tab-content-wrapper .tab-content');
-
-        const activateTab = (tabButton) => {
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            tabButton.classList.add('active');
-            tabContents.forEach(content => content.classList.remove('active'));
-
-            const targetTabId = tabButton.dataset.tab;
-            const targetTabContent = document.getElementById(targetTabId);
-            if (targetTabContent) {
-                targetTabContent.classList.add('active');
-                if (targetTabId === 'character-skill-tab') {
-                    this.characterTableViewModel.refresh();
-                }
-            }
-        }
-
-        tabButtons.forEach(button => {
-            button.addEventListener('click', () => activateTab(button));
-        });
-
-        const initialActiveTabButton = document.querySelector('.tab-buttons .tab-button.active');
-        if (initialActiveTabButton) {
-            activateTab(initialActiveTabButton);
-        }
     }
 
     initDraggableScrolling() {
@@ -197,10 +193,7 @@ export class App {
 
     bindCustomEvents() {
         document.body.addEventListener('characterRanksUpdated', () => {
-            const activeTab = document.querySelector('.tab-button.active');
-            if (activeTab && activeTab.dataset.tab === 'character-skill-tab') {
-                this.characterTableViewModel.refresh();
-            }
+            this.skillComparisonViewModel.handleRanksUpdated();
         });
     }
 }
