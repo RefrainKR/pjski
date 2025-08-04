@@ -59,8 +59,8 @@ export const DEFAULT_EP_SETTINGS = {
     currentPoints: 0,
     currentEnergy: 10,
     extraEnergy: 0,
-    epPer5Energy: 25000,
-    challengeLive: 50000,
-    mysekaiEpValue: 22000,
-    mysekaiToggle: true
+    epPer5Energy: 30000,
+    challengeLive: 20000,
+    mysekaiEpValue: 15000,
+    mysekaiToggle: false
 };

@@ -1,0 +1,99 @@
+/* =================================================================
+   common.css: 전역 변수, 기본 태그 스타일, 공용 유틸리티 클래스
+   ================================================================= */
+
+:root {
+    /* 프로젝트 주요 색상 */
+    --primary-color: #3f51b5;
+    --accent-color: #007bff;
+    --accent-hover-color: #0069d9;
+    /* 의미적 색상 */
+    --success-color: #28a745;
+    --success-hover-color: #218838;
+    --info-color: #17a2b8;
+    --info-hover-color: #138496;
+    --warning-color: #ffc107;
+    --warning-hover-color: #e0a800;
+    --danger-color: #f44336;
+    /* 회색 계열 */
+    --secondary-color: #6c757d;
+    --secondary-hover-color: #5a6268;
+    --body-bg-color: #f4f7f6;
+    --component-bg-color: #ffffff;
+    --light-gray-bg: #f8f9fa;
+    --medium-gray-bg: #e9ecef;
+    --table-header-bg: #f2f2f2;
+    --border-color: #dee2e6;
+    --subtle-border-color: #eee;
+    --text-color: #333;
+    --subtle-text-color: #555;
+    --white-color: #ffffff;
+    --black-color: #212529;
+    /* 테이블 셀 색상 */
+    --cell-blue-bg: #e0f2f7;
+    --cell-yellow-bg: #fffde7;
+    --cell-gray-bg: #f5f5f5;
+    /* 기타 UI 색상 */
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --focus-shadow-color: rgba(0, 123, 255, 0.25);
+}
+
+/* --- General Body and Container Styles --- */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--body-bg-color);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* --- Headings --- */
+h2, h3 {
+    font-size: 1.5rem;
+    color: var(--accent-color);
+    border-bottom: 1px solid var(--subtle-border-color);
+    margin-top: 0;
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.4rem;
+}
+h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+}
+
+/* --- Buttons (공용 컴포넌트) --- */
+/* -- Buttons -- */
+.btn { display: inline-block; font-weight: bold; text-align: center; text-decoration: none; vertical-align: middle; cursor: pointer; border: 1px solid transparent; border-radius: 0.3125rem; transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease; user-select: none; }
+.btn-md { padding: 0.625rem 0.9375rem; font-size: 1rem; }
+.btn-sm { padding: 0.375rem 0.75rem; font-size: 0.875rem; }
+.btn-primary { background-color: var(--accent-color); color: var(--white-color); border-color: var(--accent-color); }
+.btn-primary:hover { background-color: var(--accent-hover-color); border-color: var(--accent-hover-color); }
+.btn-secondary { background-color: var(--secondary-color); color: var(--white-color); border-color: var(--secondary-color); }
+.btn-secondary:hover { background-color: var(--secondary-hover-color); border-color: var(--secondary-hover-color); }
+.btn-success { background-color: var(--success-color); color: var(--white-color); border-color: var(--success-color); }
+.btn-success:hover { background-color: var(--success-hover-color); border-color: var(--success-hover-color); }
+.btn-info { background-color: var(--info-color); color: var(--white-color); border-color: var(--info-color); }
+.btn-info:hover { background-color: var(--info-hover-color); border-color: var(--info-hover-color); }
+.btn-warning { background-color: var(--warning-color); color: var(--black-color); border-color: var(--warning-color); }
+.btn-warning:hover { background-color: var(--warning-hover-color); border-color: var(--warning-hover-color); }
+
+/* --- Inputs (공용 컴포넌트) --- */
+.input { display: inline-block; font-family: inherit; color: var(--text-color); background-color: var(--component-bg-color); border: 1px solid #ccc; border-radius: 0.25rem; box-sizing: border-box; vertical-align: middle; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+.input:focus { border-color: var(--accent-color); outline: none; box-shadow: 0 0 0 0.2rem var(--focus-shadow-color); }
+input.input[type="number"] { -webkit-appearance: textfield; -moz-appearance: textfield; }
+.input-md { padding: 0.4rem 0.6rem; font-size: 1rem; }
+.input-sm { padding: 0.375rem 0.75rem; font-size: 0.875rem; }
+select.input { -webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 0.6rem center; background-size: 16px 12px; }
+select.input-md { padding-right: 2rem; }
+select.input-sm { padding-right: 2rem; }
+
+/* --- Draggable Utility (공용 유틸리티) --- */
+@media (max-width: 768px) {
+    .draggable-on-mobile { width: 100%; box-sizing: border-box; justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; cursor: grab; padding-bottom: 1rem; }
+    .draggable-on-mobile.active-drag { cursor: grabbing; }
+    .draggable-on-mobile::-webkit-scrollbar { display: none; }
+    .draggable-on-mobile { -ms-overflow-style: none; scrollbar-width: none; }
+}

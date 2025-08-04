@@ -38,22 +38,21 @@ export const eventPointLogic = {
         // --- 남은 자원 계산 ---
         let remaining = { naturalEnergy: 0, adEnergy: 0, challengeCount: 0, mysekaiCount: 0 };
         const today = new Date(now);
-        today.setHours(0,0,0,0); // 오늘 날짜의 시작
+        today.setHours(0, 0, 0, 0); // 오늘 날짜의 자정으로 설정
 
-        // 1. 광고불 & 챌린지 (새벽 4시 초기화 기준)
-        // 오늘을 포함하여 이벤트 종료일까지 남은 리셋 횟수를 계산
+        
+        // 오늘부터 이벤트 종료일까지 하루씩 순회
         for (let d = new Date(today); d <= eventEndDate; d.setDate(d.getDate() + 1)) {
-            const resetTime = this._getResetTimeForDate(d, 4);
-            if (now < resetTime) { // 아직 오늘의 리셋 시간이 지나지 않았다면
-                remaining.adEnergy += 1;
+            // 1. 광고불 & 챌린지 (새벽 4시 초기화 기준)
+            const resetTime4Clock = this._getResetTimeForDate(d, 4);
+            if (now < resetTime4Clock) {
+                remaining.adEnergy += 10; // 광고 2회 x 5불
                 remaining.challengeCount += 1;
             }
-        }
 
-        // 2. 마이세카이 (새벽 5시 초기화 기준)
-        for (let d = new Date(today); d <= eventEndDate; d.setDate(d.getDate() + 1)) {
-             const resetTime = this._getResetTimeForDate(d, 5);
-             if (now < resetTime) {
+            // 2. 마이세카이 (새벽 5시 초기화 기준)
+            const resetTime5Clock = this._getResetTimeForDate(d, 5);
+            if (now < resetTime5Clock) {
                 remaining.mysekaiCount += 1;
             }
         }
@@ -67,7 +66,7 @@ export const eventPointLogic = {
         const totalEnergyForLive = inputs.currentEnergy 
                                  + inputs.extraEnergy 
                                  + remaining.naturalEnergy 
-                                 + (remaining.adEnergy * 5);
+                                 + remaining.adEnergy;
                                  
         const predictions = {
             liveEP: Math.max(0, totalEnergyForLive) * epPerEnergy,

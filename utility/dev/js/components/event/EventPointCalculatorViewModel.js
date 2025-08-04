@@ -73,6 +73,21 @@ export class EventPointCalculatorViewModel {
             }
         }, 1000);
     }
+
+    _gatherInputs() {
+        return {
+            startDate: this.inputElements.startDate.value,
+            endDate: this.inputElements.endDate.value,
+            startTime: this.inputElements.startTime.value,
+            currentPoints: this.inputElements.currentPointsElement.getValue(),
+            currentEnergy: this.inputElements.currentEnergyElement.getValue(),
+            extraEnergy: this.inputElements.extraEnergyElement.getValue(),
+            epPer5Energy: this.inputElements.per5EnergyElement.getValue(),
+            challengeLive: this.inputElements.challengeLiveElement.getValue(),
+            mysekaiEpValue: this.inputElements.mysekaiValueElement.getValue(),
+            mysekaiToggle: this.inputElements.mysekaiToggle.checked
+        };
+    }
     
     updateTimers() {
         const inputs = this._gatherInputs();
@@ -99,21 +114,6 @@ export class EventPointCalculatorViewModel {
             this.outputElements.timeLeft.textContent = `${days}일 ${hours}시간 ${minutes}분 ${seconds}초`;
         }
     }
-    
-    _gatherInputs() {
-        return {
-            startDate: this.inputElements.startDate.value,
-            endDate: this.inputElements.endDate.value,
-            startTime: this.inputElements.startTime.value,
-            currentPoints: this.inputElements.currentPointsElement.getValue(),
-            currentEnergy: this.inputElements.currentEnergyElement.getValue(),
-            extraEnergy: this.inputElements.extraEnergyElement.getValue(),
-            epPer5Energy: this.inputElements.per5EnergyElement.getValue(),
-            challengeLive: this.inputElements.challengeLiveElement.getValue(),
-            mysekaiEpValue: this.inputElements.mysekaiValueElement.getValue(),
-            mysekaiToggle: this.inputElements.mysekaiToggle.checked
-        };
-    }
 
     recalculateAndRender() {
         const inputs = this._gatherInputs();
@@ -130,9 +130,7 @@ export class EventPointCalculatorViewModel {
         // --- 핵심 수정: 표시 형식 변경 ---
         this.outputElements.remainNaturalEnergy.textContent = `${remaining.naturalEnergy.toLocaleString()} 불`; // '불' 단위 추가
         
-        // 광고 횟수(remaining.adEnergy)에 5를 곱하여 총 불의 양으로 변경
-        const remainingAdEnergyAmount = remaining.adEnergy * 5; 
-        this.outputElements.remainAdEnergy.textContent = `${remainingAdEnergyAmount.toLocaleString()} 불`; // '불' 단위 추가
+        this.outputElements.remainAdEnergy.textContent = `${remaining.adEnergy.toLocaleString()} 불`; // '불' 단위 추가
 
         this.outputElements.remainChallenge.textContent = `${remaining.challengeCount.toLocaleString()} 회`;
         this.outputElements.remainMysekai.textContent = `${remaining.mysekaiCount.toLocaleString()} 회`;
