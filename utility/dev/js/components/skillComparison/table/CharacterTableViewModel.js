@@ -20,7 +20,8 @@ export class CharacterTableViewModel extends BaseTableViewModel {
         });
         
         this.bindSpecificEvents();
-        this._initColumnVisibilityObserver();
+
+        // this._initColumnVisibilityObserver();
     }
 
     bindSpecificEvents() {

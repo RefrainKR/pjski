@@ -28,7 +28,7 @@ export class RankTableViewModel extends BaseTableViewModel {
         this.rankIncrementElement.setValue(this.rankIncrementInput.value, true);
         
         this.renderTable();
-        this._initColumnVisibilityObserver();
+        // this._initColumnVisibilityObserver();
     }
 
     bindSpecificEvents() {
