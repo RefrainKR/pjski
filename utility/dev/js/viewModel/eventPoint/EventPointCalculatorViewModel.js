@@ -1,7 +1,7 @@
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
 import { storageManager } from '/lib/utils/StorageManager.js';
 
-import { eventPointLogic } from '/logic/EventPointLogic.js';
+import { eventPointLogic } from '/model/EventPointLogic.js';
 
 import { EP_SETTINGS_KEY, DEFAULT_EP_SETTINGS } from '/data.js';
 

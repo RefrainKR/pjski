@@ -12,7 +12,7 @@ import {
 /**
  * 스킬 테이블들의 공통 기능을 제공하는 추상 상위 클래스.
  */
-export class BaseTableViewModel {
+export class BaseComparisonTabViewModel {
     constructor(config) {
         this.container = document.getElementById(config.containerId);
         this.messageDisplayCallback = config.messageDisplayCallback;

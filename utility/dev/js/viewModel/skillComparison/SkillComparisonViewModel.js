@@ -1,7 +1,7 @@
 import { TabManager } from '/lib/utils/TabManager.js';
 
-import { RankTableViewModel } from '/components/skillComparison/table/RankTableViewModel.js';
-import { CharacterTableViewModel } from '/components/skillComparison/table/CharacterTableViewModel.js';
+import { ComparisonByRankViewModel } from '/viewModel/skillComparison/tab/ComparisonByRankViewModel.js';
+import { ComparisonBySkillLevelViewModel } from '/viewModel/skillComparison/tab/ComparisonBySkillLevelViewModel.js';
 
 /**
  * "스킬 비교기" 툴 전체를 관리하는 최상위 ViewModel입니다.
@@ -13,13 +13,13 @@ export class SkillComparisonViewModel {
         if (!this.container) return;
         
         // --- 1. 하위 ViewModel들을 내부에서 직접 생성 ---
-        this.rankTableViewModel = new RankTableViewModel({
+        this.ComparisonByRankViewModel = new ComparisonByRankViewModel({
             messageDisplayCallback: config.messageDisplayCallback,
             rankPanelViewModel: config.rankPanelViewModel,
             ...config.rankTableConfig
         });
         
-        this.characterTableViewModel = new CharacterTableViewModel({
+        this.ComparisonBySkillLevelViewModel = new ComparisonBySkillLevelViewModel({
             messageDisplayCallback: config.messageDisplayCallback,
             rankPanelViewModel: config.rankPanelViewModel,
             ...config.characterTableConfig
@@ -27,8 +27,8 @@ export class SkillComparisonViewModel {
 
         // --- 2. 탭 관리 책임을 직접 소유 ---
         this.tabManager = new TabManager(this.container, (activeTabId) => {
-            if (activeTabId === 'character-skill-tab') {
-                this.characterTableViewModel.refresh();
+            if (activeTabId === 'skill-level-tab') {
+                this.ComparisonBySkillLevelViewModel.refresh();
             }
         });
     }
@@ -41,17 +41,17 @@ export class SkillComparisonViewModel {
     handleRanksUpdated() {
         // 현재 활성화된 탭이 캐릭터 탭인지 확인하고 refresh 호출
         const activeTab = this.container.querySelector('.tab-button.active');
-        if (activeTab && activeTab.dataset.tab === 'character-skill-tab') {
-            this.characterTableViewModel.refresh();
+        if (activeTab && activeTab.dataset.tab === 'skill-level-tab') {
+            this.ComparisonBySkillLevelViewModel.refresh();
         }
     }
     
     // "자동 입력" 팝업이 호출할 테이블을 반환하는 메서드
     getActiveTableViewModel() {
         const activeTab = this.container.querySelector('.tab-button.active');
-        if (activeTab && activeTab.dataset.tab === 'character-skill-tab') {
-            return this.characterTableViewModel;
+        if (activeTab && activeTab.dataset.tab === 'skill-level-tab') {
+            return this.ComparisonBySkillLevelViewModel;
         }
-        return this.rankTableViewModel; // 기본값은 랭크 테이블
+        return this.ComparisonByRankViewModel; // 기본값은 랭크 테이블
     }
 }

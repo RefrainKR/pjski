@@ -3,13 +3,13 @@ import { PopupManager } from '/lib/utils/PopupManager.js';
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
 import { storageManager } from '/lib/utils/StorageManager.js';
 
-import { BackupViewModel } from '/components/backup/BackupViewModel.js';
+import { BackupViewModel } from '/viewModel/backup/BackupViewModel.js';
 
-import { SkillComparisonViewModel } from '/components/skillComparison/SkillComparisonViewModel.js';
+import { SkillComparisonViewModel } from '/viewModel/skillComparison/SkillComparisonViewModel.js';
 
-import { RankPanelViewModel } from '/components/rankPanel/RankPanelViewModel.js';
+import { RankPanelViewModel } from '/viewModel/rankPanel/RankPanelViewModel.js';
 
-import { EventPointCalculatorViewModel } from '/components/eventPoint/EventPointCalculatorViewModel.js';
+import { EventPointCalculatorViewModel } from '/viewModel/eventPoint/EventPointCalculatorViewModel.js';
 
 import { 
     MESSAGE_DISPLAY_DURATION, 
@@ -33,7 +33,7 @@ export class App {
             messageDisplayCallback: this.messageDisplay.bind(this),
             rankPanelViewModel: this.rankPanelViewModel,
             
-            // RankTableViewModel이 사용할 정보
+            // ComparisonByRankViewModel이 사용할 정보
             rankTableConfig: {
                 containerId: 'rank-skill-tab',
                 displayModeBtnId: 'btn-display-mode',
@@ -41,9 +41,9 @@ export class App {
                 multiplierBtnId: 'btn-multiplier'
             },
             
-            // CharacterTableViewModel이 사용할 정보
+            // ComparisonBySkillLevelViewModel이 사용할 정보
             characterTableConfig: {
-                containerId: 'character-skill-tab',
+                containerId: 'skill-level-tab',
                 displayModeBtnId: 'btn-display-mode-char',
                 numberFormatBtnId: 'btn-number-format-char',
                 multiplierBtnId: 'btn-multiplier-char'

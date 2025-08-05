@@ -25,14 +25,14 @@
     <nav class="navbar">
         <ul class="main-nav draggable-on-mobile">
             <!-- 메인 툴 전환 버튼들 -->
-            <li><button class="nav-button active" data-action="toggle-tool" data-target="tool-event-point-calculator">이벤트 비교기</button></li>
-            <li><button class="nav-button" data-action="toggle-tool" data-target="tool-skill-comparison">스킬 비교기</button></li>
+            <li><button class="nav-button active" data-action="toggle-tool" data-target="tool-event-point-calculator">이벤트 포인트</button></li>
+            <li><button class="nav-button" data-action="toggle-tool" data-target="tool-skill-comparison">스킬값 비교기</button></li>
             <li><button class="nav-button" data-action="toggle-tool" data-target="tool-placeholder-3">??3</button></li>
 
             <li class="nav-separator"></li>
 
             <!-- 팝업 열기 버튼들 -->
-            <li><button class="nav-button" data-action="open-popup" data-popup-trigger="character-ranks-panel">랭크 관리</button></li>
+            <li><button class="nav-button" data-action="open-popup" data-popup-trigger="character-ranks-panel">캐릭터 랭크</button></li>
             <li><button class="nav-button" data-action="open-popup" data-popup-trigger="backup-panel">백 업</button></li>
         </ul>
     </nav>
@@ -87,7 +87,7 @@
 
         <section id="tool-event-point-calculator" class="tool-section tabs">
             <div class="tab-buttons">
-                <button class="tab-button active" data-tab="ep-calc-main">로앤파(불효율)</button>
+                <button class="tab-button active" data-tab="ep-calc-main">자연불</button>
             </div>
             <div class="tab-content-wrapper">
                 <div id="ep-calc-main" class="tab-content active">
@@ -165,12 +165,12 @@
 
         <section id="tool-skill-comparison" class="tool-section tabs">
             <div class="tab-buttons">
-                <button class="tab-button" data-tab="character-skill-tab">캐릭터별</button>
-                <button class="tab-button" data-tab="rank-skill-tab">랭크별</button>
+                <button class="tab-button" data-tab="skill-level-tab">스킬 레벨</button>
+                <button class="tab-button" data-tab="rank-skill-tab">랭 크</button>
             </div>
             <div class="tab-content-wrapper">
-                <div id="character-skill-tab" class="tab-content">
-                    <h2>캐릭터별 비교</h2>
+                <div id="skill-level-tab" class="tab-content">
+                    <h2>스킬 레벨별 비교</h2>
                     <div class="table-config-group draggable-on-mobile">
                         <div class="config-group">
                             <label for="character-select">캐릭터 선택</label>
@@ -195,7 +195,7 @@
                         </div>
                     </div>
                     <div class="skill-table-container">
-                        <table id="character-skill-table" class="skill-table"></table>
+                        <table id="skill-level-table" class="skill-table"></table>
                     </div>
                 </div>
                 <div id="rank-skill-tab" class="tab-content">

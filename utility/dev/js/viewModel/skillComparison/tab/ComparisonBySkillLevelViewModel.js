@@ -1,13 +1,12 @@
-
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
 
-import { SkillDataFactory } from '/logic/SkillDataFactory.js';
+import { SkillDataFactory } from '/model/SkillDataFactory.js';
 
-import { BaseTableViewModel } from '/components/skill/comparison/BaseTableViewModel.js';
+import { BaseComparisonTabViewModel } from '/viewModel/skillComparison/tab/BaseComparisonTabViewModel.js';
 
 import { MIN_RANK, MAX_RANK, DEFAULT_RANK } from '/data.js';
 
-export class CharacterTableViewModel extends BaseTableViewModel {
+export class ComparisonBySkillLevelViewModel extends BaseComparisonTabViewModel {
     constructor(config) {
         super(config);
         this.rankPanelViewModel = config.rankPanelViewModel;
@@ -21,7 +20,8 @@ export class CharacterTableViewModel extends BaseTableViewModel {
         });
         
         this.bindSpecificEvents();
-        this._initColumnVisibilityObserver();
+
+        // this._initColumnVisibilityObserver();
     }
 
     bindSpecificEvents() {
