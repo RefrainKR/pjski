@@ -1,31 +1,17 @@
 export const eventPointLogic = {
-    /**
-     * @param {Date} date - 날짜 객체
-     * @param {number} hour - 설정할 시간 (예: 4)
-     * @returns {Date} - 해당 날짜의 지정된 시간으로 설정된 새로운 Date 객체
-     */
-    _getResetTimeForDate(date, hour) {
-        const resetTime = new Date(date);
-        resetTime.setHours(hour, 0, 0, 0);
-        return resetTime;
-    },
-
     calculate(inputs, now) {
-        if (!inputs.startDate || !inputs.endDate) {
-            return null;
-        }
+        if (!inputs.startDate || !inputs.endDate) return null;
 
         const eventStartDate = new Date(`${inputs.startDate}T${inputs.startTime}:00:00`);
         const eventEndDate = new Date(`${inputs.endDate}T${inputs.startTime === '15' ? '20:59:59' : '19:59:59'}`);
         const timeLeftMs = eventEndDate - now;
 
-        // 이벤트가 종료되었을 경우, 모든 값을 0으로 채운 완전한 객체 반환
         if (timeLeftMs < 0) {
             return {
                 timeLeft: { days: 0, hours: 0, minutes: 0, seconds: 0, totalSeconds: 0 },
                 remaining: { naturalEnergy: 0, adEnergy: 0, challengeCount: 0, mysekaiCount: 0 },
                 predictions: { liveEP: 0, challengeEP: 0, mysekaiEP: 0 },
-                finalEP: inputs.currentPoints
+                finalEP: 0
             };
         }
 		
@@ -35,43 +21,58 @@ export const eventPointLogic = {
         const minutes = Math.floor((totalSeconds % 3600) / 60);
         const seconds = totalSeconds % 60;
 
-        // --- 남은 자원 계산 ---
+        // --- 남은 자원 계산 (새로운 로직) ---
         let remaining = { naturalEnergy: 0, adEnergy: 0, challengeCount: 0, mysekaiCount: 0 };
-        const today = new Date(now);
-        today.setHours(0, 0, 0, 0); // 오늘 날짜의 자정으로 설정
 
-        
-        // 오늘부터 이벤트 종료일까지 하루씩 순회
-        for (let d = new Date(today); d <= eventEndDate; d.setDate(d.getDate() + 1)) {
-            // 1. 광고불 & 챌린지 (새벽 4시 초기화 기준)
-            const resetTime4Clock = this._getResetTimeForDate(d, 4);
-            if (now < resetTime4Clock) {
-                remaining.adEnergy += 10; // 광고 2회 x 5불
-                remaining.challengeCount += 1;
-            }
+        // 1. 광고불 & 챌린지 (새벽 4시 초기화 기준)
+        const challengeResetHour = 4;
+        const nowForChallenge = new Date(now.getTime() - challengeResetHour * 3600 * 1000);
+        const endForChallenge = new Date(eventEndDate.getTime() - challengeResetHour * 3600 * 1000);
+        const todayForChallenge = new Date(nowForChallenge);
+        todayForChallenge.setHours(0, 0, 0, 0);
 
-            // 2. 마이세카이 (새벽 5시 초기화 기준)
-            const resetTime5Clock = this._getResetTimeForDate(d, 5);
-            if (now < resetTime5Clock) {
-                remaining.mysekaiCount += 1;
-            }
+        // "오늘 몫"을 먼저 결정
+        const todayAdCount = (now.getHours() < challengeResetHour) ? 1 : 0;
+        const todayChallengeCount = inputs.challengeToggle ? 1 : 0;
+
+        // "내일 이후" 몫 계산
+        let futureAdCount = 0;
+        let futureChallengeCount = 0;
+        const diffTimeChallenge = endForChallenge.getTime() - todayForChallenge.getTime();
+        if (diffTimeChallenge > 0) {
+            const diffDays = Math.floor(diffTimeChallenge / (1000 * 3600 * 24));
+            futureAdCount = diffDays;
+            futureChallengeCount = diffDays;
         }
+
+        remaining.adEnergy = todayAdCount + futureAdCount;
+        remaining.challengeCount = todayChallengeCount + futureChallengeCount;
+
+        // 2. 마이세카이 (새벽 5시 초기화 기준) - 동일한 로직 적용
+        const mysekaiResetHour = 5;
+        const nowForMysekai = new Date(now.getTime() - mysekaiResetHour * 3600 * 1000);
+        const endForMysekai = new Date(eventEndDate.getTime() - mysekaiResetHour * 3600 * 1000);
+        const todayForMysekai = new Date(nowForMysekai);
+        todayForMysekai.setHours(0, 0, 0, 0);
+
+        const todayMysekaiCount = inputs.mysekaiToggle ? 1 : 0;
+        let futureMysekaiCount = 0;
+        const diffTimeMysekai = endForMysekai.getTime() - todayForMysekai.getTime();
+        if (diffTimeMysekai > 0) {
+            futureMysekaiCount = Math.floor(diffTimeMysekai / (1000 * 3600 * 24));
+        }
+        remaining.mysekaiCount = todayMysekaiCount + futureMysekaiCount;
 
         // 3. 자연불
         remaining.naturalEnergy = Math.floor(timeLeftMs / (30 * 60 * 1000));
         
-        // --- EP 예측 계산 ---
         const epPerEnergy = inputs.epPer5Energy > 0 ? inputs.epPer5Energy / 5 : 0;
-    
-        const totalEnergyForLive = inputs.currentEnergy 
-                                 + inputs.extraEnergy 
-                                 + remaining.naturalEnergy 
-                                 + remaining.adEnergy;
+        const totalEnergyForLive = inputs.currentEnergy + inputs.extraEnergy + remaining.naturalEnergy + (remaining.adEnergy * 10);
                                  
         const predictions = {
             liveEP: Math.max(0, totalEnergyForLive) * epPerEnergy,
             challengeEP: remaining.challengeCount * inputs.challengeLive,
-            mysekaiEP: inputs.mysekaiToggle ? remaining.mysekaiCount * inputs.mysekaiEpValue : 0
+            mysekaiEP: remaining.mysekaiCount * inputs.mysekaiEpValue
         };
         
         const finalEP = inputs.currentPoints + predictions.liveEP + predictions.challengeEP + predictions.mysekaiEP;

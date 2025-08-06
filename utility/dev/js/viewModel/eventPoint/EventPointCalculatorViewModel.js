@@ -23,7 +23,7 @@ export class EventPointCalculatorViewModel {
 
     _bindElements() {
         const ids = {
-            inputs: ['ep-start-date', 'ep-end-date', 'ep-start-time', 'ep-current-points', 'ep-current-energy', 'ep-extra-energy', 'ep-per-5-energy', 'ep-challenge-live', 'ep-mysekai-value', 'ep-mysekai-toggle'],
+            inputs: ['ep-start-date', 'ep-end-date', 'ep-start-time', 'ep-current-points', 'ep-current-energy', 'ep-extra-energy', 'ep-per-5-energy', 'ep-challenge-live-value', 'ep-challenge-live-toggle', 'ep-mysekai-value', 'ep-mysekai-toggle'],
             outputs: ['ep-current-time', 'ep-time-left', 'ep-result-live', 'ep-result-challenge', 'ep-result-mysekai', 'ep-result-total', 'ep-remain-natural-energy', 'ep-remain-ad-energy', 'ep-remain-challenge', 'ep-remain-mysekai']
         };
 
@@ -55,7 +55,11 @@ export class EventPointCalculatorViewModel {
                 element.addEventListener('change', () => this.recalculateAndRender());
             }
         });
-        
+
+        // 토글 스위치들의 disabled 속성 제어 로직
+        this.inputElements.challengeLiveToggle.addEventListener('change', (e) => {
+            this.inputElements.challengeLiveValue.disabled = !e.target.checked;
+        });
         this.inputElements.mysekaiToggle.addEventListener('change', (e) => {
             this.inputElements.mysekaiValue.disabled = !e.target.checked;
         });
@@ -83,7 +87,8 @@ export class EventPointCalculatorViewModel {
             currentEnergy: this.inputElements.currentEnergyElement.getValue(),
             extraEnergy: this.inputElements.extraEnergyElement.getValue(),
             epPer5Energy: this.inputElements.per5EnergyElement.getValue(),
-            challengeLive: this.inputElements.challengeLiveElement.getValue(),
+            challengeLive: this.inputElements.challengeLiveValueElement.getValue(),
+            challengeToggle: this.inputElements.challengeLiveToggle.checked,
             mysekaiEpValue: this.inputElements.mysekaiValueElement.getValue(),
             mysekaiToggle: this.inputElements.mysekaiToggle.checked
         };
@@ -144,19 +149,18 @@ export class EventPointCalculatorViewModel {
     loadSettings() {
         const settings = storageManager.load(EP_SETTINGS_KEY, DEFAULT_EP_SETTINGS);
         
-        const today = new Date().toISOString().slice(0, 10);
-        this.inputElements.startDate.value = settings.startDate || today;
-        this.inputElements.endDate.value = settings.endDate || today;
-        
+        this.inputElements.startDate.value = settings.startDate;
+        this.inputElements.endDate.value = settings.endDate;
         this.inputElements.startTime.value = settings.startTime;
         this.inputElements.currentPointsElement.setValue(settings.currentPoints);
         this.inputElements.currentEnergyElement.setValue(settings.currentEnergy);
         this.inputElements.extraEnergyElement.setValue(settings.extraEnergy);
         this.inputElements.per5EnergyElement.setValue(settings.epPer5Energy);
-        this.inputElements.challengeLiveElement.setValue(settings.challengeLive);
+        this.inputElements.challengeLiveValueElement.setValue(settings.challengeLive);
+        this.inputElements.challengeLiveToggle.checked = settings.challengeToggle;
+        this.inputElements.challengeLiveValue.disabled = !settings.challengeToggle;
         this.inputElements.mysekaiValueElement.setValue(settings.mysekaiEpValue);
         this.inputElements.mysekaiToggle.checked = settings.mysekaiToggle;
-        
         this.inputElements.mysekaiValue.disabled = !settings.mysekaiToggle;
         
         this.recalculateAndRender();
