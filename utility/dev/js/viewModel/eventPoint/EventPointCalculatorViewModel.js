@@ -1,5 +1,6 @@
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
 import { storageManager } from '/lib/utils/StorageManager.js';
+import { kebabToCamelCase } from '/lib/utils/StringUtils.js';
 
 import { eventPointLogic } from '/model/EventPointLogic.js';
 
@@ -42,8 +43,8 @@ export class EventPointCalculatorViewModel {
 
         ids.inputs.forEach(id => {
             const el = this.container.querySelector(`#${id}`);
-            if (el) { // 안전장치 추가
-                const key = this._toCamelCase(id);
+            if (el) {
+                const key = kebabToCamelCase(id.replace('ep-', ''));
                 this.inputElements[key] = el;
                 if (el.type === 'number') {
                     this.inputElements[`${key}Element`] = new InputNumberElement(el, 0, 9999999999, 0);
@@ -51,15 +52,12 @@ export class EventPointCalculatorViewModel {
             }
         });
         ids.outputs.forEach(id => {
-            this.outputElements[this._toCamelCase(id)] = this.container.querySelector(`#${id}`);
+            const key = kebabToCamelCase(id.replace('ep-', ''));
+            this.outputElements[key] = this.container.querySelector(`#${id}`);
         });
 
         this.saveBtn = this.container.querySelector('#ep-save-btn');
         this.resetBtn = this.container.querySelector('#ep-reset-btn');
-    }
-    
-    _toCamelCase(str) {
-        return str.replace('ep-', '').replace(/-./g, match => match.charAt(1).toUpperCase());
     }
 
     _attachEventListeners() {
