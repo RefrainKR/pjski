@@ -34,11 +34,6 @@
     display: grid;
     gap: 1rem;
 }
-.config-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-}
 .form-group {
     display: flex;
     flex-direction: column;

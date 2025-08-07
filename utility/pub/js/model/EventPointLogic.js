@@ -63,31 +63,25 @@ export const eventPointLogic = {
         }
         remaining.mysekaiCount = todayMysekaiCount + futureMysekaiCount;
 
-        // --- EP 예측 계산 ---
+        // 3. 자연불
+        remaining.naturalEnergy = Math.floor(timeLeftMs / (30 * 60 * 1000));
+        
         const epPerEnergy = inputs.epPer5Energy > 0 ? inputs.epPer5Energy / 5 : 0;
-        const totalEnergyFromResources = inputs.currentEnergy + inputs.extraEnergy + remaining.naturalEnergy + (remaining.adEnergy * 10);
-                                     
+        const totalEnergyForLive = inputs.currentEnergy + inputs.extraEnergy + remaining.naturalEnergy + (remaining.adEnergy * 10);
+                                 
         const predictions = {
-            liveEP: Math.max(0, totalEnergyFromResources) * epPerEnergy,
+            liveEP: Math.max(0, totalEnergyForLive) * epPerEnergy,
             challengeEP: remaining.challengeCount * inputs.challengeLive,
-            mysekaiEP: inputs.mysekaiToggle ? remaining.mysekaiCount * inputs.mysekaiEpValue : 0
+            mysekaiEP: remaining.mysekaiCount * inputs.mysekaiEpValue
         };
-
-        const achievableEP = predictions.liveEP + predictions.challengeEP + predictions.mysekaiEP;
-        const finalEP = inputs.currentPoints + achievableEP;
-        const remainingEP = Math.max(0, inputs.targetPoints - finalEP);
-        const neededEnergy = epPerEnergy > 0 ? Math.ceil(Math.max(0, inputs.targetPoints - finalEP) / epPerEnergy) : 0;
+        
+        const finalEP = inputs.currentPoints + predictions.liveEP + predictions.challengeEP + predictions.mysekaiEP;
 
         return {
-            timeLeft: { /* ... */ },
+            timeLeft: { days, hours, minutes, seconds, totalSeconds },
             remaining,
-            predictions: {
-                ...predictions, // 기존 live, challenge, mysekai EP 유지
-                achievableEP,
-                remainingEP,
-                neededEnergy
-            },
+            predictions,
             finalEP
-        }
+        };
     }
 };
