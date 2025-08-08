@@ -131,14 +131,12 @@ input:checked + .slider:before { transform: translateX(1.25rem); }
 .section-header div { display: flex; gap: 0.5rem; }
 
 /* --- Media Queries --- */
-@media (max-width: 400px) {
-    .config-row {
-        grid-template-columns: 1fr;
-    }
-}
-
 @media (max-width: 768px) {
     .table-display-info.draggable-on-mobile { margin-bottom: -0.8rem; }
     .table-display-info.draggable-on-mobile .legend-container { flex-wrap: nowrap; }
     .navbar-actions .btn, .table-config-group .config-group { flex-shrink: 0; width: auto; margin: 0 0.25rem; }
+
+    .config-row {
+        grid-template-columns: 1fr;
+    }
 }
