@@ -3,6 +3,8 @@ import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
 import { ToggleButtonElement } from '/lib/utils/ToggleButtonElement.js';
 import { storageManager } from '/lib/utils/StorageManager.js';
 
+import { kebabToCamelCase } from '/lib/utils/StringUtils.js';
+
 import {
     MIN_TARGET_VALUE, MAX_TARGET_VALUE,
     DEFAULT_AUTO_INPUT_START, DEFAULT_AUTO_INPUT_END, DEFAULT_AUTO_INPUT_INCREMENT,
@@ -46,7 +48,33 @@ export class BaseComparisonTabViewModel {
             }
         );
 
-        this.loadManualXValues();
+        this.loadTargetXValues();
+    }
+
+    _populateTableBody() {
+        throw new Error("Subclasses must implement _populateTableBody()");
+    }
+
+    _renderRow(calculator, yValue, xValues, optionalRank = null) {
+        throw new Error("Subclasses must implement _renderRow()");
+    }
+
+    getAxisLabels() {
+        throw new Error("Subclasses must implement getAxisLabels()");
+    }
+
+    bindTargetInputEvents() {
+        const manualInputs = this.table.querySelectorAll('thead th .target-value-input');
+        manualInputs.forEach((input, index) => {
+            if (!input._inputNumberElementInstance) {
+                const instance = new InputNumberElement(input, MIN_TARGET_VALUE, MAX_TARGET_VALUE, null, (value) => {
+                    this.manualXValues[index] = value;
+                    this._populateTableBody();
+                    this.saveTargetXValues();
+                }, null);
+                input._inputNumberElementInstance = instance;
+            }
+        });
     }
     
     /**
@@ -55,7 +83,7 @@ export class BaseComparisonTabViewModel {
      */
     updateXValuesAndRender(newXValues) {
         this.manualXValues = newXValues;
-        this.saveManualXValues();
+        this.saveTargetXValues();
         this.renderTable();
     }
 
@@ -87,25 +115,7 @@ export class BaseComparisonTabViewModel {
         });
         tableHTML += `</tr></thead><tbody></tbody>`;
         this.table.innerHTML = tableHTML;
-        this.bindManualInputEvents();
-    }
-
-    bindManualInputEvents() {
-        const manualInputs = this.table.querySelectorAll('thead th .target-value-input');
-        manualInputs.forEach((input, index) => {
-            if (!input._inputNumberElementInstance) {
-                const instance = new InputNumberElement(input, MIN_TARGET_VALUE, MAX_TARGET_VALUE, null, (value) => {
-                    this.manualXValues[index] = value;
-                    this._populateTableBody();
-                    this.saveManualXValues();
-                }, null);
-                input._inputNumberElementInstance = instance;
-            }
-        });
-    }
-
-    _renderRow(calculator, yValue, xValues, optionalRank = null) {
-        throw new Error("Subclasses must implement _renderRow()");
+        this.bindTargetInputEvents();
     }
 
     _updateCellDisplay() {
@@ -114,37 +124,13 @@ export class BaseComparisonTabViewModel {
         
         cells.forEach(cell => {
             const format = this.numberFormat.substring(0, 3);
-            // --- 핵심 수정: 'difference'를 'diff'로 일관되게 사용 ---
-            const type = this.displayMode === 'highest' ? 'highest' : 'diff';
-            const dataKey = `data-${format}-${type}`;
+            const type = this.displayMode;
+            const multi = this.useMultiplier ? '-multi' : '';
             
-            cell.textContent = cell.dataset[this.toCamelCase(dataKey)];
+            const keyName = `${format}-${type}${multi}`;
+            
+            cell.textContent = cell.dataset[kebabToCamelCase(keyName)];
         });
-    }
-
-    /**
-     * data-key-name 형식의 문자열을 dataset이 사용하는 keyName 형식으로 변환합니다.
-     * @param {string} str - 변환할 문자열 (예: 'data-int-highest').
-     * @returns {string} 변환된 문자열 (예: 'intHighest').
-     */
-    toCamelCase(str) {
-        return str.replace('data-', '').replace(/-./g, match => match.charAt(1).toUpperCase());
-    }
-
-    loadManualXValues() {
-        const storedSettings = storageManager.load(SKILL_CALCULATOR_SETTINGS_KEY, {});
-        this.manualXValues = storedSettings.manualXValues || [];
-        if (this.manualXValues.length === 0) {
-            for (let i = DEFAULT_AUTO_INPUT_START; i <= DEFAULT_AUTO_INPUT_END; i += DEFAULT_AUTO_INPUT_INCREMENT) {
-                this.manualXValues.push(i);
-            }
-        }
-    }
-    
-    saveManualXValues() {
-        const storedSettings = storageManager.load(SKILL_CALCULATOR_SETTINGS_KEY, {});
-        storedSettings.manualXValues = this.manualXValues;
-        storageManager.save(SKILL_CALCULATOR_SETTINGS_KEY, storedSettings);
     }
     
     _initColumnVisibilityObserver() {
@@ -179,11 +165,19 @@ export class BaseComparisonTabViewModel {
         });
     }
 
-    _populateTableBody() {
-        throw new Error("Subclasses must implement _populateTableBody()");
+    loadTargetXValues() {
+        const storedSettings = storageManager.load(SKILL_CALCULATOR_SETTINGS_KEY, {});
+        this.manualXValues = storedSettings.manualXValues || [];
+        if (this.manualXValues.length === 0) {
+            for (let i = DEFAULT_AUTO_INPUT_START; i <= DEFAULT_AUTO_INPUT_END; i += DEFAULT_AUTO_INPUT_INCREMENT) {
+                this.manualXValues.push(i);
+            }
+        }
     }
-
-    getAxisLabels() {
-        throw new Error("Subclasses must implement getAxisLabels()");
+    
+    saveTargetXValues() {
+        const storedSettings = storageManager.load(SKILL_CALCULATOR_SETTINGS_KEY, {});
+        storedSettings.manualXValues = this.manualXValues;
+        storageManager.save(SKILL_CALCULATOR_SETTINGS_KEY, storedSettings);
     }
 }

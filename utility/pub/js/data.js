@@ -57,11 +57,12 @@ export const DEFAULT_EP_SETTINGS = {
     endDate: new Date().toISOString().slice(0, 10),
     startTime: '15',
     currentPoints: 0,
-    currentEnergy: 10,
+    targetPoints: 0,
+    currentEnergy: 0,
     extraEnergy: 0,
-    epPer5Energy: 25000,
-    challengeLive: 20000,
+    epPer5Energy: 0,
+    challengeLive: 0,
     challengeToggle: true,
-    mysekaiEpValue: 22000,
+    mysekaiEpValue: 0,
     mysekaiToggle: true
 };

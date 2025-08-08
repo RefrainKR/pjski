@@ -1,5 +1,6 @@
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
 import { storageManager } from '/lib/utils/StorageManager.js';
+import { kebabToCamelCase } from '/lib/utils/StringUtils.js';
 
 import { eventPointLogic } from '/model/EventPointLogic.js';
 
@@ -23,29 +24,40 @@ export class EventPointCalculatorViewModel {
 
     _bindElements() {
         const ids = {
-            inputs: ['ep-start-date', 'ep-end-date', 'ep-start-time', 'ep-current-points', 'ep-current-energy', 'ep-extra-energy', 'ep-per-5-energy', 'ep-challenge-live-value', 'ep-challenge-live-toggle', 'ep-mysekai-value', 'ep-mysekai-toggle'],
-            outputs: ['ep-current-time', 'ep-time-left', 'ep-result-live', 'ep-result-challenge', 'ep-result-mysekai', 'ep-result-total', 'ep-remain-natural-energy', 'ep-remain-ad-energy', 'ep-remain-challenge', 'ep-remain-mysekai']
+            inputs: [
+                'ep-start-date', 'ep-end-date', 'ep-start-time', 
+                'ep-current-points', 'ep-target-points', 
+                'ep-current-energy', 'ep-extra-energy', 
+                'ep-per-5-energy', 
+                'ep-challenge-live-value', 'ep-challenge-live-toggle', 
+                'ep-mysekai-value', 'ep-mysekai-toggle'
+            ],
+            // --- 핵심 수정: 실제 HTML에 있는 ID만 남깁니다 ---
+            outputs: [
+                'ep-current-time', 'ep-time-left', 
+                'ep-result-achievable', 'ep-result-total', 'ep-result-remaining', 'ep-result-needed-energy',
+                'ep-remain-natural-energy', 'ep-remain-ad-energy', 
+                'ep-remain-challenge', 'ep-remain-mysekai'
+            ]
         };
 
         ids.inputs.forEach(id => {
             const el = this.container.querySelector(`#${id}`);
-            const key = this._toCamelCase(id);
-            this.inputElements[key] = el;
-            if (el && el.type === 'number') {
-                // InputNumberElement를 생성하고, 원래 키 이름 뒤에 'Element'를 붙여 저장
-                this.inputElements[`${key}Element`] = new InputNumberElement(el, 0, 999999999, 0);
+            if (el) {
+                const key = kebabToCamelCase(id.replace('ep-', ''));
+                this.inputElements[key] = el;
+                if (el.type === 'number') {
+                    this.inputElements[`${key}Element`] = new InputNumberElement(el, 0, 9999999999, 0);
+                }
             }
         });
         ids.outputs.forEach(id => {
-            this.outputElements[this._toCamelCase(id)] = this.container.querySelector(`#${id}`);
+            const key = kebabToCamelCase(id.replace('ep-', ''));
+            this.outputElements[key] = this.container.querySelector(`#${id}`);
         });
 
         this.saveBtn = this.container.querySelector('#ep-save-btn');
         this.resetBtn = this.container.querySelector('#ep-reset-btn');
-    }
-    
-    _toCamelCase(str) {
-        return str.replace('ep-', '').replace(/-./g, match => match.charAt(1).toUpperCase());
     }
 
     _attachEventListeners() {
@@ -84,6 +96,7 @@ export class EventPointCalculatorViewModel {
             endDate: this.inputElements.endDate.value,
             startTime: this.inputElements.startTime.value,
             currentPoints: this.inputElements.currentPointsElement.getValue(),
+            targetPoints: this.inputElements.targetPointsElement.getValue(),
             currentEnergy: this.inputElements.currentEnergyElement.getValue(),
             extraEnergy: this.inputElements.extraEnergyElement.getValue(),
             epPer5Energy: this.inputElements.per5EnergyElement.getValue(),
@@ -131,19 +144,11 @@ export class EventPointCalculatorViewModel {
 
         const { remaining, predictions, finalEP } = results;
         if (!remaining || !predictions) return;
-
-        // --- 핵심 수정: 표시 형식 변경 ---
-        this.outputElements.remainNaturalEnergy.textContent = `${remaining.naturalEnergy.toLocaleString()} 불`; // '불' 단위 추가
         
-        this.outputElements.remainAdEnergy.textContent = `${remaining.adEnergy.toLocaleString()} 불`; // '불' 단위 추가
-
-        this.outputElements.remainChallenge.textContent = `${remaining.challengeCount.toLocaleString()} 회`;
-        this.outputElements.remainMysekai.textContent = `${remaining.mysekaiCount.toLocaleString()} 회`;
-        
-        this.outputElements.resultLive.textContent = Math.floor(predictions.liveEP).toLocaleString();
-        this.outputElements.resultChallenge.textContent = Math.floor(predictions.challengeEP).toLocaleString();
-        this.outputElements.resultMysekai.textContent = Math.floor(predictions.mysekaiEP).toLocaleString();
+        this.outputElements.resultAchievable.textContent = Math.floor(predictions.achievableEP).toLocaleString();
         this.outputElements.resultTotal.textContent = Math.floor(finalEP).toLocaleString();
+        this.outputElements.resultRemaining.textContent = Math.floor(predictions.remainingEP).toLocaleString();
+        this.outputElements.resultNeededEnergy.textContent = `${predictions.neededEnergy.toLocaleString()} 불`;
     }
 
     loadSettings() {
@@ -152,11 +157,14 @@ export class EventPointCalculatorViewModel {
         this.inputElements.startDate.value = settings.startDate;
         this.inputElements.endDate.value = settings.endDate;
         this.inputElements.startTime.value = settings.startTime;
+
         this.inputElements.currentPointsElement.setValue(settings.currentPoints);
+        this.inputElements.targetPointsElement.setValue(settings.targetPoints);
         this.inputElements.currentEnergyElement.setValue(settings.currentEnergy);
         this.inputElements.extraEnergyElement.setValue(settings.extraEnergy);
         this.inputElements.per5EnergyElement.setValue(settings.epPer5Energy);
         this.inputElements.challengeLiveValueElement.setValue(settings.challengeLive);
+
         this.inputElements.challengeLiveToggle.checked = settings.challengeToggle;
         this.inputElements.challengeLiveValue.disabled = !settings.challengeToggle;
         this.inputElements.mysekaiValueElement.setValue(settings.mysekaiEpValue);
