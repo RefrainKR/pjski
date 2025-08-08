@@ -141,8 +141,4 @@ input:checked + .slider:before { transform: translateX(1.25rem); }
         grid-template-columns: 1fr;
         gap: 1.5rem;
     }
-
-    .config-row {
-        grid-template-columns: 1fr;
-    }
 }
