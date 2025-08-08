@@ -149,7 +149,7 @@ input:checked + .slider:before { transform: translateX(1.25rem); }
     }
 }
 /* --- config-row 보호용 미디어 쿼리 --- */
-@media (max-width: 400px) {
+@media (max-width: 550px) {
     .config-row {
         grid-template-columns: 1fr;
     }
