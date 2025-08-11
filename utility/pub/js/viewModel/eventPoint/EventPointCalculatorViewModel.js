@@ -144,6 +144,11 @@ export class EventPointCalculatorViewModel {
 
         const { remaining, predictions, finalEP } = results;
         if (!remaining || !predictions) return;
+
+        this.outputElements.remainNaturalEnergy.textContent = `${remaining.naturalEnergy.toLocaleString()} 불`;
+        this.outputElements.remainAdEnergy.textContent = `${remaining.adEnergy} 불`; // 횟수 * 10으로 표시
+        this.outputElements.remainChallenge.textContent = `${remaining.challengeCount.toLocaleString()} 회`;
+        this.outputElements.remainMysekai.textContent = `${remaining.mysekaiCount.toLocaleString()} 회`;
         
         this.outputElements.resultAchievable.textContent = Math.floor(predictions.achievableEP).toLocaleString();
         this.outputElements.resultTotal.textContent = Math.floor(finalEP).toLocaleString();

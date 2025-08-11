@@ -85,6 +85,7 @@
     <main class="container">
         <div id="message-display" class="message"></div>
 
+        <!-- 이벤트 포인트 계산기 -->
         <section id="tool-event-point-calculator" class="tool-section tabs">
             <div class="tab-buttons">
                 <button class="tab-button active" data-tab="ep-calc-main">자연불</button>
@@ -150,16 +151,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- 출력 섹션 -->
-                        <div class="card ep-results">
-                            <h3>앞으로 남은 양</h3>
-                            <div class="result-grid">
-                                <p>자연불:</p> <span id="ep-remain-natural-energy">0 불</span>
-                                <p>광고불:</p> <span id="ep-remain-ad-energy">0 불</span>
-                                <p>챌린지 라이브:</p> <span id="ep-remain-challenge">0 회</span>
-                                <p>마이세카이:</p> <span id="ep-remain-mysekai">0 회</span>
-                            </div>
-                        </div>
+
                         <div class="card ep-results">
                             <h3>예측 결과</h3>
                             <div class="timer-display">
@@ -173,11 +165,21 @@
                                 <p>추가 필요 불:</p> <span id="ep-result-needed-energy">0 불</span>
                             </div>
                         </div>
+                        <div class="card ep-results">
+                            <h3>앞으로 남은 양</h3>
+                            <div class="result-grid">
+                                <p>자연불:</p> <span id="ep-remain-natural-energy">0 불</span>
+                                <p>광고불:</p> <span id="ep-remain-ad-energy">0 불</span>
+                                <p>챌린지 라이브:</p> <span id="ep-remain-challenge">0 회</span>
+                                <p>마이세카이:</p> <span id="ep-remain-mysekai">0 회</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- 스킬값 비교기 -->
         <section id="tool-skill-comparison" class="tool-section tabs">
             <div class="tab-buttons">
                 <button class="tab-button" data-tab="skill-level-tab">스킬 레벨</button>
@@ -213,6 +215,7 @@
                         <table id="skill-level-table" class="skill-table"></table>
                     </div>
                 </div>
+                
                 <div id="rank-skill-tab" class="tab-content">
                     <h2>랭크별 비교</h2>
                     <div class="table-config-group draggable-on-mobile">
