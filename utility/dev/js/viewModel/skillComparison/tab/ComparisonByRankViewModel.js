@@ -1,7 +1,7 @@
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
 import { storageManager } from '/lib/utils/StorageManager.js';
 
-import { SkillDataFactory } from '/model/SkillDataFactory.js';
+import { SkillComparisonModel } from '/model/SkillComparisonModel.js';
 
 import { BaseComparisonTabViewModel } from '/viewModel/skillComparison/tab/BaseComparisonTabViewModel.js';
 
@@ -50,7 +50,7 @@ export class ComparisonByRankViewModel extends BaseComparisonTabViewModel {
     _populateTableBody() {
         try {
             const skillLevel = parseInt(this.skillLevelSelect.value);
-            const calculator = new SkillDataFactory(skillLevel);
+            const calculator = new SkillComparisonModel(skillLevel);
             
             const rankMin = this.rankMinElement.getValue();
             const rankMax = this.rankMaxElement.getValue();

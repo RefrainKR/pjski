@@ -5,7 +5,7 @@ import { BloomFesSkill } from '/lib/projectSekai/skill/BloomFesSkill.js';
  * 게임 규칙 계산 결과를 분석하고 조합하여,
  * UI 컴포넌트가 사용하기 좋은 최종 데이터를 생성하는 Factory 클래스입니다.
  */
-export class SkillDataFactory {
+export class SkillComparisonModel {
     constructor(skillLevel) {
         this.bloomFesSkill = new BloomFesSkill(skillLevel);
     }

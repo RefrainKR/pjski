@@ -1,6 +1,6 @@
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
 
-import { SkillDataFactory } from '/model/SkillDataFactory.js';
+import { SkillComparisonModel } from '/model/SkillComparisonModel.js';
 
 import { BaseComparisonTabViewModel } from '/viewModel/skillComparison/tab/BaseComparisonTabViewModel.js';
 
@@ -92,7 +92,7 @@ export class ComparisonBySkillLevelViewModel extends BaseComparisonTabViewModel 
 
         yValues.forEach(yValue => {
             // yValue는 skillLevel이므로, calculator를 매번 새로 생성
-            const calculator = new SkillDataFactory(yValue);
+            const calculator = new SkillComparisonModel(yValue);
             
             const rowHTML = this._renderRow(calculator, yValue, this.manualXValues, charRank);
             tbody.insertAdjacentHTML('beforeend', rowHTML);

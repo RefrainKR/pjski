@@ -2,7 +2,7 @@ import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
 import { storageManager } from '/lib/utils/StorageManager.js';
 import { kebabToCamelCase } from '/lib/utils/StringUtils.js';
 
-import { eventPointLogic } from '/model/EventPointLogic.js';
+import { eventPointModel } from '/model/eventPointModel.js';
 
 import { EP_SETTINGS_KEY, DEFAULT_EP_SETTINGS } from '/data.js';
 
@@ -135,7 +135,7 @@ export class EventPointCalculatorViewModel {
     recalculateAndRender() {
         const inputs = this._gatherInputs();
         const now = new Date();
-        const results = eventPointLogic.calculate(inputs, now);
+        const results = eventPointModel.calculate(inputs, now);
 
         this.updateTimers();
 
