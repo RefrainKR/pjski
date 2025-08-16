@@ -7,11 +7,19 @@ export const eventPointLogic = {
         const timeLeftMs = eventEndDate - now;
 
         if (timeLeftMs < 0) {
+            const remainingEP = Math.max(0, inputs.targetPoints - inputs.currentPoints);
             return {
                 timeLeft: { days: 0, hours: 0, minutes: 0, seconds: 0, totalSeconds: 0 },
                 remaining: { naturalEnergy: 0, adEnergy: 0, challengeCount: 0, mysekaiCount: 0 },
-                predictions: { liveEP: 0, challengeEP: 0, mysekaiEP: 0 },
-                finalEP: inputs.currentEP
+                predictions: { 
+                    liveEP: 0, 
+                    challengeEP: 0, 
+                    mysekaiEP: 0,
+                    achievableEP: 0, // << 추가
+                    remainingEP: remainingEP, // << 추가
+                    neededEnergy: inputs.epPer5Energy > 0 ? Math.ceil(remainingEP / (inputs.epPer5Energy / 5)) : 0 // << 추가
+                },
+                finalEP: inputs.currentPoints
             };
         }
 		
