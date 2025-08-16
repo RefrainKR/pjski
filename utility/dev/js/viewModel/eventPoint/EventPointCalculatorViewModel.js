@@ -26,13 +26,12 @@ export class EventPointCalculatorViewModel {
         const ids = {
             inputs: [
                 'ep-start-date', 'ep-end-date', 'ep-start-time', 
-                'ep-current-points', 'ep-target-points', 
+                'ep-current-ep', 'ep-target-ep', 
                 'ep-current-energy', 'ep-extra-energy', 
                 'ep-per-5-energy', 
                 'ep-challenge-live-value', 'ep-challenge-live-toggle', 
                 'ep-mysekai-value', 'ep-mysekai-toggle'
             ],
-            // --- 핵심 수정: 실제 HTML에 있는 ID만 남깁니다 ---
             outputs: [
                 'ep-current-time', 'ep-time-left', 
                 'ep-result-achievable', 'ep-result-total', 'ep-result-remaining', 'ep-result-needed-energy',
@@ -95,8 +94,8 @@ export class EventPointCalculatorViewModel {
             startDate: this.inputElements.startDate.value,
             endDate: this.inputElements.endDate.value,
             startTime: this.inputElements.startTime.value,
-            currentPoints: this.inputElements.currentPointsElement.getValue(),
-            targetPoints: this.inputElements.targetPointsElement.getValue(),
+            currentEP: this.inputElements.currentEpElement.getValue(),
+            targetEP: this.inputElements.targetEpElement.getValue(),
             currentEnergy: this.inputElements.currentEnergyElement.getValue(),
             extraEnergy: this.inputElements.extraEnergyElement.getValue(),
             epPer5Energy: this.inputElements.per5EnergyElement.getValue(),
@@ -163,8 +162,8 @@ export class EventPointCalculatorViewModel {
         this.inputElements.endDate.value = settings.endDate;
         this.inputElements.startTime.value = settings.startTime;
 
-        this.inputElements.currentPointsElement.setValue(settings.currentPoints);
-        this.inputElements.targetPointsElement.setValue(settings.targetPoints);
+        this.inputElements.currentEpElement.setValue(settings.currentEP);
+        this.inputElements.targetEpElement.setValue(settings.targetEP);
         this.inputElements.currentEnergyElement.setValue(settings.currentEnergy);
         this.inputElements.extraEnergyElement.setValue(settings.extraEnergy);
         this.inputElements.per5EnergyElement.setValue(settings.epPer5Energy);
