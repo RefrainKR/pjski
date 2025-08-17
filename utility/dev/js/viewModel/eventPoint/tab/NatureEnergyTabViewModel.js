@@ -70,13 +70,6 @@ export class NatureEnergyTabViewModel {
             }
         });
 
-        this.inputElements.challengeLiveToggle.addEventListener('change', (e) => {
-            this.inputElements.challengeLiveValue.disabled = !e.target.checked;
-        });
-        this.inputElements.mysekaiToggle.addEventListener('change', (e) => {
-            this.inputElements.mysekaiValue.disabled = !e.target.checked;
-        });
-
         this.resetBtn.addEventListener('click', () => this.resetSettings());
     }
 
@@ -169,12 +162,10 @@ export class NatureEnergyTabViewModel {
         this.inputElements.extraEnergyElement.setValue(settings.extraEnergy);
         this.inputElements.per5EnergyElement.setValue(settings.epPer5Energy);
         this.inputElements.challengeLiveValueElement.setValue(settings.challengeLive);
+        this.inputElements.mysekaiValueElement.setValue(settings.mysekaiEpValue);
 
         this.inputElements.challengeLiveToggle.checked = settings.challengeToggle;
-        this.inputElements.challengeLiveValue.disabled = !settings.challengeToggle;
-        this.inputElements.mysekaiValueElement.setValue(settings.mysekaiEpValue);
         this.inputElements.mysekaiToggle.checked = settings.mysekaiToggle;
-        this.inputElements.mysekaiValue.disabled = !settings.mysekaiToggle;
         
         this.recalculateAndRender();
     }

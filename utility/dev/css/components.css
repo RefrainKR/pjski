@@ -80,6 +80,32 @@ input:checked + .slider:before { transform: translateX(1.25rem); }
 .legend-yellow { background-color: var(--cell-yellow-bg); }
 .legend-gray { background-color: var(--cell-gray-bg); }
 
+/* --- Skill Comprasion --- */
+.auto-input-controls {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem 1.5rem;
+}
+.auto-input-controls .config-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.auto-input-controls .config-group label {
+    margin-bottom: 0; 
+    flex-shrink: 0; 
+}
+.auto-input-controls .input {
+    width: 6rem;
+}
+
+.auto-input-controls .btn {
+    margin-left: auto;
+}
+
 /* --- Skill Table --- */
 .skill-table-container { overflow-x: auto; overflow-y: auto; max-width: 100%; max-height: 70vh; position: relative; }
 .skill-table { width: 100%; border-collapse: collapse; margin-top: 0.3125rem; table-layout: fixed; }

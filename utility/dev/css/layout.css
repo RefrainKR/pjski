@@ -25,7 +25,6 @@
 .popup-close-btn { background: none; border: none; font-size: 1.75rem; cursor: pointer; color: var(--secondary-color); padding: 0; line-height: 1; }
 .popup-close-btn:hover { color: var(--text-color); }
 .scrollable-content { max-height: 400px; overflow-y: auto; padding: 1.25rem; }
-.auto-input-controls { display: flex; flex-direction: column; gap: 0.9375rem; }
 
 /* --- Footer & Message --- */
 .footer { padding: 0.9375rem 1.25rem; background-color: var(--primary-color); color: var(--white-color); text-align: center; font-size: 0.9rem; box-shadow: 0 -0.125rem 0.25rem var(--shadow-color); }
