@@ -27,6 +27,7 @@ export class App {
             // ComparisonByRankViewModel이 사용할 정보
             rankTableConfig: {
                 containerId: 'rank-skill-tab',
+                tabId: 'byRank',
                 displayModeBtnId: 'btn-display-mode',
                 numberFormatBtnId: 'btn-number-format',
                 multiplierBtnId: 'btn-multiplier'
@@ -35,6 +36,7 @@ export class App {
             // ComparisonBySkillLevelViewModel이 사용할 정보
             characterTableConfig: {
                 containerId: 'skill-level-tab',
+                tabId: 'bySkillLevel',
                 displayModeBtnId: 'btn-display-mode-char',
                 numberFormatBtnId: 'btn-number-format-char',
                 multiplierBtnId: 'btn-multiplier-char'

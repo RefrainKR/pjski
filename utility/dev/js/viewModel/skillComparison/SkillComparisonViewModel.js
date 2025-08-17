@@ -6,7 +6,7 @@ import { ComparisonByRankViewModel } from '/viewModel/skillComparison/tab/Compar
 import { ComparisonBySkillLevelViewModel } from '/viewModel/skillComparison/tab/ComparisonBySkillLevelViewModel.js';
 
 import {
-    SKILL_CALCULATOR_SETTINGS_KEY, 
+    SKILL_COMPARISON_SETTINGS_KEY , 
     MIN_AUTO_INPUT, MAX_AUTO_INPUT, MIN_AUTO_INPUT_INCREMENT, MAX_AUTO_INPUT_INCREMENT,
     DEFAULT_AUTO_INPUT_START, DEFAULT_AUTO_INPUT_END, DEFAULT_AUTO_INPUT_INCREMENT, 
     MIN_X_VALUES_COUNT, MAX_X_VALUES_COUNT 
@@ -92,7 +92,7 @@ export class SkillComparisonViewModel {
     }
 
     _setupAutoInputPanel(startElement, endElement, incrementElement) {
-        const settings = storageManager.load(SKILL_CALCULATOR_SETTINGS_KEY, {});
+        const settings = storageManager.load(SKILL_COMPARISON_SETTINGS_KEY , {});
         startElement.setValue(settings.autoInputStart || DEFAULT_AUTO_INPUT_START, false);
         endElement.setValue(settings.autoInputEnd || DEFAULT_AUTO_INPUT_END, false);
         incrementElement.setValue(settings.autoInputIncrement || DEFAULT_AUTO_INPUT_INCREMENT, false);

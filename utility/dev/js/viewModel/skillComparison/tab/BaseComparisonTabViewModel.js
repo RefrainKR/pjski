@@ -7,8 +7,7 @@ import { stringUtils } from '/lib/utils/StringUtils.js';
 
 import {
     MIN_TARGET_VALUE, MAX_TARGET_VALUE,
-    DEFAULT_AUTO_INPUT_START, DEFAULT_AUTO_INPUT_END, DEFAULT_AUTO_INPUT_INCREMENT,
-    SKILL_CALCULATOR_SETTINGS_KEY
+    SKILL_COMPARISON_SETTINGS_KEY, DEFAULT_SKILL_COMPARISON_SETTINGS
 } from '/data.js';
 
 /**
@@ -47,6 +46,8 @@ export class BaseComparisonTabViewModel {
                 this._updateCellDisplay();
             }
         );
+
+        this.tabId = config.tabId;
 
         this.loadTargetXValues();
     }
@@ -93,11 +94,11 @@ export class BaseComparisonTabViewModel {
     }
 
     bindTargetInputEvents() {
-        const manualInputs = this.table.querySelectorAll('thead th .target-value-input');
-        manualInputs.forEach((input, index) => {
+        const targetInputs = this.table.querySelectorAll('thead th .target-value-input');
+        targetInputs.forEach((input, index) => {
             if (!input._inputNumberElementInstance) {
                 const instance = new InputNumberElement(input, MIN_TARGET_VALUE, MAX_TARGET_VALUE, null, (value) => {
-                    this.manualXValues[index] = value;
+                    this.targetXValues[index] = value;
                     this._populateTableBody();
                     this.saveTargetXValues();
                 }, null);
@@ -111,7 +112,7 @@ export class BaseComparisonTabViewModel {
      * @param {Array<number>} newXValues - 새로운 x축 값 배열.
      */
     updateXValuesAndRender(newXValues) {
-        this.manualXValues = newXValues;
+        this.targetXValues = newXValues;
         this.saveTargetXValues();
         this.renderTable();
     }
@@ -122,7 +123,7 @@ export class BaseComparisonTabViewModel {
     }
 
     _renderTableStructure() {
-        const xValues = this.manualXValues;
+        const xValues = this.targetXValues;
         const axisLabels = this.getAxisLabels();
 
         let tableHTML = `<thead><tr><th class="corner-header">
@@ -195,18 +196,21 @@ export class BaseComparisonTabViewModel {
     }
 
     loadTargetXValues() {
-        const storedSettings = storageManager.load(SKILL_CALCULATOR_SETTINGS_KEY, {});
-        this.manualXValues = storedSettings.manualXValues || [];
-        if (this.manualXValues.length === 0) {
-            for (let i = DEFAULT_AUTO_INPUT_START; i <= DEFAULT_AUTO_INPUT_END; i += DEFAULT_AUTO_INPUT_INCREMENT) {
-                this.manualXValues.push(i);
+        const settings = storageManager.load(SKILL_COMPARISON_SETTINGS_KEY, DEFAULT_SKILL_COMPARISON_SETTINGS);
+        
+        this.targetXValues = settings[this.tabId].targetXValues || [];
+        
+        if (this.targetXValues.length === 0) {
+            const autoInputDefaults = settings.autoInput;
+            for (let i = autoInputDefaults.start; i <= autoInputDefaults.end; i += autoInputDefaults.increment) {
+                this.targetXValues.push(i);
             }
         }
     }
     
     saveTargetXValues() {
-        const storedSettings = storageManager.load(SKILL_CALCULATOR_SETTINGS_KEY, {});
-        storedSettings.manualXValues = this.manualXValues;
-        storageManager.save(SKILL_CALCULATOR_SETTINGS_KEY, storedSettings);
+        const settings = storageManager.load(SKILL_COMPARISON_SETTINGS_KEY, DEFAULT_SKILL_COMPARISON_SETTINGS);
+        settings[this.tabId].targetXValues = this.targetXValues;
+        storageManager.save(SKILL_COMPARISON_SETTINGS_KEY, settings);
     }
 }

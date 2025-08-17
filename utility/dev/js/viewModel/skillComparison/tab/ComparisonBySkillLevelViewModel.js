@@ -94,7 +94,7 @@ export class ComparisonBySkillLevelViewModel extends BaseComparisonTabViewModel 
             // yValue는 skillLevel이므로, calculator를 매번 새로 생성
             const calculator = new SkillComparisonModel(yValue);
             
-            const rowHTML = this._renderRow(calculator, yValue, this.manualXValues, charRank);
+            const rowHTML = this._renderRow(calculator, yValue, this.targetXValues, charRank);
             tbody.insertAdjacentHTML('beforeend', rowHTML);
         });
 

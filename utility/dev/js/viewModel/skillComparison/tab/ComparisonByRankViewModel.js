@@ -5,7 +5,12 @@ import { SkillComparisonModel } from '/model/SkillComparisonModel.js';
 
 import { BaseComparisonTabViewModel } from '/viewModel/skillComparison/tab/BaseComparisonTabViewModel.js';
 
-import { SKILL_CALCULATOR_SETTINGS_KEY, MIN_RANK_MIN, MAX_RANK_MIN, DEFAULT_RANK_MIN, MIN_RANK_MAX, MAX_RANK_MAX, DEFAULT_RANK_MAX, INCREMENT_MIN_RANK, INCREMENT_MAX_RANK, INCREMENT_DEFAULT_RANK, FALLBACK_RANK_INPUT_ON_BLANK } from '/data.js';
+import { SKILL_COMPARISON_SETTINGS_KEY, DEFAULT_SKILL_COMPARISON_SETTINGS,
+    MIN_RANK_MIN, MAX_RANK_MIN, MIN_RANK_MAX, MAX_RANK_MAX,
+    DEFAULT_RANK_MIN, DEFAULT_RANK_MAX,
+    INCREMENT_MIN_RANK, INCREMENT_MAX_RANK, INCREMENT_DEFAULT_RANK,
+    FALLBACK_RANK_INPUT_ON_BLANK
+} from '/data.js';
 
 export class ComparisonByRankViewModel extends BaseComparisonTabViewModel {
     constructor(config) {
@@ -65,7 +70,7 @@ export class ComparisonByRankViewModel extends BaseComparisonTabViewModel {
 
             yValues.forEach(yValue => {
                 // --- 핵심: _renderRow 호출 시 인자 4개 전달, 마지막 인자는 null ---
-                const rowHTML = this._renderRow(calculator, yValue, this.manualXValues, null);
+                const rowHTML = this._renderRow(calculator, yValue, this.targetXValues, null);
                 tbody.insertAdjacentHTML('beforeend', rowHTML);
             });
             this._updateCellDisplay();
@@ -77,22 +82,22 @@ export class ComparisonByRankViewModel extends BaseComparisonTabViewModel {
     }
     
     loadSettings() {
-        const storedSettings = storageManager.load(SKILL_CALCULATOR_SETTINGS_KEY, {});
-        this.skillLevelSelect.value = storedSettings.skillLevel || '1';
-        this.rankMinInput.value = storedSettings.rankMin ?? '';
-        this.rankMaxInput.value = storedSettings.rankMax ?? '';
-        this.rankIncrementInput.value = storedSettings.rankIncrement ?? '';
+        const settings = storageManager.load(SKILL_COMPARISON_SETTINGS_KEY, DEFAULT_SKILL_COMPARISON_SETTINGS).byRank;
+        this.skillLevelSelect.value = settings.skillLevel || '1';
+        this.rankMinInput.value = settings.rankMin ?? '';
+        this.rankMaxInput.value = settings.rankMax ?? '';
+        this.rankIncrementInput.value = settings.rankIncrement ?? '';
     }
 
     saveSettings() {
-        const storedSettings = storageManager.load(SKILL_CALCULATOR_SETTINGS_KEY, {});
-        const newSettings = {
-            ...storedSettings,
+        const allSettings = storageManager.load(SKILL_COMPARISON_SETTINGS_KEY, DEFAULT_SKILL_COMPARISON_SETTINGS);
+        allSettings.byRank = {
+            ...allSettings.byRank,
             skillLevel: this.skillLevelSelect.value,
             rankMin: this.rankMinInput.value,
             rankMax: this.rankMaxInput.value,
             rankIncrement: this.rankIncrementInput.value
         };
-        storageManager.save(SKILL_CALCULATOR_SETTINGS_KEY, newSettings);
+        storageManager.save(SKILL_COMPARISON_SETTINGS_KEY , allSettings);
     }
 }
