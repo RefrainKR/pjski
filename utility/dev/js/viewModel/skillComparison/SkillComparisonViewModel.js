@@ -1,57 +1,115 @@
 import { TabManager } from '/lib/utils/TabManager.js';
+import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
+import { storageManager } from '/lib/utils/storageManager.js';
 
 import { ComparisonByRankViewModel } from '/viewModel/skillComparison/tab/ComparisonByRankViewModel.js';
 import { ComparisonBySkillLevelViewModel } from '/viewModel/skillComparison/tab/ComparisonBySkillLevelViewModel.js';
 
-/**
- * "스킬 비교기" 툴 전체를 관리하는 최상위 ViewModel입니다.
- * 내부 탭 시스템과 하위 테이블 ViewModel들을 제어합니다.
- */
+import {
+    SKILL_CALCULATOR_SETTINGS_KEY, 
+    MIN_AUTO_INPUT, MAX_AUTO_INPUT, MIN_AUTO_INPUT_INCREMENT, MAX_AUTO_INPUT_INCREMENT,
+    DEFAULT_AUTO_INPUT_START, DEFAULT_AUTO_INPUT_END, DEFAULT_AUTO_INPUT_INCREMENT, 
+    MIN_X_VALUES_COUNT, MAX_X_VALUES_COUNT 
+} from '/data.js';
+
 export class SkillComparisonViewModel {
     constructor(config) {
         this.container = document.getElementById(config.containerId);
         if (!this.container) return;
+
+        this.messageDisplayCallback = config.messageDisplayCallback;
         
-        // --- 1. 하위 ViewModel들을 내부에서 직접 생성 ---
-        this.ComparisonByRankViewModel = new ComparisonByRankViewModel({
+        this.comparisonByRankViewModel = new ComparisonByRankViewModel({
             messageDisplayCallback: config.messageDisplayCallback,
             rankPanelViewModel: config.rankPanelViewModel,
             ...config.rankTableConfig
         });
         
-        this.ComparisonBySkillLevelViewModel = new ComparisonBySkillLevelViewModel({
+        this.comparisonBySkillLevelViewModel = new ComparisonBySkillLevelViewModel({
             messageDisplayCallback: config.messageDisplayCallback,
             rankPanelViewModel: config.rankPanelViewModel,
             ...config.characterTableConfig
         });
 
-        // --- 2. 탭 관리 책임을 직접 소유 ---
         this.tabManager = new TabManager(this.container, (activeTabId) => {
             if (activeTabId === 'skill-level-tab') {
-                this.ComparisonBySkillLevelViewModel.refresh();
+                this.comparisonBySkillLevelViewModel.refresh();
             }
         });
+
+        this._initAutoInputPanel();
     }
 
     init() {
         this.tabManager.activateDefaultTab();
     }
-    
-    // App.js로부터 이벤트를 전달받는 메서드
-    handleRanksUpdated() {
-        // 현재 활성화된 탭이 캐릭터 탭인지 확인하고 refresh 호출
-        const activeTab = this.container.querySelector('.tab-button.active');
-        if (activeTab && activeTab.dataset.tab === 'skill-level-tab') {
-            this.ComparisonBySkillLevelViewModel.refresh();
-        }
+
+    _initAutoInputPanel() {
+        const autoInputPanel = document.getElementById('auto-input-panel');
+        if (!autoInputPanel) return;
+        
+        const applyBtn = autoInputPanel.querySelector('#applyAutoInputBtn');
+        const startInput = autoInputPanel.querySelector('#auto-input-start');
+        const endInput = autoInputPanel.querySelector('#auto-input-end');
+        const incrementInput = autoInputPanel.querySelector('#auto-input-increment');
+
+        const startElement = new InputNumberElement(startInput, MIN_AUTO_INPUT, MAX_AUTO_INPUT, DEFAULT_AUTO_INPUT_START, null);
+        const endElement = new InputNumberElement(endInput, MIN_AUTO_INPUT, MAX_AUTO_INPUT, DEFAULT_AUTO_INPUT_END, null);
+        const incrementElement = new InputNumberElement(incrementInput, MIN_AUTO_INPUT_INCREMENT, MAX_AUTO_INPUT_INCREMENT, DEFAULT_AUTO_INPUT_INCREMENT, null);
+
+        document.body.addEventListener('popupOpened', (e) => {
+            if (e.detail.panelId === 'auto-input-panel' && this.container.contains(e.detail.triggerElement)) {
+                this._setupAutoInputPanel(startElement, endElement, incrementElement);
+            }
+        });
+
+        applyBtn.addEventListener('click', () => {
+            const activeTable = this.getActiveTableViewModel();
+            if (!activeTable) return;
+
+            let startVal = startElement.getValue();
+            let endVal = endElement.getValue();
+            let incrementVal = incrementElement.getValue();
+            
+            if (startVal > endVal) [startVal, endVal] = [endVal, startVal];
+            if (incrementVal <= 0) incrementVal = 1;
+
+            let generatedXValues = [];
+            for (let i = startVal; i <= endVal; i += incrementVal) { generatedXValues.push(i); }
+            
+            if (generatedXValues.length < MIN_X_VALUES_COUNT) {
+                this.messageDisplayCallback('생성된 대상값이 최소 개수에 미치지 못하여 빈공간을 생성합니다.', 'info');
+                while (generatedXValues.length < MIN_X_VALUES_COUNT) { generatedXValues.push(0); }
+            } else if (generatedXValues.length > MAX_X_VALUES_COUNT) {
+                this.messageDisplayCallback('생성된 대상값이 최대 개수를 초과하였습니다.', 'info');
+                generatedXValues = generatedXValues.slice(0, MAX_X_VALUES_COUNT);
+            }
+
+            activeTable.updateXValuesAndRender(generatedXValues);
+            
+            document.body.dispatchEvent(new CustomEvent('closePopupRequest'));
+        });
     }
-    
-    // "자동 입력" 팝업이 호출할 테이블을 반환하는 메서드
+
+    _setupAutoInputPanel(startElement, endElement, incrementElement) {
+        const settings = storageManager.load(SKILL_CALCULATOR_SETTINGS_KEY, {});
+        startElement.setValue(settings.autoInputStart || DEFAULT_AUTO_INPUT_START, false);
+        endElement.setValue(settings.autoInputEnd || DEFAULT_AUTO_INPUT_END, false);
+        incrementElement.setValue(settings.autoInputIncrement || DEFAULT_AUTO_INPUT_INCREMENT, false);
+    }
+
     getActiveTableViewModel() {
         const activeTab = this.container.querySelector('.tab-button.active');
         if (activeTab && activeTab.dataset.tab === 'skill-level-tab') {
-            return this.ComparisonBySkillLevelViewModel;
+            return this.comparisonBySkillLevelViewModel;
         }
-        return this.ComparisonByRankViewModel; // 기본값은 랭크 테이블
+        return this.comparisonByRankViewModel;
+    }
+    
+    handleRanksUpdated() {
+        const activeTab = this.container.querySelector('.tab-button.active');
+        if (activeTab && activeTab.dataset.tab === 'skill-level-tab') {
+            this.comparisonBySkillLevelViewModel.refresh();
+        }
     }
 }

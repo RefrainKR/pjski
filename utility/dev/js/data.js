@@ -51,18 +51,20 @@ export const FALLBACK_AUTO_INPUT_INCREMENT_ON_BLANK = null;
 export const FALLBACK_MANUAL_X_ON_BLANK = 0; // manual-x-input blank 시 0으로
 
 // --- Event Point Calculator ---\
-export const EP_SETTINGS_KEY = 'eventPointCalculatorSettings';
+export const EP_SETTINGS_KEY = 'eventPointSettings';
 export const DEFAULT_EP_SETTINGS = {
-    startDate: new Date().toISOString().slice(0, 10),
-    endDate: new Date().toISOString().slice(0, 10),
-    startTime: '15',
-    currentEP: 0,
-    targetEP: 0,
-    currentEnergy: 0,
-    extraEnergy: 0,
-    epPer5Energy: 0,
-    challengeLive: 0,
-    challengeToggle: true,
-    mysekaiEpValue: 0,
-    mysekaiToggle: true
+    natureEnergy: {
+        startDate: new Date().toISOString().slice(0, 10),
+        endDate: new Date().toISOString().slice(0, 10),
+        startTime: '15',
+        currentEP: 0,
+        targetEP: 0,
+        currentEnergy: 0,
+        extraEnergy: 0,
+        epPer5Energy: 0,
+        challengeLive: 0,
+        challengeToggle: true,
+        mysekaiEpValue: 0,
+        mysekaiToggle: true
+    }
 };

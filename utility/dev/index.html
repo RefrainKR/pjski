@@ -88,35 +88,37 @@
         <!-- 이벤트 포인트 계산기 -->
         <section id="tool-event-point-calculator" class="tool-section tabs">
             <div class="tab-buttons">
-                <button class="tab-button active" data-tab="ep-calc-main">자연불</button>
+                <button class="tab-button active" data-tab="ep-ne-calc-main">자연불</button>
+                <button class="tab-button" data-tab="ep-event-run-tab">이벤런(미작성)</button>
             </div>
-            <!-- 자연불 -->
+            
             <div class="tab-content-wrapper">
-                <div id="ep-calc-main" class="tab-content active">
+                <!-- 자연불 -->
+                <div id="ep-ne-calc-main" class="tab-content active">
                     <div class="action-buttons">
-                        <button id="ep-reset-btn" class="btn btn-sm btn-secondary">초기화</button>
+                        <button id="ep-ne-reset-btn" class="btn btn-sm btn-secondary">초기화</button>
                     </div>
                     <div class="ep-calculator">
                         <div class="card">
                             <h3>이벤트 정보</h3>
                             <div class="card-grid">
                                 <div class="config-row">
-                                    <div class="form-group"><label for="ep-start-date">시작일</label><input type="date" id="ep-start-date" class="input input-md"></div>
-                                    <div class="form-group"><label for="ep-end-date">종료일</label><input type="date" id="ep-end-date" class="input input-md"></div>
+                                    <div class="form-group"><label for="ep-ne-start-date">시작일</label><input type="date" id="ep-ne-start-date" class="input input-md"></div>
+                                    <div class="form-group"><label for="ep-ne-end-date">종료일</label><input type="date" id="ep-ne-end-date" class="input input-md"></div>
                                 </div>
-                                <div class="form-group"><label for="ep-start-time">시작 시간</label><select id="ep-start-time" class="input input-md"><option value="15">일반 (15시->21시)</option><option value="20">월링 (20시->20시)</option></select></div>
+                                <div class="form-group"><label for="ep-ne-start-time">시작 시간</label><select id="ep-ne-start-time" class="input input-md"><option value="15">일반 (15시->21시)</option><option value="20">월링 (20시->20시)</option></select></div>
                             </div>
                         </div>
                         <div class="card">
                             <h3>내 정보</h3>
                             <div class="card-grid">
                                 <div class="config-row">
-                                    <div class="form-group"><label for="ep-current-ep">현재 EP</label><input type="number" id="ep-current-ep" class="input input-md"></div>
-                                    <div class="form-group"><label for="ep-target-ep">목표 EP</label><input type="number" id="ep-target-ep" class="input input-md"></div>
+                                    <div class="form-group"><label for="ep-ne-current-ep">현재 EP</label><input type="number" id="ep-ne-current-ep" class="input input-md"></div>
+                                    <div class="form-group"><label for="ep-ne-target-ep">목표 EP</label><input type="number" id="ep-ne-target-ep" class="input input-md"></div>
                                 </div>
                                 <div class="config-row">
-                                    <div class="form-group"><label for="ep-current-energy">현재 불</label><input type="number" id="ep-current-energy" class="input input-md"></div>
-                                    <div class="form-group"><label for="ep-extra-energy">추가 불 (캔, 랭크업)</label><input type="number" id="ep-extra-energy" class="input input-md"></div>
+                                    <div class="form-group"><label for="ep-ne-current-energy">현재 불</label><input type="number" id="ep-ne-current-energy" class="input input-md"></div>
+                                    <div class="form-group"><label for="ep-ne-extra-energy">추가 불 (캔, 랭크업)</label><input type="number" id="ep-ne-extra-energy" class="input input-md"></div>
                                 </div>
                             </div>
                         </div>
@@ -125,26 +127,26 @@
                             <div class="card-grid">
                                 <div class="config-row">
                                     <div class="form-group">
-                                        <label for="ep-per-5-energy">평균 EP (5불 기준)</label>
-                                        <input type="number" id="ep-per-5-energy" class="input input-md">
+                                        <label for="ep-ne-per-5-energy">평균 EP (5불 기준)</label>
+                                        <input type="number" id="ep-ne-per-5-energy" class="input input-md">
                                     </div>
                                     <div class="form-group">
-                                        <label for="ep-challenge-live-value">챌린지 라이브 EP</label>
+                                        <label for="ep-ne-challenge-live-value">챌린지 라이브 EP</label>
                                         <div class="toggle-input-wrapper">
-                                            <input type="number" id="ep-challenge-live-value" class="input input-md">
+                                            <input type="number" id="ep-ne-challenge-live-value" class="input input-md">
                                             <label class="toggle-switch">
-                                                <input type="checkbox" id="ep-challenge-live-toggle" checked>
+                                                <input type="checkbox" id="ep-ne-challenge-live-toggle" checked>
                                                 <span class="slider"></span>
                                             </label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="ep-mysekai-value">마이세카이 EP</label>
+                                    <label for="ep-ne-mysekai-value">마이세카이 EP</label>
                                     <div class="toggle-input-wrapper">
-                                        <input type="number" id="ep-mysekai-value" class="input input-md">
+                                        <input type="number" id="ep-ne-mysekai-value" class="input input-md">
                                         <label class="toggle-switch">
-                                            <input type="checkbox" id="ep-mysekai-toggle" checked>
+                                            <input type="checkbox" id="ep-ne-mysekai-toggle" checked>
                                             <span class="slider"></span>
                                         </label>
                                     </div>
@@ -152,29 +154,35 @@
                             </div>
                         </div>
 
-                        <div class="card ep-results">
+                        <div class="card ep-ne-results">
                             <h3>예측 결과</h3>
                             <div class="timer-display">
-                                <p>현재 시간: <span id="ep-current-time">--</span></p>
-                                <p>남은 시간: <span id="ep-time-left">--</span></p>
+                                <p>현재 시간: <span id="ep-ne-current-time">--</span></p>
+                                <p>남은 시간: <span id="ep-ne-time-left">--</span></p>
                             </div>
                             <div class="result-grid">
-                                <p>획득 가능 EP:</p> <span id="ep-result-achievable">0</span>
-                                <p class="total">최종 예측 EP:</p> <span id="ep-result-total" class="total">0</span>
-                                <p>남은 EP:</p> <span id="ep-result-remaining">0</span>
-                                <p>추가 필요 불:</p> <span id="ep-result-needed-energy">0 불</span>
+                                <p>획득 가능 EP:</p> <span id="ep-ne-result-achievable">0</span>
+                                <p class="total">최종 예측 EP:</p> <span id="ep-ne-result-total" class="total">0</span>
+                                <p>남은 EP:</p> <span id="ep-ne-result-remaining">0</span>
+                                <p>추가 필요 불:</p> <span id="ep-ne-result-needed-energy">0 불</span>
                             </div>
                         </div>
-                        <div class="card ep-results">
+                        <div class="card ep-ne-results">
                             <h3>앞으로 남은 양</h3>
                             <div class="result-grid">
-                                <p>자연불:</p> <span id="ep-remain-natural-energy">0 불</span>
-                                <p>광고불:</p> <span id="ep-remain-ad-energy">0 불</span>
-                                <p>챌린지 라이브:</p> <span id="ep-remain-challenge">0 회</span>
-                                <p>마이세카이:</p> <span id="ep-remain-mysekai">0 회</span>
+                                <p>자연불:</p> <span id="ep-ne-remain-natural-energy">0 불</span>
+                                <p>광고불:</p> <span id="ep-ne-remain-ad-energy">0 불</span>
+                                <p>챌린지 라이브:</p> <span id="ep-ne-remain-challenge">0 회</span>
+                                <p>마이세카이:</p> <span id="ep-ne-remain-mysekai">0 회</span>
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- 이벤런 -->
+                <div id="ep-event-run-tab" class="tab-content">
+                    <h2>이벤런 계산기 (개발 예정)</h2>
+                    <p>이곳에 새로운 기능이 추가될 예정입니다.</p>
                 </div>
             </div>
         </section>
@@ -185,8 +193,9 @@
                 <button class="tab-button" data-tab="skill-level-tab">스킬 레벨</button>
                 <button class="tab-button" data-tab="rank-skill-tab">랭 크</button>
             </div>
-            <!-- 스킬 레벨별 비교 -->
+            
             <div class="tab-content-wrapper">
+                <!-- 스킬 레벨별 비교 -->
                 <div id="skill-level-tab" class="tab-content">
                     <h2>스킬 레벨별 비교</h2>
                     <div class="table-config-group draggable-on-mobile">

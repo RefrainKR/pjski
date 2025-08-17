@@ -8,7 +8,7 @@ export class PopupManager {
 
         this.bindEvents();
 
-		this.onOpenCallbacks = {}; // 콜백 저장 객체 추가
+		this.onOpenCallbacks = {};
     }
 
     bindEvents() {
@@ -22,7 +22,6 @@ export class PopupManager {
                 }
             });
         });
-
         // 팝업 닫기 버튼 이벤트
         this.closeButtons.forEach(button => {
             button.addEventListener('click', (e) => {
@@ -32,10 +31,15 @@ export class PopupManager {
                 }
             });
         });
-
-        // 다른 곳 클릭 시 팝업 닫기
+        // 외부 클릭 시 팝업 닫기
         document.addEventListener('click', (e) => {
             if (this.activePanel && !this.activePanel.contains(e.target) && !e.target.closest('[data-popup-trigger]')) {
+                this.close(this.activePanel);
+            }
+        });
+        // 닫기 요청 이벤트 수신
+        document.body.addEventListener('closePopupRequest', (e) => {
+            if (this.activePanel) {
                 this.close(this.activePanel);
             }
         });
@@ -57,15 +61,10 @@ export class PopupManager {
 		// --- onOpen 콜백 실행 로직 추가 ---
         const panelId = panel.dataset.popupId;
         if (typeof this.onOpenCallbacks[panelId] === 'function') {
-            this.onOpenCallbacks[panelId](trigger); // << trigger 인자 추가
+            this.onOpenCallbacks[panelId](trigger);
         }
     }
 
-	/**
-     * 특정 팝업이 열릴 때 실행될 콜백 함수를 등록합니다.
-     * @param {string} panelId - 콜백을 등록할 패널의 ID.
-     * @param {Function} callback - 실행할 콜백 함수.
-     */
     onOpen(panelId, callback) {
         this.onOpenCallbacks[panelId] = callback;
     }

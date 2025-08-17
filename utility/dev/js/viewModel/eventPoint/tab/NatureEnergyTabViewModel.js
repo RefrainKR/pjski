@@ -6,7 +6,7 @@ import { eventPointModel } from '/model/eventPointModel.js';
 
 import { EP_SETTINGS_KEY, DEFAULT_EP_SETTINGS } from '/data.js';
 
-export class EventPointCalculatorViewModel {
+export class NatureEnergyTabViewModel {
     constructor(config) {
         this.container = document.getElementById(config.containerId);
         if (!this.container) return;
@@ -25,25 +25,25 @@ export class EventPointCalculatorViewModel {
     _bindElements() {
         const ids = {
             inputs: [
-                'ep-start-date', 'ep-end-date', 'ep-start-time', 
-                'ep-current-ep', 'ep-target-ep', 
-                'ep-current-energy', 'ep-extra-energy', 
-                'ep-per-5-energy', 
-                'ep-challenge-live-value', 'ep-challenge-live-toggle', 
-                'ep-mysekai-value', 'ep-mysekai-toggle'
+                'ep-ne-start-date', 'ep-ne-end-date', 'ep-ne-start-time', 
+                'ep-ne-current-ep', 'ep-ne-target-ep', 
+                'ep-ne-current-energy', 'ep-ne-extra-energy', 
+                'ep-ne-per-5-energy', 
+                'ep-ne-challenge-live-value', 'ep-ne-challenge-live-toggle', 
+                'ep-ne-mysekai-value', 'ep-ne-mysekai-toggle'
             ],
             outputs: [
-                'ep-current-time', 'ep-time-left', 
-                'ep-result-achievable', 'ep-result-total', 'ep-result-remaining', 'ep-result-needed-energy',
-                'ep-remain-natural-energy', 'ep-remain-ad-energy', 
-                'ep-remain-challenge', 'ep-remain-mysekai'
+                'ep-ne-current-time', 'ep-ne-time-left', 
+                'ep-ne-result-achievable', 'ep-ne-result-total', 'ep-ne-result-remaining', 'ep-ne-result-needed-energy',
+                'ep-ne-remain-natural-energy', 'ep-ne-remain-ad-energy', 
+                'ep-ne-remain-challenge', 'ep-ne-remain-mysekai'
             ]
         };
 
         ids.inputs.forEach(id => {
             const el = this.container.querySelector(`#${id}`);
             if (el) {
-                const key = stringUtils.kebabToCamelCase(id.replace('ep-', ''));
+                const key = stringUtils.kebabToCamelCase(id.replace('ep-ne-', ''));
                 this.inputElements[key] = el;
                 if (el.type === 'number') {
                     this.inputElements[`${key}Element`] = new InputNumberElement(el, 0, 9999999999, 0);
@@ -51,11 +51,11 @@ export class EventPointCalculatorViewModel {
             }
         });
         ids.outputs.forEach(id => {
-            const key = stringUtils.kebabToCamelCase(id.replace('ep-', ''));
+            const key = stringUtils.kebabToCamelCase(id.replace('ep-ne-', ''));
             this.outputElements[key] = this.container.querySelector(`#${id}`);
         });
 
-        this.resetBtn = this.container.querySelector('#ep-reset-btn');
+        this.resetBtn = this.container.querySelector('#ep-ne-reset-btn');
     }
 
     _attachEventListeners() {
@@ -157,7 +157,7 @@ export class EventPointCalculatorViewModel {
     }
 
     loadSettings() {
-        const settings = storageManager.load(EP_SETTINGS_KEY, DEFAULT_EP_SETTINGS);
+        const settings = storageManager.load(EP_SETTINGS_KEY, DEFAULT_EP_SETTINGS).natureEnergy;
         
         this.inputElements.startDate.value = settings.startDate;
         this.inputElements.endDate.value = settings.endDate;
@@ -180,8 +180,13 @@ export class EventPointCalculatorViewModel {
     }
 
     _saveSettings() {
-        const settings = this._gatherInputs();
-        storageManager.save(EP_SETTINGS_KEY, settings);
+		const allSettings = storageManager.load(EP_SETTINGS_KEY, DEFAULT_EP_SETTINGS);
+        const newNatureEnergySettings = this._gatherInputs();
+
+		allSettings.natureEnergy = newNatureEnergySettings;
+
+        storageManager.save(EP_SETTINGS_KEY, allSettings);
+
         this.messageDisplayCallback('설정이 자동 저장되었습니다.', 'info');
     }
     
