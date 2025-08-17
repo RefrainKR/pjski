@@ -7,7 +7,8 @@ import { stringUtils } from '/lib/utils/stringUtils.js';
 
 import {
     MIN_TARGET_VALUE, MAX_TARGET_VALUE,
-    SKILL_COMPARISON_SETTINGS_KEY, DEFAULT_SKILL_COMPARISON_SETTINGS
+    SKILL_COMPARISON_SETTINGS_KEY, DEFAULT_SKILL_COMPARISON_SETTINGS,
+    DEFAULT_AUTO_INPUT_SETTINGS
 } from '/data.js';
 
 /**
@@ -201,8 +202,7 @@ export class BaseComparisonTabViewModel {
         this.targetXValues = settings[this.tabId].targetXValues || [];
         
         if (this.targetXValues.length === 0) {
-            const autoInputDefaults = settings.autoInput;
-            for (let i = autoInputDefaults.start; i <= autoInputDefaults.end; i += autoInputDefaults.increment) {
+            for (let i = DEFAULT_AUTO_INPUT_SETTINGS.start; i <= DEFAULT_AUTO_INPUT_SETTINGS.end; i += DEFAULT_AUTO_INPUT_SETTINGS.increment) {
                 this.targetXValues.push(i);
             }
         }

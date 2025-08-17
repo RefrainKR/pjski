@@ -9,29 +9,29 @@ import { MIN_RANK, MAX_RANK, DEFAULT_RANK } from '/data.js';
 export class ComparisonBySkillLevelViewModel extends BaseComparisonTabViewModel {
     constructor(config) {
         super(config);
+        
         this.rankPanelViewModel = config.rankPanelViewModel;
 
         this.characterSelect = this.container.querySelector('#character-select');
         this.rankInput = this.container.querySelector('#character-rank-input');
 
-        // InputNumberElement의 콜백은 이제 랭크 업데이트만 담당합니다.
-        this.rankInputElement = new InputNumberElement(this.rankInput, MIN_RANK, MAX_RANK, DEFAULT_RANK, (newRank) => {
-            this.updateManagerRank(newRank);
-        });
+        this.rankInputElement = new InputNumberElement(
+            this.rankInput, MIN_RANK, MAX_RANK, DEFAULT_RANK,
+            (newRank) => { this.updateManagerRank(newRank); }
+        );
         
         this.bindSpecificEvents();
-
         // this._initColumnVisibilityObserver();
     }
 
     bindSpecificEvents() {
         this.characterSelect.addEventListener('change', () => this.handleCharacterSelectChange());
-        // 사용자가 직접 랭크를 입력하고 포커스를 잃었을 때도 테이블을 다시 그리도록 이벤트를 추가합니다.
         this.rankInput.addEventListener('change', () => this.renderTable());
     }
 
     updateManagerRank(newRank) {
         const selectedCharName = this.characterSelect.value;
+
         if (selectedCharName !== 'direct') {
             this.rankPanelViewModel.updateCharacterRank(selectedCharName, newRank);
         }

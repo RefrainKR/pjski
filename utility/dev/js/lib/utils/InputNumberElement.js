@@ -9,6 +9,7 @@ export class InputNumberElement {
         this.min = min;
         this.max = max;
         this.defaultValue = defaultValue;
+
         this.changeCallback = changeCallback;
         this.fallbackValueOnBlank = fallbackValueOnBlank;
 
@@ -18,8 +19,9 @@ export class InputNumberElement {
         this.inputElement.max = String(this.max);
 
         const initialParsedValue = parseInt(this.inputElement.value);
+        
         if (isNaN(initialParsedValue)) {
-            this.inputElement.value = '';
+            this.inputElement.value = String(defaultValue);
         } else {
             const validatedInitialValue = Math.max(this.min, Math.min(this.max, initialParsedValue));
             this.inputElement.value = String(validatedInitialValue);

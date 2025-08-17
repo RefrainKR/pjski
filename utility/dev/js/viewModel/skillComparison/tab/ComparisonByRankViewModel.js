@@ -7,7 +7,6 @@ import { BaseComparisonTabViewModel } from '/viewModel/skillComparison/tab/BaseC
 
 import { SKILL_COMPARISON_SETTINGS_KEY, DEFAULT_SKILL_COMPARISON_SETTINGS,
     MIN_RANK_MIN, MAX_RANK_MIN, MIN_RANK_MAX, MAX_RANK_MAX,
-    DEFAULT_RANK_MIN, DEFAULT_RANK_MAX,
     INCREMENT_MIN_RANK, INCREMENT_MAX_RANK, INCREMENT_DEFAULT_RANK,
     FALLBACK_RANK_INPUT_ON_BLANK
 } from '/data.js';
@@ -21,9 +20,21 @@ export class ComparisonByRankViewModel extends BaseComparisonTabViewModel {
         this.rankMaxInput = this.container.querySelector('#rank-max');
         this.rankIncrementInput = this.container.querySelector('#rank-increment');
 
-        this.rankMinElement = new InputNumberElement(this.rankMinInput, MIN_RANK_MIN, MAX_RANK_MIN, DEFAULT_RANK_MIN, this.handleInputChange.bind(this), FALLBACK_RANK_INPUT_ON_BLANK);
-        this.rankMaxElement = new InputNumberElement(this.rankMaxInput, MIN_RANK_MAX, MAX_RANK_MAX, DEFAULT_RANK_MAX, this.handleInputChange.bind(this), FALLBACK_RANK_INPUT_ON_BLANK);
-        this.rankIncrementElement = new InputNumberElement(this.rankIncrementInput, INCREMENT_MIN_RANK, INCREMENT_MAX_RANK, INCREMENT_DEFAULT_RANK, this.handleInputChange.bind(this), FALLBACK_RANK_INPUT_ON_BLANK);
+        this.rankMinElement = new InputNumberElement(
+            this.rankMinInput, MIN_RANK_MIN, MAX_RANK_MIN,
+            DEFAULT_SKILL_COMPARISON_SETTINGS.byRank.rankMin,
+            this.handleInputChange.bind(this), FALLBACK_RANK_INPUT_ON_BLANK
+        );
+        this.rankMaxElement = new InputNumberElement(
+            this.rankMaxInput, MIN_RANK_MAX, MAX_RANK_MAX,
+            DEFAULT_SKILL_COMPARISON_SETTINGS.byRank.rankMin,
+            this.handleInputChange.bind(this), FALLBACK_RANK_INPUT_ON_BLANK
+        );
+        this.rankIncrementElement = new InputNumberElement(
+            this.rankIncrementInput, INCREMENT_MIN_RANK, INCREMENT_MAX_RANK,
+            INCREMENT_DEFAULT_RANK, this.handleInputChange.bind(this),
+            FALLBACK_RANK_INPUT_ON_BLANK
+        );
 
         this.loadSettings();
         this.bindSpecificEvents();
@@ -69,7 +80,6 @@ export class ComparisonByRankViewModel extends BaseComparisonTabViewModel {
             tbody.innerHTML = '';
 
             yValues.forEach(yValue => {
-                // --- 핵심: _renderRow 호출 시 인자 4개 전달, 마지막 인자는 null ---
                 const rowHTML = this._renderRow(calculator, yValue, this.targetXValues, null);
                 tbody.insertAdjacentHTML('beforeend', rowHTML);
             });

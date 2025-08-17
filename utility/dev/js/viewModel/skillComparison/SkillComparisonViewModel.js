@@ -6,10 +6,9 @@ import { ComparisonByRankViewModel } from '/viewModel/skillComparison/tab/Compar
 import { ComparisonBySkillLevelViewModel } from '/viewModel/skillComparison/tab/ComparisonBySkillLevelViewModel.js';
 
 import {
-    SKILL_COMPARISON_SETTINGS_KEY , 
+    AUTO_INPUT_SETTINGS_KEY, DEFAULT_AUTO_INPUT_SETTINGS,
     MIN_AUTO_INPUT, MAX_AUTO_INPUT, MIN_AUTO_INPUT_INCREMENT, MAX_AUTO_INPUT_INCREMENT,
-    DEFAULT_AUTO_INPUT_START, DEFAULT_AUTO_INPUT_END, DEFAULT_AUTO_INPUT_INCREMENT, 
-    MIN_X_VALUES_COUNT, MAX_X_VALUES_COUNT 
+    MIN_X_VALUES_COUNT, MAX_X_VALUES_COUNT
 } from '/data.js';
 
 export class SkillComparisonViewModel {
@@ -38,9 +37,6 @@ export class SkillComparisonViewModel {
         });
 
         this._initAutoInputPanel();
-    }
-
-    init() {
         this.tabManager.activateDefaultTab();
     }
 
@@ -53,23 +49,27 @@ export class SkillComparisonViewModel {
         const endInput = autoInputPanel.querySelector('#auto-input-end');
         const incrementInput = autoInputPanel.querySelector('#auto-input-increment');
 
-        const startElement = new InputNumberElement(startInput, MIN_AUTO_INPUT, MAX_AUTO_INPUT, DEFAULT_AUTO_INPUT_START, null);
-        const endElement = new InputNumberElement(endInput, MIN_AUTO_INPUT, MAX_AUTO_INPUT, DEFAULT_AUTO_INPUT_END, null);
-        const incrementElement = new InputNumberElement(incrementInput, MIN_AUTO_INPUT_INCREMENT, MAX_AUTO_INPUT_INCREMENT, DEFAULT_AUTO_INPUT_INCREMENT, null);
+        const initialSettings = storageManager.load(AUTO_INPUT_SETTINGS_KEY, DEFAULT_AUTO_INPUT_SETTINGS);
 
-        document.body.addEventListener('popupOpened', (e) => {
-            if (e.detail.panelId === 'auto-input-panel' && this.container.contains(e.detail.triggerElement)) {
-                this._setupAutoInputPanel(startElement, endElement, incrementElement);
-            }
-        });
+        this.autoInputStartElement = new InputNumberElement(
+            startInput, MIN_AUTO_INPUT, MAX_AUTO_INPUT,
+            initialSettings.start, () => this.saveAutoInputSettings()
+        );
+        this.autoInputEndElement = new InputNumberElement(endInput, MIN_AUTO_INPUT, MAX_AUTO_INPUT,
+            initialSettings.end, () => this.saveAutoInputSettings()
+        );
+        this.autoInputIncrementElement = new InputNumberElement(
+            incrementInput, MIN_AUTO_INPUT_INCREMENT, MAX_AUTO_INPUT_INCREMENT,
+            initialSettings.increment, () => this.saveAutoInputSettings()
+        );
 
         applyBtn.addEventListener('click', () => {
             const activeTable = this.getActiveTableViewModel();
             if (!activeTable) return;
 
-            let startVal = startElement.getValue();
-            let endVal = endElement.getValue();
-            let incrementVal = incrementElement.getValue();
+            let startVal = this.autoInputStartElement.getValue();
+            let endVal = this.autoInputEndElement.getValue();
+            let incrementVal = this.autoInputIncrementElement.getValue();
             
             if (startVal > endVal) [startVal, endVal] = [endVal, startVal];
             if (incrementVal <= 0) incrementVal = 1;
@@ -91,13 +91,6 @@ export class SkillComparisonViewModel {
         });
     }
 
-    _setupAutoInputPanel(startElement, endElement, incrementElement) {
-        const settings = storageManager.load(SKILL_COMPARISON_SETTINGS_KEY , {});
-        startElement.setValue(settings.autoInputStart || DEFAULT_AUTO_INPUT_START, false);
-        endElement.setValue(settings.autoInputEnd || DEFAULT_AUTO_INPUT_END, false);
-        incrementElement.setValue(settings.autoInputIncrement || DEFAULT_AUTO_INPUT_INCREMENT, false);
-    }
-
     getActiveTableViewModel() {
         const activeTab = this.container.querySelector('.tab-button.active');
         if (activeTab && activeTab.dataset.tab === 'skill-level-tab') {
@@ -111,5 +104,14 @@ export class SkillComparisonViewModel {
         if (activeTab && activeTab.dataset.tab === 'skill-level-tab') {
             this.comparisonBySkillLevelViewModel.refresh();
         }
+    }
+    
+    saveAutoInputSettings() {
+        const settings = {
+            start: this.autoInputStartElement.getValue(),
+            end: this.autoInputEndElement.getValue(),
+            increment: this.autoInputIncrementElement.getValue()
+        };
+        storageManager.save(AUTO_INPUT_SETTINGS_KEY, settings);
     }
 }

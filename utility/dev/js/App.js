@@ -42,7 +42,6 @@ export class App {
                 multiplierBtnId: 'btn-multiplier-char'
             }
         });
-        this.skillComparisonViewModel.init();
 
         this.eventPointViewModel  = new EventPointViewModel ({
             containerId: 'tool-event-point-calculator',
