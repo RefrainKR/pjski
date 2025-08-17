@@ -1,7 +1,7 @@
 
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
 import { ToggleButtonElement } from '/lib/utils/ToggleButtonElement.js';
-import { storageManager } from '/lib/utils/StorageManager.js';
+import { storageManager } from '/lib/utils/storageManager.js';
 
 import { stringUtils } from '/lib/utils/stringUtils.js';
 

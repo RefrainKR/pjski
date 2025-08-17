@@ -1,3 +1,4 @@
+
 export const eventPointModel = {
     calculate(inputs, now) {
         if (!inputs.startDate || !inputs.endDate) return null;

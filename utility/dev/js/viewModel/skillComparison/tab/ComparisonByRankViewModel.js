@@ -1,5 +1,5 @@
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
-import { storageManager } from '/lib/utils/StorageManager.js';
+import { storageManager } from '/lib/utils/storageManager.js';
 
 import { SkillComparisonModel } from '/model/SkillComparisonModel.js';
 
