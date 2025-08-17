@@ -1,9 +1,9 @@
 
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
 import { ToggleButtonElement } from '/lib/utils/ToggleButtonElement.js';
-import { storageManager } from '/lib/utils/StorageManager.js';
+import { storageManager } from '/lib/utils/storageManager.js';
 
-import { kebabToCamelCase } from '/lib/utils/StringUtils.js';
+import { stringUtils } from '/lib/utils/StringUtils.js';
 
 import {
     MIN_TARGET_VALUE, MAX_TARGET_VALUE,
@@ -56,7 +56,36 @@ export class BaseComparisonTabViewModel {
     }
 
     _renderRow(calculator, yValue, xValues, optionalRank = null) {
-        throw new Error("Subclasses must implement _renderRow()");
+        const charRank = this.isRankBased() ? yValue : optionalRank;
+        let rowHTML = `<tr><th>${yValue}</th>`;
+
+        xValues.forEach(targetValue => {
+            const parsedTargetValue = parseInt(targetValue);
+            if (isNaN(parsedTargetValue) || parsedTargetValue === 0) {
+                rowHTML += `<td class="empty-cell"></td>`;
+                return;
+            }
+
+            const result = calculator.calculate(charRank, parsedTargetValue, { includeDecimal: true });
+            const intData = result.integer;
+            const decData = result.decimal;
+
+            const formattedIntDiff = (intData.difference > 0 ? '+' : '') + intData.difference + '%';
+            const formattedDecDiff = (decData.difference > 0 ? '+' : '') + decData.difference.toFixed(1) + '%';
+            
+            rowHTML += `<td class="skill-cell-${intData.winner}" 
+                            data-int-highest="${intData.highest}%"
+                            data-int-diff="${formattedIntDiff}"
+                            data-dec-highest="${decData.highest.toFixed(1)}%"
+                            data-dec-diff="${formattedDecDiff}">
+                        </td>`;
+        });
+        rowHTML += `</tr>`;
+        return rowHTML;
+    }
+
+    isRankBased() {
+        return this.container.id === 'rank-skill-tab';
     }
 
     getAxisLabels() {
@@ -129,7 +158,7 @@ export class BaseComparisonTabViewModel {
             
             const keyName = `${format}-${type}${multi}`;
             
-            cell.textContent = cell.dataset[kebabToCamelCase(keyName)];
+            cell.textContent = cell.dataset[stringUtils.kebabToCamelCase(keyName)];
         });
     }
     

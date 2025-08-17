@@ -101,34 +101,6 @@ export class ComparisonBySkillLevelViewModel extends BaseComparisonTabViewModel 
         this._updateCellDisplay();
     }
 
-    _renderRow(calculator, skillLevel, xValues, charRank) {
-        let rowHTML = `<tr><th>${skillLevel}</th>`;
-        xValues.forEach(targetValue => {
-            const parsedTargetValue = parseInt(targetValue);
-            if (isNaN(parsedTargetValue) || parsedTargetValue === 0) {
-                rowHTML += `<td class="empty-cell"></td>`;
-                return;
-            }
-
-            const result = calculator.calculate(charRank, parsedTargetValue, { includeDecimal: true });
-            const intData = result.integer;
-            const decData = result.decimal;
-
-            const formattedIntDiff = (intData.difference > 0 ? '+' : '') + intData.difference + '%';
-            const formattedDecDiff = (decData.difference > 0 ? '+' : '') + decData.difference.toFixed(1) + '%';
-            
-            rowHTML += `<td class="skill-cell-${intData.winner}" 
-                            data-int-highest="${intData.highest}%"
-                            data-int-diff="${formattedIntDiff}"
-                            data-dec-highest="${decData.highest.toFixed(1)}%"
-                            data-dec-diff="${formattedDecDiff}">
-                        </td>`;
-        });
-        rowHTML += `</tr>`;
-        return rowHTML;
-    }
-
-
     getAxisLabels() {
         return { y: '스킬Lv', x: '대상값' };
     }

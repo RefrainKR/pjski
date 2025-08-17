@@ -1,6 +1,6 @@
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
-import { storageManager } from '/lib/utils/StorageManager.js';
-import { kebabToCamelCase } from '/lib/utils/StringUtils.js';
+import { storageManager } from '/lib/utils/storageManager.js';
+import { stringUtils } from '/lib/utils/StringUtils.js';
 
 import { eventPointModel } from '/model/eventPointModel.js';
 
@@ -43,7 +43,7 @@ export class EventPointCalculatorViewModel {
         ids.inputs.forEach(id => {
             const el = this.container.querySelector(`#${id}`);
             if (el) {
-                const key = kebabToCamelCase(id.replace('ep-', ''));
+                const key = stringUtils.kebabToCamelCase(id.replace('ep-', ''));
                 this.inputElements[key] = el;
                 if (el.type === 'number') {
                     this.inputElements[`${key}Element`] = new InputNumberElement(el, 0, 9999999999, 0);
@@ -51,7 +51,7 @@ export class EventPointCalculatorViewModel {
             }
         });
         ids.outputs.forEach(id => {
-            const key = kebabToCamelCase(id.replace('ep-', ''));
+            const key = stringUtils.kebabToCamelCase(id.replace('ep-', ''));
             this.outputElements[key] = this.container.querySelector(`#${id}`);
         });
 

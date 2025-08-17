@@ -1,7 +1,7 @@
 import { DraggableScroller } from '/lib/utils/DraggableScroller.js';
 import { PopupManager } from '/lib/utils/PopupManager.js';
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
-import { storageManager } from '/lib/utils/StorageManager.js';
+import { storageManager } from '/lib/utils/storageManager.js';
 
 import { BackupViewModel } from '/viewModel/backup/BackupViewModel.js';
 

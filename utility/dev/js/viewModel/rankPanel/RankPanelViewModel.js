@@ -2,7 +2,7 @@
 import { GROUP_DATA } from '/lib/projectSekai/data/groupData.js';
 
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
-import { storageManager } from '/lib/utils/StorageManager.js';
+import { storageManager } from '/lib/utils/storageManager.js';
 
 import { CHARACTER_RANKS_KEY, MIN_RANK, MAX_RANK, DEFAULT_RANK } from '/data.js';
 

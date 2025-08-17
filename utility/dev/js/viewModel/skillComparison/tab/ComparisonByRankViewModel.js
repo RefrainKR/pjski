@@ -1,5 +1,5 @@
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
-import { storageManager } from '/lib/utils/StorageManager.js';
+import { storageManager } from '/lib/utils/storageManager.js';
 
 import { SkillComparisonModel } from '/model/SkillComparisonModel.js';
 
@@ -70,32 +70,6 @@ export class ComparisonByRankViewModel extends BaseComparisonTabViewModel {
             });
             this._updateCellDisplay();
         } catch (error) { this.messageDisplayCallback(error.message, 'error'); }
-    }
-
-    _renderRow(calculator, charRank, xValues) {
-        let rowHTML = `<tr><th>${charRank}</th>`;
-        xValues.forEach(targetValue => {
-            const parsedTargetValue = parseInt(targetValue);
-            if (isNaN(parsedTargetValue) || parsedTargetValue === 0) {
-                rowHTML += `<td class="empty-cell"></td>`;
-                return;
-            }
-            const result = calculator.calculate(charRank, parsedTargetValue, { includeDecimal: true });
-            const intData = result.integer;
-            const decData = result.decimal;
-
-            const formattedIntDiff = (intData.difference > 0 ? '+' : '') + intData.difference + '%';
-            const formattedDecDiff = (decData.difference > 0 ? '+' : '') + decData.difference.toFixed(1) + '%';
-            
-            rowHTML += `<td class="skill-cell-${intData.winner}" 
-                            data-int-highest="${intData.highest}%"
-                            data-int-diff="${formattedIntDiff}"
-                            data-dec-highest="${decData.highest.toFixed(1)}%"
-                            data-dec-diff="${formattedDecDiff}">
-                        </td>`;
-        });
-        rowHTML += `</tr>`;
-        return rowHTML;
     }
     
     getAxisLabels() {
