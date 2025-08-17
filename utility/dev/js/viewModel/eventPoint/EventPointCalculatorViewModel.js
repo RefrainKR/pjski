@@ -65,7 +65,7 @@ export class EventPointCalculatorViewModel {
 
                 element.addEventListener('change', () => {
                     this.recalculateAndRender();
-                    this._saveCurrentSettings();
+                    this._saveSettings();
                 });
             }
         });
@@ -179,7 +179,7 @@ export class EventPointCalculatorViewModel {
         this.recalculateAndRender();
     }
 
-    _saveCurrentSettings() {
+    _saveSettings() {
         const settings = this._gatherInputs();
         storageManager.save(EP_SETTINGS_KEY, settings);
         this.messageDisplayCallback('설정이 자동 저장되었습니다.', 'info');
