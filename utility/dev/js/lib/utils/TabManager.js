@@ -1,3 +1,4 @@
+
 export class TabManager {
     /**
      * @param {HTMLElement} container - 탭 시스템을 포함하는 부모 요소.

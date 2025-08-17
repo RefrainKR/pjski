@@ -1,6 +1,6 @@
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
-import { storageManager } from '/lib/utils/storageManager.js';
-import { stringUtils } from '/lib/utils/StringUtils.js';
+import { storageManager } from '/lib/utils/StorageManager.js';
+import { stringUtils } from '/lib/utils/stringUtils.js';
 
 import { eventPointModel } from '/model/eventPointModel.js';
 

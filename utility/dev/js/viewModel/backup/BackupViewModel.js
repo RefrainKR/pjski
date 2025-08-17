@@ -1,4 +1,4 @@
-import { storageManager } from '/lib/utils/storageManager.js';
+import { storageManager } from '/lib/utils/StorageManager.js';
 
 import { CHARACTER_RANKS_KEY } from '/data.js';
 

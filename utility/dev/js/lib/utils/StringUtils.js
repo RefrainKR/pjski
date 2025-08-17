@@ -1,4 +1,4 @@
-// lib/utils/StringUtils.js
+// lib/utils/stringUtils.js
 
 /**
  * 문자열 관련 유틸리티 함수들을 모아놓은 객체.

@@ -1,6 +1,6 @@
 import { TabManager } from '/lib/utils/TabManager.js';
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
-import { storageManager } from '/lib/utils/storageManager.js';
+import { storageManager } from '/lib/utils/StorageManager.js';
 
 import { ComparisonByRankViewModel } from '/viewModel/skillComparison/tab/ComparisonByRankViewModel.js';
 import { ComparisonBySkillLevelViewModel } from '/viewModel/skillComparison/tab/ComparisonBySkillLevelViewModel.js';
