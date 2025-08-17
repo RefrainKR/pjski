@@ -55,7 +55,6 @@ export class EventPointCalculatorViewModel {
             this.outputElements[key] = this.container.querySelector(`#${id}`);
         });
 
-        this.saveBtn = this.container.querySelector('#ep-save-btn');
         this.resetBtn = this.container.querySelector('#ep-reset-btn');
     }
 
@@ -63,11 +62,14 @@ export class EventPointCalculatorViewModel {
         Object.values(this.inputElements).forEach(element => {
             if (element instanceof HTMLElement) {
                 element.addEventListener('input', () => this.recalculateAndRender());
-                element.addEventListener('change', () => this.recalculateAndRender());
+
+                element.addEventListener('change', () => {
+                    this.recalculateAndRender();
+                    this._saveCurrentSettings();
+                });
             }
         });
 
-        // 토글 스위치들의 disabled 속성 제어 로직
         this.inputElements.challengeLiveToggle.addEventListener('change', (e) => {
             this.inputElements.challengeLiveValue.disabled = !e.target.checked;
         });
@@ -75,7 +77,6 @@ export class EventPointCalculatorViewModel {
             this.inputElements.mysekaiValue.disabled = !e.target.checked;
         });
 
-        this.saveBtn.addEventListener('click', () => this.saveSettings());
         this.resetBtn.addEventListener('click', () => this.resetSettings());
     }
 
@@ -178,10 +179,10 @@ export class EventPointCalculatorViewModel {
         this.recalculateAndRender();
     }
 
-    saveSettings() {
+    _saveCurrentSettings() {
         const settings = this._gatherInputs();
         storageManager.save(EP_SETTINGS_KEY, settings);
-        this.messageDisplayCallback('이벤트 계산기 설정이 저장되었습니다.', 'success');
+        this.messageDisplayCallback('설정이 자동 저장되었습니다.', 'info');
     }
     
     resetSettings() {
