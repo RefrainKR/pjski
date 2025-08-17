@@ -116,10 +116,10 @@ input:checked + .slider:before { transform: translateX(1.25rem); }
     gap: 1rem;
 }
 
-.ep-results h3:not(:first-child) { margin-top: 1.5rem; }
-.ep-results .timer-display { text-align: center; font-size: 1rem; margin-bottom: 1.5rem; background-color: var(--light-gray-bg); padding: 0.75rem; border-radius: 0.25rem; }
-.ep-results .timer-display p { margin: 0.25rem 0; }
-.ep-results .timer-display #ep-time-left { font-weight: bold; color: var(--accent-color); }
+.ep-ne-results h3:not(:first-child) { margin-top: 1.5rem; }
+.ep-ne-results .timer-display { text-align: center; font-size: 1rem; margin-bottom: 1.5rem; background-color: var(--light-gray-bg); padding: 0.75rem; border-radius: 0.25rem; }
+.ep-ne-results .timer-display p { margin: 0.25rem 0; }
+.ep-ne-results .timer-display #ep-ne-time-left { font-weight: bold; color: var(--accent-color); }
 .result-grid { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 0.75rem 1rem; font-size: 1rem; }
 .result-grid p { margin: 0; font-weight: bold; }
 .result-grid span { text-align: right; }
