@@ -40,8 +40,7 @@ export const eventPointModel = {
         const todayForChallenge = new Date(nowForChallenge);
         todayForChallenge.setHours(0, 0, 0, 0);
 
-            // "오늘 몫"을 먼저 결정
-        const todayAdCount = (now.getHours() < challengeResetHour) ? 1 : 0;
+            // "오늘 몫"을 먼저 결정, 오늘 광고는 항상 소모되었다고 가정
         const todayChallengeCount = inputs.challengeToggle ? 1 : 0;
 
             // "내일 이후" 몫 계산
@@ -54,7 +53,7 @@ export const eventPointModel = {
             futureChallengeCount = diffDays;
         }
 
-        remaining.adEnergy = (todayAdCount + futureAdCount) * 10;
+        remaining.adEnergy = futureAdCount * 10;
         remaining.challengeCount = todayChallengeCount + futureChallengeCount;
 
         // 2. 마이세카이 (새벽 5시 초기화 기준)
