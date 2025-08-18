@@ -1,4 +1,5 @@
 import { InputNumberElement } from '/lib/utils/InputNumberElement.js';
+import { FormattedNumberInputElement } from '/lib/utils/FormattedNumberInputElement.js';
 import { storageManager } from '/lib/utils/storageManager.js';
 import { stringUtils } from '/lib/utils/stringUtils.js';
 
@@ -28,9 +29,9 @@ export class NatureEnergyTabViewModel {
                 'ep-ne-start-date', 'ep-ne-end-date', 'ep-ne-start-time', 
                 'ep-ne-current-ep', 'ep-ne-target-ep', 
                 'ep-ne-current-energy', 'ep-ne-extra-energy', 
-                'ep-ne-per-5-energy', 
-                'ep-ne-challenge-live-value', 'ep-ne-challenge-live-toggle', 
-                'ep-ne-mysekai-value', 'ep-ne-mysekai-toggle'
+                'ep-ne-per-5-ep', 
+                'ep-ne-challenge-live-ep', 'ep-ne-challenge-live-toggle', 
+                'ep-ne-mysekai-ep', 'ep-ne-mysekai-toggle'
             ],
             outputs: [
                 'ep-ne-current-time', 'ep-ne-time-left', 
@@ -46,10 +47,20 @@ export class NatureEnergyTabViewModel {
                 const key = stringUtils.kebabToCamelCase(id.replace('ep-ne-', ''));
                 this.inputElements[key] = el;
                 if (el.type === 'number') {
-                    this.inputElements[`${key}Element`] = new InputNumberElement(el, 0, 9999999999, 0);
+                    const changeCallback = () => {
+                        this.recalculateAndRender();
+                        this._saveSettings();
+                    };
+
+                    if (id.includes('-ep')) {
+                        this.inputElements[`${key}Element`] = new FormattedNumberInputElement(el, { min: 0, max: 9999999999, defaultValue: 0, changeCallback });
+                    } else {
+                        this.inputElements[`${key}Element`] = new InputNumberElement(el, 0, 99999, 0, changeCallback);
+                    }
                 }
             }
         });
+
         ids.outputs.forEach(id => {
             const key = stringUtils.kebabToCamelCase(id.replace('ep-ne-', ''));
             this.outputElements[key] = this.container.querySelector(`#${id}`);
@@ -62,14 +73,8 @@ export class NatureEnergyTabViewModel {
         Object.values(this.inputElements).forEach(element => {
             if (element instanceof HTMLElement) {
                 element.addEventListener('input', () => this.recalculateAndRender());
-
-                element.addEventListener('change', () => {
-                    this.recalculateAndRender();
-                    this._saveSettings();
-                });
             }
         });
-
         this.resetBtn.addEventListener('click', () => this.resetSettings());
     }
 
@@ -88,15 +93,15 @@ export class NatureEnergyTabViewModel {
             startDate: this.inputElements.startDate.value,
             endDate: this.inputElements.endDate.value,
             startTime: this.inputElements.startTime.value,
-            currentEP: this.inputElements.currentEpElement.getValue(),
-            targetEP: this.inputElements.targetEpElement.getValue(),
+            currentEp: this.inputElements.currentEpElement.getValue(),
+            targetEp: this.inputElements.targetEpElement.getValue(),
             currentEnergy: this.inputElements.currentEnergyElement.getValue(),
             extraEnergy: this.inputElements.extraEnergyElement.getValue(),
-            epPer5Energy: this.inputElements.per5EnergyElement.getValue(),
-            challengeLive: this.inputElements.challengeLiveValueElement.getValue(),
+            per5Ep: this.inputElements.per5EpElement.getValue(),
+            challengeLiveEp: this.inputElements.challengeLiveEpElement.getValue(),
             challengeToggle: this.inputElements.challengeLiveToggle.checked,
-            mysekaiEpValue: this.inputElements.mysekaiValueElement.getValue(),
-            mysekaiToggle: this.inputElements.mysekaiToggle.checked
+            mysekaiEp: this.inputElements.mysekaiEpElement.getValue(),
+            mysekaiToggle: this.inputElements.mysekaiToggle.checked,
         };
     }
     
@@ -156,13 +161,13 @@ export class NatureEnergyTabViewModel {
         this.inputElements.endDate.value = settings.endDate;
         this.inputElements.startTime.value = settings.startTime;
 
-        this.inputElements.currentEpElement.setValue(settings.currentEP);
-        this.inputElements.targetEpElement.setValue(settings.targetEP);
+        this.inputElements.currentEpElement.setValue(settings.currentEp);
+        this.inputElements.targetEpElement.setValue(settings.targetEp);
         this.inputElements.currentEnergyElement.setValue(settings.currentEnergy);
         this.inputElements.extraEnergyElement.setValue(settings.extraEnergy);
-        this.inputElements.per5EnergyElement.setValue(settings.epPer5Energy);
-        this.inputElements.challengeLiveValueElement.setValue(settings.challengeLive);
-        this.inputElements.mysekaiValueElement.setValue(settings.mysekaiEpValue);
+        this.inputElements.per5EpElement.setValue(settings.per5Ep);
+        this.inputElements.challengeLiveEpElement.setValue(settings.challengeLiveEp);
+        this.inputElements.mysekaiEpElement.setValue(settings.mysekaiEp);
 
         this.inputElements.challengeLiveToggle.checked = settings.challengeToggle;
         this.inputElements.mysekaiToggle.checked = settings.mysekaiToggle;
@@ -172,12 +177,9 @@ export class NatureEnergyTabViewModel {
 
     _saveSettings() {
 		const allSettings = storageManager.load(EP_SETTINGS_KEY, DEFAULT_EP_SETTINGS);
-        const newNatureEnergySettings = this._gatherInputs();
-
-		allSettings.natureEnergy = newNatureEnergySettings;
-
+        allSettings.natureEnergy = this._gatherInputs();
         storageManager.save(EP_SETTINGS_KEY, allSettings);
-
+        
         this.messageDisplayCallback('설정이 자동 저장되었습니다.', 'info');
     }
     

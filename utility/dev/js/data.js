@@ -64,14 +64,15 @@ export const DEFAULT_EP_SETTINGS = {
         startDate: new Date().toISOString().slice(0, 10),
         endDate: new Date().toISOString().slice(0, 10),
         startTime: '15',
-        currentEP: 0,
-        targetEP: 0,
+        currentEp: 0,
+        targetEp: 0,
         currentEnergy: 0,
         extraEnergy: 0,
-        epPer5Energy: 0,
-        challengeLive: 0,
+        per5Ep: 0,
+        challengeLiveEp: 0,
         challengeToggle: true,
-        mysekaiEpValue: 0,
+        mysekaiEp: 0,
         mysekaiToggle: true
-    }
+    }, 
+    eventRun: {}
 };
