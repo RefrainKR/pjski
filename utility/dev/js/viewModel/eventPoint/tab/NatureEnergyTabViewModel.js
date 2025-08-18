@@ -101,7 +101,7 @@ export class NatureEnergyTabViewModel {
             challengeLiveEp: this.inputElements.challengeLiveEpElement.getValue(),
             challengeToggle: this.inputElements.challengeLiveToggle.checked,
             mysekaiEp: this.inputElements.mysekaiEpElement.getValue(),
-            mysekaiToggle: this.inputElements.mysekaiToggle.checked,
+            mysekaiToggle: this.inputElements.mysekaiToggle.checked
         };
     }
     
@@ -140,18 +140,18 @@ export class NatureEnergyTabViewModel {
 
         if (!results) return;
 
-        const { remaining, predictions, finalEP } = results;
+        const { remaining, predictions, finalEp } = results;
         if (!remaining || !predictions) return;
+        
+        this.outputElements.resultAchievable.textContent = Math.floor(predictions.achievableEp).toLocaleString();
+        this.outputElements.resultTotal.textContent = Math.floor(finalEp).toLocaleString();
+        this.outputElements.resultRemaining.textContent = Math.floor(predictions.remainingEp).toLocaleString();
+        this.outputElements.resultNeededEnergy.textContent = `${predictions.neededEnergy.toLocaleString()} 불`;
 
         this.outputElements.remainNaturalEnergy.textContent = `${remaining.naturalEnergy.toLocaleString()} 불`;
         this.outputElements.remainAdEnergy.textContent = `${remaining.adEnergy} 불`; // 횟수 * 10으로 표시
         this.outputElements.remainChallenge.textContent = `${remaining.challengeCount.toLocaleString()} 회`;
         this.outputElements.remainMysekai.textContent = `${remaining.mysekaiCount.toLocaleString()} 회`;
-        
-        this.outputElements.resultAchievable.textContent = Math.floor(predictions.achievableEP).toLocaleString();
-        this.outputElements.resultTotal.textContent = Math.floor(finalEP).toLocaleString();
-        this.outputElements.resultRemaining.textContent = Math.floor(predictions.remainingEP).toLocaleString();
-        this.outputElements.resultNeededEnergy.textContent = `${predictions.neededEnergy.toLocaleString()} 불`;
     }
 
     loadSettings() {

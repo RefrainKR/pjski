@@ -1,28 +1,17 @@
 import { storageManager } from '/lib/utils/storageManager.js';
 
-import { CHARACTER_RANKS_KEY } from '/data.js';
-
 export class BackupViewModel {
-    /**
-     * @param {string} containerId - 백업/복원 버튼이 있는 HTML 컨테이너의 ID (예: 'backup-section').
-     * @param {Function} messageDisplayCallback - 메시지를 표시하기 위한 콜백 함수.
-     * @param {Function} getCharacterRanksCallback - RankPanelViewModel로부터 현재 랭크 데이터를 가져오는 콜백.
-     * @param {Function} setCharacterRanksCallback - RankPanelViewModel로 랭크 데이터를 설정하는 콜백.
-     */
-    constructor(containerId, messageDisplayCallback, getCharacterRanksCallback, setCharacterRanksCallback) {
-        this.container = document.getElementById(containerId);
-        if (!this.container) {
-            console.error(`BackupViewModel: Container with ID '${containerId}' not found.`);
-            return;
-        }
-        this.messageDisplayCallback = messageDisplayCallback;
-        this.getCharacterRanksCallback = getCharacterRanksCallback;
-        this.setCharacterRanksCallback = setCharacterRanksCallback;
+    constructor(config) {
+        this.container = document.getElementById(config.containerId);
+        if (!this.container) return;
+        
+        this.messageDisplayCallback = config.messageDisplayCallback;
+        this.dataSources = config.dataSources;
 
         this.exportDataBtn = this.container.querySelector('#exportDataBtn');
         this.importFile = this.container.querySelector('#importFile');
         this.clearDataBtn = this.container.querySelector('#clearDataBtn');
-        this.userIdDisplay = this.container.querySelector('#user-id-display'); // 사용자 ID 표시 요소
+        this.userIdDisplay = this.container.querySelector('#user-id-display');
 
         this.bindEvents();
     }
@@ -40,21 +29,31 @@ export class BackupViewModel {
     }
 
     exportData() {
-        const data = this.getCharacterRanksCallback();
-        if (!data) {
+        const backupObject = {};
+        
+        for (const key in this.dataSources) {
+            const source = this.dataSources[key];
+            if (typeof source.getData === 'function') {
+                backupObject[key] = source.getData();
+            }
+        }
+
+        if (Object.keys(backupObject).length === 0) {
             this.messageDisplayCallback('내보낼 데이터가 없습니다.', 'info');
             return;
         }
-        const jsonData = JSON.stringify(data, null, 2);
+
+        const jsonData = JSON.stringify(backupObject, null, 2);
         const blob = new Blob([jsonData], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `character_ranks_backup_${new Date().toISOString().slice(0, 10)}.json`;
+        a.download = `pjski_backup_${new Date().toISOString().slice(0, 10)}.json`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+
         this.messageDisplayCallback('데이터가 성공적으로 내보내졌습니다.', 'success');
     }
 
@@ -69,13 +68,24 @@ export class BackupViewModel {
         reader.onload = (e) => {
             try {
                 const importedData = JSON.parse(e.target.result);
-                // 가져온 데이터의 유효성 검사 (간단하게)
-                if (typeof importedData === 'object' && Object.keys(importedData).length > 0) {
-                    this.setCharacterRanksCallback(importedData); // RankPanelViewModel로 데이터 설정
-                    this.messageDisplayCallback('데이터가 성공적으로 가져와졌습니다.', 'success');
-                } else {
-                    this.messageDisplayCallback('유효하지 않은 JSON 파일입니다.', 'error');
+                
+                let applied = false;
+                for (const key in this.dataSources) {
+                    if (importedData.hasOwnProperty(key)) {
+                        const source = this.dataSources[key];
+                        if (typeof source.setData === 'function') {
+                            source.setData(importedData[key]);
+                            applied = true;
+                        }
+                    }
                 }
+                if (applied) {
+                    this.messageDisplayCallback('데이터를 성공적으로 불러왔습니다. 페이지를 새로고침합니다.', 'success');
+                    setTimeout(() => window.location.reload(), 1500);
+                } else {
+                    this.messageDisplayCallback('파일에 유효한 데이터가 없습니다.', 'error');
+                }
+
             } catch (error) {
                 this.messageDisplayCallback('JSON 파일을 파싱하는 데 실패했습니다: ' + error.message, 'error');
                 console.error("Error parsing imported JSON:", error);
@@ -88,10 +98,16 @@ export class BackupViewModel {
     }
 
     clearData() {
-        if (confirm('정말로 모든 캐릭터 랭크 데이터를 지우시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
-            storageManager.remove(CHARACTER_RANKS_KEY);
-            this.setCharacterRanksCallback({});
-            this.messageDisplayCallback('모든 데이터가 지워졌습니다.', 'success');
+        if (confirm('정말로 모든 설정 데이터를 지우시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+            for (const key in this.dataSources) {
+                const source = this.dataSources[key];
+                if (source.storageKey) {
+                    storageManager.remove(source.storageKey);
+                }
+            }
+            
+            this.messageDisplayCallback('모든 데이터가 삭제되었습니다. 페이지를 새로고침합니다.', 'success');
+            setTimeout(() => window.location.reload(), 1500);
         }
     }
 }

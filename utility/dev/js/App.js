@@ -1,5 +1,6 @@
 import { DraggableScroller } from '/lib/utils/DraggableScroller.js';
 import { PopupManager } from '/lib/utils/PopupManager.js';
+import { storageManager } from '/lib/utils/storageManager.js';
 
 import { BackupViewModel } from '/viewModel/backup/BackupViewModel.js';
 import { SkillComparisonViewModel } from '/viewModel/skillComparison/SkillComparisonViewModel.js';
@@ -8,7 +9,9 @@ import { RankPanelViewModel } from '/viewModel/rankPanel/RankPanelViewModel.js';
 
 import { EventPointViewModel } from '/viewModel/eventPoint/EventPointViewModel.js';
 
-import { MESSAGE_DISPLAY_DURATION} from '/data.js';
+import { MESSAGE_DISPLAY_DURATION,
+    CHARACTER_RANKS_KEY, SKILL_COMPARISON_SETTINGS_KEY, EP_SETTINGS_KEY
+ } from '/data.js';
 
 export class App {
     constructor() {
@@ -48,12 +51,28 @@ export class App {
             messageDisplayCallback: this.messageDisplay.bind(this)
         });
 
-        this.backupViewModel = new BackupViewModel(
-            'backup-panel',
-            this.messageDisplay.bind(this),
-            this.rankPanelViewModel.getCharacterRanks.bind(this.rankPanelViewModel),
-            this.rankPanelViewModel.setCharacterRanks.bind(this.rankPanelViewModel)
-        );
+        const backupDataSources = {
+            characterRanks: {
+                getData: this.rankPanelViewModel.getCharacterRanks.bind(this.rankPanelViewModel),
+                setData: this.rankPanelViewModel.setCharacterRanks.bind(this.rankPanelViewModel),
+                storageKey: CHARACTER_RANKS_KEY
+            },
+            skillComparisonSettings: {
+                getData: () => storageManager.load(SKILL_COMPARISON_SETTINGS_KEY),
+                setData: (data) => storageManager.save(SKILL_COMPARISON_SETTINGS_KEY, data),
+                storageKey: SKILL_COMPARISON_SETTINGS_KEY
+            },
+            eventPointSettings: {
+                getData: () => storageManager.load(EP_SETTINGS_KEY),
+                setData: (data) => storageManager.save(EP_SETTINGS_KEY, data),
+                storageKey: EP_SETTINGS_KEY
+            }
+        };
+        this.backupViewModel = new BackupViewModel({
+            containerId: 'backup-panel',
+            messageDisplayCallback: this.messageDisplay.bind(this),
+            dataSources: backupDataSources
+        });
 
         this.popupManager = new PopupManager();
         this.popupManager.onOpen('character-ranks-panel', () => {

@@ -8,19 +8,19 @@ export const eventPointModel = {
         const timeLeftMs = eventEndDate - now;
 
         if (timeLeftMs < 0) {
-            const remainingEP = Math.max(0, inputs.targetEp - inputs.currentEp);
+            const remainingEp = Math.max(0, inputs.targetEp - inputs.currentEp);
             return {
                 timeLeft: { days: 0, hours: 0, minutes: 0, seconds: 0, totalSeconds: 0 },
                 remaining: { naturalEnergy: 0, adEnergy: 0, challengeCount: 0, mysekaiCount: 0 },
                 predictions: { 
-                    liveEP: 0, 
-                    challengeEP: 0, 
-                    mysekaiEP: 0,
-                    achievableEP: 0,
-                    remainingEP: remainingEP,
-                    neededEnergy: inputs.epPer5Energy > 0 ? Math.ceil(remainingEP / (inputs.epPer5Energy / 5)) : 0
+                    liveEp: 0, 
+                    challengeEp: 0, 
+                    mysekaiEp: 0,
+                    achievableEp: 0,
+                    remainingEp: remainingEp,
+                    neededEnergy: inputs.per5Ep > 0 ? Math.ceil(remainingEp / (inputs.per5Ep / 5)) : 0
                 },
-                finalEP: inputs.currentEP
+                finalEp: inputs.currentEp
             };
         }
 		
@@ -75,30 +75,30 @@ export const eventPointModel = {
         remaining.naturalEnergy = Math.floor(timeLeftMs / (30 * 60 * 1000));
 
         // --- EP 예측 계산 ---
-        const epPerEnergy = inputs.epPer5Energy > 0 ? inputs.epPer5Energy / 5 : 0;
-        const totalEnergyFromResources = inputs.currentEnergy + inputs.extraEnergy + remaining.naturalEnergy + (remaining.adEnergy);
+        const epPerEnergy = inputs.per5Ep > 0 ? inputs.per5Ep / 5 : 0;
+        const totalEnergyFromResources = inputs.currentEnergy + inputs.extraEnergy + remaining.naturalEnergy + remaining.adEnergy;
                                      
-        const predictions = {
-            liveEP: Math.max(0, totalEnergyFromResources) * epPerEnergy,
-            challengeEP: remaining.challengeCount * inputs.challengeLiveEp,
-            mysekaiEP: remaining.mysekaiCount * inputs.mysekaiEp
+         const predictions = {
+            liveEp: Math.max(0, totalEnergyFromResources) * epPerEnergy,
+            challengeEp: remaining.challengeCount * inputs.challengeLiveEp,
+            mysekaiEp: remaining.mysekaiCount * inputs.mysekaiEp
         };
 
-        const achievableEP = predictions.liveEP + predictions.challengeEP + predictions.mysekaiEP;
-        const finalEP = inputs.currentEp + achievableEP;
-        const remainingEP = Math.max(0, inputs.targetEp - finalEP);
-        const neededEnergy = epPerEnergy > 0 ? Math.ceil(remainingEP / epPerEnergy) : 0;
+        const achievableEp = predictions.liveEp + predictions.challengeEp + predictions.mysekaiEp;
+        const finalEp = inputs.currentEp + achievableEp;
+        const remainingEp = Math.max(0, inputs.targetEp - finalEp);
+        const neededEnergy = epPerEnergy > 0 ? Math.ceil(remainingEp / epPerEnergy) : 0;
 
         return {
             timeLeft: { days, hours, minutes, seconds, totalSeconds },
             remaining,
             predictions: {
                 ...predictions,
-                achievableEP,
-                remainingEP,
+                achievableEp,
+                remainingEp,
                 neededEnergy
             },
-            finalEP
+            finalEp
         };
     }
 };
