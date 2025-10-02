@@ -155,7 +155,7 @@ export class BaseComparisonTabViewModel {
         
         cells.forEach(cell => {
             const format = this.numberFormat.substring(0, 3);
-            const type = this.displayMode;
+            const type = this.displayMode === 'highest' ? 'highest' : 'diff';
             const multi = this.useMultiplier ? '-multi' : '';
             
             const keyName = `${format}-${type}${multi}`;
